@@ -3,6 +3,8 @@ FROM alpine:3.10
 # Some ENV variables
 ENV PATH="/mattermost/bin:${PATH}"
 ENV MM_INSTALL_TYPE=docker
+ENV DOCKER_DEFAULT_PLATFORM=linux/amd64
+ARG DOCKER_DEFAULT_PLATFORM=linux/amd64
 
 # Build argument to set Mattermost edition
 ARG edition=enterprise

@@ -51,17 +51,6 @@ services:
 
       # in case your config is not in default location
       #- MM_CONFIG=/mattermost/config/config.json
-
-  web:
-    build: web
-    ports:
-      - "80:8080"
-      - "443:8443"
-    read_only: true
-    restart: unless-stopped
-    volumes:
-      # This directory must have cert files if you want to enable SSL
-      - ./volumes/web/cert:/cert:ro
-      - /etc/localtime:/etc/localtime:ro
-    cap_drop:
-      - ALL
+      ports:
+      - "8000:8000" # Map port 8000 in the container to port 8000 on the host
+      - "9000:9000" 
