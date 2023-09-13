@@ -45,6 +45,9 @@ if (DEV) {
 const buildTimestamp = Date.now();
 
 var config = {
+  stats: {
+  warningsFilter: /node_modules/,
+},
   entry: ["./src/root.tsx"],
   output: {
     publicPath,
