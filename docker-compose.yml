@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-
   db:
     build: db
     read_only: true
@@ -22,12 +21,6 @@ services:
   app:
     build:
       context: app
-      # uncomment following lines for team edition or change UID/GID
-      # args:
-      #   - edition=team
-      #   - PUID=1000
-      #   - PGID=1000
-      #   - MM_VERSION=5.31
     restart: unless-stopped
     volumes:
       - ./volumes/app/mattermost/config:/mattermost/config:rw
@@ -51,6 +44,6 @@ services:
 
       # in case your config is not in default location
       #- MM_CONFIG=/mattermost/config/config.json
-      ports:
+    ports:
       - "8000:8000" # Map port 8000 in the container to port 8000 on the host
-      - "9000:9000" 
+      - "9000:9000"

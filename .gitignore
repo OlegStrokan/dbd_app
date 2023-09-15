@@ -5,4 +5,4 @@
 !.elasticbeanstalk/*.global.yml
 
 # Generated data
-volumes
+
