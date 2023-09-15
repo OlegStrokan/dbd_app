@@ -4139,6 +4139,7 @@
 "sidebar_left.sidebar_channel_menu.unmuteChannel": "Zrušit ztlumení kanálu",
 "sidebar_left.sidebar_channel_menu.unmuteConversation": "Zrušit ztlumení konverzace",
 "sidebar_left.sidebar_channel_navigator.inviteUsers": "Pozvat uživatele",
+  "sidebar_left.sidebar_channel_navigator.addChannelsCta": "Přidat kanál",
 "sidebar_right_menu.console": "Systémová konzole",
 "sidebar_right_menu.flagged": "Uložené zprávy",
 "sidebar_right_menu.recentMentions": "Nedávné zmínky",
