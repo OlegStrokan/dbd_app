@@ -539,6 +539,7 @@ export default class MessageAttachment extends React.PureComponent<Props, State>
 
         const hasContent = author.length > 0 || Boolean(title) || Boolean(thumb) || Boolean(attachmentText) || Boolean(image) || Boolean(fields) || Boolean(footer) || Boolean(actions);
 
+        // TODO - delete hardcode text and styles (marginTop)
         return (
             <div
                 className={'attachment ' + preTextClass}
@@ -553,12 +554,16 @@ export default class MessageAttachment extends React.PureComponent<Props, State>
                             style={useBorderStyle}
                         >
                             {author}
-                            {title}
+                            <strong>Nastavit e-mailovou adresu pro podporu</strong>
                             <div>
                                 <div
-                                    className={thumb ? 'attachment__body' : 'attachment__body attachment__body--no_thumb'}
+                                    className={thumb ? 'attachment__body' : 'attachment__body attachment__body--no_thumb'}  style={{marginTop: 15}}
                                 >
-                                    {attachmentText}
+
+                                   <span>Prosím, přejděte do <strong>Systémového konzolu > Nastavení webu > Přizpůsobení</strong> a nastavte
+                                    <a href="https://docs.mattermost.com/administration/config-settings.html#support-email"> e-mailovou adresu </a>
+                                    podpory jako interní e-mailovou adresu vaší organizace pro zpětnou vazbu od koncových uživatelů, e-mailové oznámení a požadavky na podporu
+                                       </span>
                                     {image}
                                     {fields}
                                     {footer}

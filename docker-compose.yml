@@ -41,9 +41,20 @@ services:
       # use the credentials you've set above, in the format:
       # MM_SQLSETTINGS_DATASOURCE=postgres://${MM_USERNAME}:${MM_PASSWORD}@db:5432/${MM_DBNAME}?sslmode=disable&connect_timeout=10
       - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mmuser_password@db:5432/mattermost?sslmode=disable&connect_timeout=10
+      # - MM_SQLSETTINGS_DATASOURCE=postgres:${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable&connect_timeout=10`
 
       # in case your config is not in default location
       #- MM_CONFIG=/mattermost/config/config.json
     ports:
       - "8000:8000" # Map port 8000 in the container to port 8000 on the host
       - "9000:9000"
+
+
+  frontend:
+    build:
+      context: webapp
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    depends_on:
+      - app

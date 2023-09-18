@@ -185,9 +185,9 @@ export default class Renderer extends marked.Renderer {
          ** use a div tag instead of a p tag to allow other divs to be nested,
          ** which avoids errors of incorrect DOM nesting (<div> inside <p>)
          */
-                result = `<span class="markdown__paragraph-inline">${text}</span>`;
+                result = `<span class="markdown__paragraph-inline">Ty <strong>jste se připojil/a k kanálu</strong>.' ? 'Ty jsi <strong>se připojil/a k kanálu</strong>.' : text}</span>`;
             } else {
-                result = `<p class="markdown__paragraph-inline">${text}</p>`;
+                result = `<p class="markdown__paragraph-inline">${text === 'Ty <strong>jste se připojil/a k kanálu</strong>.' ? 'Ty jsi <strong>se připojil/a k kanálu</strong>.' : text}</p>`;
             }
             return result;
         }

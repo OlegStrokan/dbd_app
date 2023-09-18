@@ -5670,5 +5670,7 @@
   "workspace_limits.teams_limit_reached.view_upgrade_options": "View upgrade options",
   "workspace_limits.upgrade": "Upgrade to avoid {planName} data limits",
   "workspace_limits.upgrade_reasons.free": "{planName} is restricted to {messagesLimit} message history and {storageLimit} file storage. You can delete items to free up space or upgrade to a paid plan.",
-  "yourcomputer": "Your computer"
+  "yourcomputer": "Your computer",
+  "additional.post_attachment.title": "  Set Your Support Email Address",
+  "additional.post_attachment.description": "  Please go to System Console > Site Configuration > Customization to set the Support Email as your organization's internal IT Support Desk email address for end user feedback, email notifications, and support requests.\n"
 }
