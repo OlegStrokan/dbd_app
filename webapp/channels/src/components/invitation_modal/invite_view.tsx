@@ -87,6 +87,7 @@ export default function InviteView(props: Props) {
     const inviteURL = useMemo(() => {
         return `${getSiteURL()}/signup_user_complete/?id=${props.currentTeam.invite_id}&md=link&sbr=${getTrackFlowRole()}`;
     }, [props.currentTeam.invite_id]);
+    console.log('hello', inviteURL, getSiteURL())
 
     const copyText = useCopyText({
         trackCallback: () => trackEvent(getAnalyticsCategory(props.isAdmin), 'click_copy_invite_link', {...getRoleForTrackFlow(), ...getSourceForTrackFlow()}),
