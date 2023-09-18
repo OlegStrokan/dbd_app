@@ -17,44 +17,6 @@ const WebpackPwaManifest = require("webpack-pwa-manifest");
 
 const packageJson = require("./package.json");
 
-// webpack-error-suppression-plugin.js
-class ErrorSuppressionPlugin {
-  constructor(options) {
-    this.options = options || {};
-  }
-
-  apply(compiler) {
-    compiler.hooks.emit.tapAsync('ErrorSuppressionPlugin', (compilation, callback) => {
-      // Iterate through the compilation's assets (output files)
-      compilation.assets = Object.keys(compilation.assets).reduce((assets, assetName) => {
-        // Suppress errors in the asset's content based on conditions
-        let assetSource = compilation.assets[assetName].source();
-        if (this.shouldSuppressError(assetSource, assetName)) {
-          assetSource = ''; // Replace the content with an empty string
-        }
-
-        assets[assetName] = {
-          source: () => assetSource,
-          size: () => Buffer.from(assetSource).length,
-        };
-
-        return assets;
-      }, {});
-
-      callback();
-    });
-  }
-
-  shouldSuppressError(assetSource, assetName) {
-    // Define conditions to determine whether to suppress errors
-    // For example, you can check the assetName or the content of assetSource
-    return assetName.includes('.js'); // Suppress errors in JavaScript files
-  }
-}
-
-module.exports = ErrorSuppressionPlugin;
-
-
 const NPM_TARGET = process.env.npm_lifecycle_event;
 
 const targetIsRun = NPM_TARGET?.startsWith("run");
@@ -427,7 +389,6 @@ async function initializeModuleFederation() {
 
   // Add this plugin to perform the substitution of window.basename when loading remote containers
   config.plugins.push(new ExternalTemplateRemotesPlugin());
-config.plugins.push(new ErrorSuppressionPlugin())
   config.plugins.push(
     new webpack.DefinePlugin({
       REMOTE_CONTAINERS: JSON.stringify(remotes),
