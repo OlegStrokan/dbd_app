@@ -228,7 +228,6 @@ export function getFlaggedPosts(): ActionFunc {
                 type: SearchTypes.SEARCH_FLAGGED_POSTS_SUCCESS,
             },
         ], 'SEARCH_FLAGGED_POSTS_BATCH'));
-
         return {data: posts};
     };
 }

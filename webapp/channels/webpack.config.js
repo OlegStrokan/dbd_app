@@ -430,6 +430,13 @@ if (targetIsDevServer) {
     ...config,
     devtool: "eval-cheap-module-source-map",
     devServer: {
+      client: {
+        overlay: {
+          errors: false,
+          warnings: false,
+          runtimeErrors: false,
+        },
+      },
       liveReload: true,
       proxy: {
         // Forward these requests to the server
