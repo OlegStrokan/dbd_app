@@ -88,38 +88,17 @@ export default function InviteView(props: Props) {
         return `${getSiteURL()}/signup_user_complete/?id=${props.currentTeam.invite_id}&md=link&sbr=${getTrackFlowRole()}`;
     }, [props.currentTeam.invite_id]);
 
+    console.log(inviteURL)
+
     const copyText = useCopyText({
         trackCallback: () => trackEvent(getAnalyticsCategory(props.isAdmin), 'click_copy_invite_link', {...getRoleForTrackFlow(), ...getSourceForTrackFlow()}),
         text: inviteURL,
     });
 
 
-    const copyToClipboard = async () => {
-            try {
-                const textField = document.createElement('textarea');
-                textField.innerText = inviteURL;
-                textField.style.position = 'fixed';
-                textField.style.opacity = '0';
-
-                document.body.appendChild(textField);
-                textField.select();
-
-                if (document.execCommand('copy')) {
-                    console.log('Text copied to clipboard successfully.');
-                } else {
-                    console.error('Failed to copy text to clipboard.');
-                }
-
-                textField.remove();
-            } catch (error) {
-                console.error('An error occurred while copying text to clipboard:', error);
-            }
-    };
-
-
     const copyButton = (
         <button
-            onClick={copyToClipboard}
+            onClick={copyText.onClick}
             data-testid='InviteView__copyInviteLink'
             aria-label={
                 formatMessage({
