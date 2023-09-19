@@ -95,14 +95,25 @@ export default function InviteView(props: Props) {
 
 
     const copyToClipboard = async () => {
-        try {
+            try {
+                const textField = document.createElement('textarea');
+                textField.innerText = inviteURL;
+                textField.style.position = 'fixed';
+                textField.style.opacity = '0';
 
-            await navigator.clipboard.writeText(inviteURL);
+                document.body.appendChild(textField);
+                textField.select();
 
-            console.log('Text copied to clipboard successfully.');
-        } catch (error) {
-            console.error('Failed to copy text to clipboard:', error);
-        }
+                if (document.execCommand('copy')) {
+                    console.log('Text copied to clipboard successfully.');
+                } else {
+                    console.error('Failed to copy text to clipboard.');
+                }
+
+                textField.remove();
+            } catch (error) {
+                console.error('An error occurred while copying text to clipboard:', error);
+            }
     };
 
 
