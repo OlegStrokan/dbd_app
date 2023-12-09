@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  parcel_delivery_dev_db:
+    container_name: parcel_delivery_dev_db
+    image: postgres:13
+    environment:
+      POSTGRES_USER: stroka01
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: dev_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_parcel_delivery_dev_db:/var/lib/postgresql/data
+    restart: always
+
+  parcel_delivery_test_db:
+    container_name: parcel_delivery_test_db
+    image: postgres:13
+    environment:
+      POSTGRES_USER: stroka01
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: test_db
+    ports:
+      - "8433:5432"
+    volumes:
+      - pgdata_parcel_delivery_test_db:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata_parcel_delivery_dev_db: {}
+  pgdata_parcel_delivery_test_db: {}
+
