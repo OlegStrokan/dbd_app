@@ -20,11 +20,12 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node --require tsconfig-paths/register ./node_modules/typeorm/cli",
-    "migration:run": "npx typeorm migration:run -- -d ./src/parcel-delivery/common/db/typeorm.config.ts",
-    "migration:generate": "npm run typeorm -- -d ./src/parcel-delivery/common/db/typeorm.config.ts migration:generate ./db/migrations/%npm_config_name%",
-    "migration:create": "pnpm typeorm -- migration:create ./db/migrations/$npm_config_name",
-    "migration:revert": "pnpm typeorm -- -d ./src/parcel-delivery/common/db/typeorm.config.ts migration:revert",
-    "migration:show": "pnpm typeorm -- migration:show -d ./db/typeorm.config.ts" },
+    "migration:run": "npm run typeorm migration:run -- -d ./src/parcel-delivery/common/db/typeorm.config.ts",
+    "migration:generate": "npm run typeorm -- -d ./src/parcel-delivery/common/db/typeorm.config.ts migration:generate ./src/migrations",
+    "migration:create": "npm run typeorm -- migration:create ./src/migrations",
+    "migration:revert": "npm run typeorm -- -d ./src/parcel-delivery/common/db/typeorm.config.ts migration:revert",
+    "migration:show": "npm run typeorm migration:show -- -d ./src/parcel-delivery/common/db/typeorm.config.ts"
+  },
   "dependencies": {
     "@apollo/gateway": "2.2.3",
     "@apollo/subgraph": "2.2.3",

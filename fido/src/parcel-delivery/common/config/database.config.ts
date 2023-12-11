@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import {ParcelDeliveryEntity} from "../../domain/entities/parcel-delivery";
 
 export default registerAs('database', () => ({
     type: 'postgres',
@@ -7,7 +8,7 @@ export default registerAs('database', () => ({
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
+    entities: [ParcelDeliveryEntity],
     synchronize: process.env.NODE_ENV === 'development',
     logging: process.env.NODE_ENV === 'development',
     migrations: [`${__dirname}/../../db/migrations/*{.ts,.js}`],

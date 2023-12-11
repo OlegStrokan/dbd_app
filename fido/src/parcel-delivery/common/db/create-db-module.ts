@@ -17,7 +17,7 @@ export const createDbTestingModule = async () => {
         database: 'test_db',
         entities: [ParcelDeliveryEntity],
         synchronize: true,
-        migrations: ["src/common/migrations/*{.ts}"],
+        migrations: [`${__dirname}/../../db/migrations/*{.ts,.js}`],
         migrationsTableName: "migrations"
 
       }),
