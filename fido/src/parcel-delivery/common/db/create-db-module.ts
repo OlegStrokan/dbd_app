@@ -17,7 +17,9 @@ export const createDbTestingModule = async () => {
         database: 'test_db',
         entities: [ParcelDeliveryEntity],
         synchronize: true,
-        migrations: ["src/common/migrations/*{.ts}"]
+        migrations: ["src/common/migrations/*{.ts}"],
+        migrationsTableName: "migrations"
+
       }),
       TypeOrmModule.forFeature([ParcelDeliveryEntity]),
     ],

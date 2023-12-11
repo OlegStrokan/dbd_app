@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ParcelDeliveryResolver } from "./infrastructure/parcel-delivery.resolver";
 import { ParcelDeliveryService } from "./app/use-cases/create-parcel-delivery";
 import { ParcelDeliveryEntity } from "./domain/entities/parcel-delivery";
+import {ConfigModule, ConfigService} from "@nestjs/config";
+import {AppConfig, DatabaseConfig} from "./common/config";
 
 @Module({
   imports: [
@@ -14,17 +16,18 @@ import { ParcelDeliveryEntity } from "./domain/entities/parcel-delivery";
           federation: 1
         }
       }),
-      TypeOrmModule.forRoot({
-          type: 'postgres',
-          host: 'localhost',
-          port: 5433,
-          username: 'stroka01',
-          password: 'user',
-          database: 'dev_db',
-          entities: [ParcelDeliveryEntity],
-          synchronize: true,
-          migrations: ["src/common/migrations/*{.ts}"]
-      }),
+    ConfigModule.forRoot({
+        isGlobal: true,
+        cache: true,
+        load: [AppConfig, DatabaseConfig],
+    }),
+    TypeOrmModule.forRootAsync({
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+            ...configService.get('database'),
+        }),
+        inject: [ConfigService],
+    }),
     TypeOrmModule.forFeature([ParcelDeliveryEntity])
   ],
   providers: [ParcelDeliveryService, ParcelDeliveryResolver],
