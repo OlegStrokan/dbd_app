@@ -21,7 +21,7 @@ export const createDbTestingModule = async () => {
         migrationsTableName: "migrations"
 
       }),
-      TypeOrmModule.forFeature([ParcelDeliveryEntity]),
+      TypeOrmModule.forFeature([ParcelDeliveryEntity, ParcelDeliveryRepository]),
     ],
     providers: [ParcelDeliveryService, ParcelDeliveryRepository],
   }).compile();

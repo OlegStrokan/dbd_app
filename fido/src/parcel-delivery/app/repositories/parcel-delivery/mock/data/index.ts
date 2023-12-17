@@ -3,11 +3,16 @@ import {
   CreateParcelDeliveryInput
 } from "../../../../use-cases/create-parcel-delivery/dto/create-parcel-delivery.input";
 
+export const getRandomParcelDelivery = (overrides?: Partial<ParcelDeliveryEntity>): ParcelDeliveryEntity => {
+  const defaultParcel: ParcelDeliveryEntity = new ParcelDeliveryEntity();
 
+  if (overrides) {
+    Object.assign(defaultParcel, overrides);
+  }
 
-export const getRandomParcelDelivery = (overrides?: ParcelDeliveryEntity) => {
-  return new ParcelDeliveryEntity()
-}
+  return defaultParcel;
+};
+
 
 export const getRandomParcelDeliveryInput = (): CreateParcelDeliveryInput => {
   return {

@@ -1,20 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { IParcelDelivery } from "./interfaces";
 import { CreateParcelDeliveryInput } from "./dto/create-parcel-delivery.input";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 import { ParcelDeliveryEntity } from "../../../domain/entities/parcel-delivery";
+import {IParcelDeliveryRepository} from "../../repositories/parcel-delivery";
+import {InjectRepository} from "@nestjs/typeorm";
+import {ParcelDeliveryRepository} from "../../../domain/repositories/parcel-delivery";
 
 @Injectable()
 export class ParcelDeliveryService implements IParcelDelivery {
 
   constructor(
-    @InjectRepository(ParcelDeliveryEntity)
-    public readonly parcelDeliveryRepository: Repository<ParcelDeliveryEntity>,
+      @InjectRepository(ParcelDeliveryRepository)
+      public readonly parcelDeliveryRepository: IParcelDeliveryRepository,
   ) {}
 
-  async create(dto: CreateParcelDeliveryInput) {
-    const newParcelDelivery = this.parcelDeliveryRepository.create(dto);
-    return await this.parcelDeliveryRepository.save(newParcelDelivery);
+  async create(dto: CreateParcelDeliveryInput): Promise<ParcelDeliveryEntity> {
+    return this.parcelDeliveryRepository.upsertOne(dto);
+  }
+
+  async getOne(id: number): Promise<ParcelDeliveryEntity> {
+    const parcelDelivery = await this.parcelDeliveryRepository.findOneById(id)
+
+    if (!parcelDelivery) {
+      throw new Error('Parcel delivery with current id doesn\'t exist')
+    }
+
+    return parcelDelivery;
+
   }
 }

@@ -2,7 +2,9 @@ import { CreateParcelDeliveryInput } from "../../use-cases/create-parcel-deliver
 import { ParcelDeliveryEntity } from "../../../domain/entities/parcel-delivery";
 
 export interface IParcelDeliveryRepository {
-  create(dto: CreateParcelDeliveryInput): Promise<ParcelDeliveryEntity>;
+  upsertOne(dto: CreateParcelDeliveryInput): Promise<ParcelDeliveryEntity>;
+  upsertMany(dtos: CreateParcelDeliveryInput[]): Promise<ParcelDeliveryEntity[]>;
   findOneById(id: ParcelDeliveryEntity['id']): Promise<ParcelDeliveryEntity>
   findAll(): Promise<ParcelDeliveryEntity[]>
+  deleteAll(): Promise<void>
 }

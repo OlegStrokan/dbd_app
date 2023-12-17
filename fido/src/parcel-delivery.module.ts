@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import {GraphQLModule} from "@nestjs/graphql";
 import {ApolloFederationDriver, ApolloFederationDriverConfig} from "@nestjs/apollo";
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ParcelDeliveryResolver } from "./infrastructure/parcel-delivery.resolver";
-import { ParcelDeliveryService } from "./app/use-cases/create-parcel-delivery";
-import { ParcelDeliveryEntity } from "./domain/entities/parcel-delivery";
+import {TypeOrmModule} from '@nestjs/typeorm';
+import { ParcelDeliveryResolver } from "./parcel-delivery/infrastructure/parcel-delivery.resolver";
+import { ParcelDeliveryService } from "./parcel-delivery/app/use-cases/create-parcel-delivery";
+import { ParcelDeliveryEntity } from "./parcel-delivery/domain/entities/parcel-delivery";
 import {ConfigModule, ConfigService} from "@nestjs/config";
-import {AppConfig, DatabaseConfig} from "./common/config";
+import {AppConfig, DatabaseConfig} from "./parcel-delivery/common/config";
+import {ParcelDeliveryRepository} from "./parcel-delivery/domain/repositories/parcel-delivery";
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import {AppConfig, DatabaseConfig} from "./common/config";
         }),
         inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([ParcelDeliveryEntity])
+    TypeOrmModule.forFeature([ParcelDeliveryEntity, ParcelDeliveryRepository])
   ],
   providers: [ParcelDeliveryService, ParcelDeliveryResolver],
 })

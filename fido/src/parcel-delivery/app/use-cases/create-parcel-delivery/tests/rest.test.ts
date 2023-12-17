@@ -1,11 +1,10 @@
-import { IParcelDelivery } from "../../../use-cases/create-parcel-delivery/interfaces";
-import { IParcelDeliveryRepository } from "../index";
-import { TestingModule } from "@nestjs/testing";
-import { createDbTestingModule } from "../../../../common/db/create-db-module";
-import { ParcelDeliveryService } from "../../../use-cases/create-parcel-delivery";
-import { ParcelDeliveryRepository } from "../../../../domain/repositories/parcel-delivery";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { ParcelDeliveryMocks } from "../mock";
+import {createDbTestingModule} from "../../../../common/db/create-db-module";
+import {TestingModule} from "@nestjs/testing";
+import {IParcelDeliveryRepository} from "../../../repositories/parcel-delivery";
+import {IParcelDelivery} from "../interfaces";
+import {ParcelDeliveryService} from "../index";
+import {ParcelDeliveryRepository} from "../../../../domain/repositories/parcel-delivery";
+import {ParcelDeliveryMocks} from "../../../repositories/parcel-delivery/mock";
 
 describe('ParcelDeliveryService', () => {
   let parcelDeliveryService: IParcelDelivery;
