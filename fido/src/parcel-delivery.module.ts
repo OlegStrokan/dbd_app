@@ -8,6 +8,7 @@ import { ParcelDeliveryEntity } from "./parcel-delivery/domain/entities/parcel-d
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {AppConfig, DatabaseConfig} from "./parcel-delivery/common/config";
 import {ParcelDeliveryRepository} from "./parcel-delivery/domain/repositories/parcel-delivery";
+import {ImportDataService} from "./parcel-delivery/app/services/import-manager";
 
 @Module({
   imports: [
@@ -31,6 +32,10 @@ import {ParcelDeliveryRepository} from "./parcel-delivery/domain/repositories/pa
     }),
     TypeOrmModule.forFeature([ParcelDeliveryEntity, ParcelDeliveryRepository])
   ],
-  providers: [ParcelDeliveryService, ParcelDeliveryResolver],
+  providers: [
+      ParcelDeliveryService,
+      ParcelDeliveryResolver,
+      ImportDataService
+  ],
 })
 export class ParcelDeliveryModule {}
