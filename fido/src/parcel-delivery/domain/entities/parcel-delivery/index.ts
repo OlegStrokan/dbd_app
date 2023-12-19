@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { ParcelDelivery } from "../../../app/entities/parcel-delivery.entity";
+import { ParcelDelivery } from "../../../core/entities/parcel-delivery.entity";
 
 @ObjectType()
 @Entity({ name: "parcel-deliveries"})
@@ -17,11 +17,7 @@ export class ParcelDeliveryEntity {
   @Column()
   name: string;
 
-  // ... other properties and relationships
-
-  // Conversion methods between TypeORM entity and Core entity
   toCoreEntity(): ParcelDelivery {
-    // Implement conversion logic here
     return new ParcelDelivery({
       id: this.id,
       name: this.name,

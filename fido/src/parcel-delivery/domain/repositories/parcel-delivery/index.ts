@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import {InjectEntityManager, InjectRepository} from "@nestjs/typeorm";
 import {EntityManager, Repository} from "typeorm";
-import { CreateParcelDeliveryInput } from "../../../app/use-cases/create-parcel-delivery/dto/create-parcel-delivery.input";
-import { IParcelDeliveryRepository } from "../../../app/repositories/parcel-delivery";
+import { CreateParcelDeliveryInput } from "../../../core/use-cases/create-parcel-delivery/dto/create-parcel-delivery.input";
+import { IParcelDeliveryRepository } from "../../../core/repositories/parcel-delivery";
 import { ParcelDeliveryEntity } from "../../entities/parcel-delivery";
 
 @Injectable()

@@ -3,12 +3,12 @@ import {GraphQLModule} from "@nestjs/graphql";
 import {ApolloFederationDriver, ApolloFederationDriverConfig} from "@nestjs/apollo";
 import {TypeOrmModule} from '@nestjs/typeorm';
 import { ParcelDeliveryResolver } from "./parcel-delivery/infrastructure/parcel-delivery.resolver";
-import { ParcelDeliveryService } from "./parcel-delivery/app/use-cases/create-parcel-delivery";
+import { ParcelDeliveryService } from "./parcel-delivery/core/use-cases/create-parcel-delivery";
 import { ParcelDeliveryEntity } from "./parcel-delivery/domain/entities/parcel-delivery";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {AppConfig, DatabaseConfig} from "./parcel-delivery/common/config";
 import {ParcelDeliveryRepository} from "./parcel-delivery/domain/repositories/parcel-delivery";
-import {ImportDataService} from "./parcel-delivery/app/services/import-manager";
+import {ImportDataService} from "./parcel-delivery/core/services/import-manager";
 
 @Module({
   imports: [
