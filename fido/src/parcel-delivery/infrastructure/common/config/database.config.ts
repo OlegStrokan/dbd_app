@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import {ParcelDeliveryEntity} from "../../domain/entities/parcel-delivery";
+import {ParcelDeliveryEntity} from "../../entities/parcel-delivery";
 
 export default registerAs('database', () => ({
     type: 'postgres',

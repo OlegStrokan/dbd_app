@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { IParcelDelivery } from "./interfaces";
 import { CreateParcelDeliveryInput } from "./dto/create-parcel-delivery.input";
-import { ParcelDeliveryEntity } from "../../../domain/entities/parcel-delivery";
+import { ParcelDeliveryEntity } from "../../../infrastructure/entities/parcel-delivery";
 import {IParcelDeliveryRepository} from "../../repositories/parcel-delivery";
 import {InjectRepository} from "@nestjs/typeorm";
-import {ParcelDeliveryRepository} from "../../../domain/repositories/parcel-delivery";
+import {ParcelDeliveryRepository} from "../../../infrastructure/repositories/parcel-delivery";
 
 @Injectable()
 export class ParcelDeliveryService implements IParcelDelivery {

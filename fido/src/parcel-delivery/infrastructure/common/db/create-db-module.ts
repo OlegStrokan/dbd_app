@@ -1,9 +1,9 @@
 import {Test} from "@nestjs/testing";
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {ParcelDeliveryEntity} from "../../domain/entities/parcel-delivery";
-import {ParcelDeliveryService} from "../../core/use-cases/create-parcel-delivery";
-import {ParcelDeliveryRepository} from "../../domain/repositories/parcel-delivery";
-import {ImportDataService} from "../../core/services/import-manager";
+import {ParcelDeliveryEntity} from "../../entities/parcel-delivery";
+import {ParcelDeliveryService} from "../../../core/use-cases/create-parcel-delivery";
+import {ParcelDeliveryRepository} from "../../repositories/parcel-delivery";
+import {ImportDataService} from "../../../core/services/import-manager";
 
 
 export const createDbTestingModule = async () => {

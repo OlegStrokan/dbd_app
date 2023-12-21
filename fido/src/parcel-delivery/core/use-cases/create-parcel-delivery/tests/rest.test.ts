@@ -1,9 +1,9 @@
-import {createDbTestingModule} from "../../../../common/db/create-db-module";
+import {createDbTestingModule} from "../../../../infrastructure/common/db/create-db-module";
 import {TestingModule} from "@nestjs/testing";
 import {IParcelDeliveryRepository} from "../../../repositories/parcel-delivery";
 import {IParcelDelivery} from "../interfaces";
 import {ParcelDeliveryService} from "../index";
-import {ParcelDeliveryRepository} from "../../../../domain/repositories/parcel-delivery";
+import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/parcel-delivery";
 import {ParcelDeliveryMocks} from "../../../repositories/parcel-delivery/mock";
 
 describe('ParcelDeliveryService', () => {

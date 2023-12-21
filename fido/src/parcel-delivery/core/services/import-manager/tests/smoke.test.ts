@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createDbTestingModule } from '../../../../common/db/create-db-module';
-import { ParcelDeliveryRepository } from '../../../../domain/repositories/parcel-delivery';
+import { createDbTestingModule } from '../../../../infrastructure/common/db/create-db-module';
+import { ParcelDeliveryRepository } from '../../../../infrastructure/repositories/parcel-delivery';
 import * as fs from 'fs';
 import {IImportManagerService} from "../interfaces";
 import {IParcelDeliveryRepository} from "../../../repositories/parcel-delivery";

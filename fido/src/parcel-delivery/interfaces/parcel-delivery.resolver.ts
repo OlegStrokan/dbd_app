@@ -1,6 +1,6 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { CreateParcelDeliveryInput } from '../core/use-cases/create-parcel-delivery/dto/create-parcel-delivery.input';
-import { ParcelDeliveryEntity } from "../domain/entities/parcel-delivery";
+import { ParcelDeliveryEntity } from "../infrastructure/entities/parcel-delivery";
 import { ParcelDeliveryService } from "../core/use-cases/create-parcel-delivery";
 
 @Resolver(() => ParcelDeliveryEntity)

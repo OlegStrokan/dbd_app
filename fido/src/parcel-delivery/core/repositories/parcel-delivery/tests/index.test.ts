@@ -1,7 +1,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
-import {ParcelDeliveryRepository} from "../../../../domain/repositories/parcel-delivery";
-import {createDbTestingModule} from "../../../../common/db/create-db-module";
+import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/parcel-delivery";
+import {createDbTestingModule} from "../../../../infrastructure/common/db/create-db-module";
 import {IParcelDeliveryRepository} from "../index";
 import {ParcelDeliveryMocks} from "../mock";
 
