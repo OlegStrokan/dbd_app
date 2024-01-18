@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { IParcelDelivery } from "./interfaces";
+import {Inject, Injectable} from '@nestjs/common';
+import { IParcelDeliveryUseCase } from "./interfaces";
 import { CreateParcelDeliveryInput } from "./dto/create-parcel-delivery.input";
 import { ParcelDeliveryEntity } from "../../../infrastructure/entities/parcel-delivery";
 import {IParcelDeliveryRepository} from "../../repositories/parcel-delivery";
-import {InjectRepository} from "@nestjs/typeorm";
+import {getRepositoryToken, InjectRepository} from "@nestjs/typeorm";
 import {ParcelDeliveryRepository} from "../../../infrastructure/repositories/parcel-delivery";
 
 @Injectable()
-export class ParcelDeliveryService implements IParcelDelivery {
+export class ParcelDeliveryUseCase implements IParcelDeliveryUseCase {
 
   constructor(
       @InjectRepository(ParcelDeliveryRepository)
@@ -19,13 +19,8 @@ export class ParcelDeliveryService implements IParcelDelivery {
   }
 
   async getOne(id: number): Promise<ParcelDeliveryEntity> {
-    const parcelDelivery = await this.parcelDeliveryRepository.findOneById(id)
+   return await this.parcelDeliveryRepository.findOneById(id)
 
-    if (!parcelDelivery) {
-      throw new Error('Parcel delivery with current id doesn\'t exist')
-    }
-
-    return parcelDelivery;
 
   }
 }

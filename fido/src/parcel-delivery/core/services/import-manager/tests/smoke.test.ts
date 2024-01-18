@@ -5,10 +5,12 @@ import * as fs from 'fs';
 import {IImportManagerService} from "../interfaces";
 import {IParcelDeliveryRepository} from "../../../repositories/parcel-delivery";
 import {ImportDataService} from "../index";
+import {SchedulerRegistry} from "@nestjs/schedule";
 
 describe('ImportDataService', () => {
     let importManagerService: IImportManagerService;
     let parcelDeliveryRepository: IParcelDeliveryRepository;
+    let schedulerRegistry: SchedulerRegistry;
     let module: TestingModule;
 
     beforeAll(async () => {
@@ -18,6 +20,8 @@ describe('ImportDataService', () => {
         parcelDeliveryRepository = module.get<IParcelDeliveryRepository>(
             ParcelDeliveryRepository,
         );
+        schedulerRegistry = module.get<SchedulerRegistry>(SchedulerRegistry);
+
     });
 
     afterAll(async () => {
@@ -29,12 +33,12 @@ describe('ImportDataService', () => {
         const testData = {
             parcelDelivery: [
                 {
-                    id: 2793209,
+                    id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
                     parcelNumber: 202380,
                     name: "Parcel 1"
                 },
                 {
-                    id: 12910,
+                    id: "123e4567-e89b-12d3-a456-426614174001",
                     parcelNumber: 272890,
                     name: "Parcel 2"
                 }
@@ -48,6 +52,20 @@ describe('ImportDataService', () => {
         const savedParcels = await parcelDeliveryRepository.findAll();
 
         expect(savedParcels).toHaveLength(testData.parcelDelivery.length);
+    });
+
+    it('should trigger the cron job and fetch data', async () => {
+        jest.spyOn(Date, 'now').mockImplementation(() => new Date('2024-01-15T01:00:00').getTime());
+
+        console.log(schedulerRegistry.getCronJobs())
+        schedulerRegistry.getCronJob('ImportParcelsCronJob');
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        const savedParcels = await parcelDeliveryRepository.findAll();
+        expect(savedParcels).toHaveLength(10);
+
+        jest.restoreAllMocks();
     });
 });
 

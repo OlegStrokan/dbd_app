@@ -1,9 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import {Injectable} from "@nestjs/common";
 import {InjectEntityManager, InjectRepository} from "@nestjs/typeorm";
 import {EntityManager, Repository} from "typeorm";
-import { CreateParcelDeliveryInput } from "../../../core/use-cases/create-parcel-delivery/dto/create-parcel-delivery.input";
-import { IParcelDeliveryRepository } from "../../../core/repositories/parcel-delivery";
-import { ParcelDeliveryEntity } from "../../entities/parcel-delivery";
+import {
+  CreateParcelDeliveryInput
+} from "../../../core/use-cases/create-parcel-delivery/dto/create-parcel-delivery.input";
+import {IParcelDeliveryRepository} from "../../../core/repositories/parcel-delivery";
+import {ParcelDeliveryEntity} from "../../entities/parcel-delivery";
 
 @Injectable()
 export class ParcelDeliveryRepository implements IParcelDeliveryRepository {
@@ -22,16 +24,27 @@ export class ParcelDeliveryRepository implements IParcelDeliveryRepository {
 
   async upsertMany(dto: CreateParcelDeliveryInput[]): Promise<ParcelDeliveryEntity[]> {
     return await this.entityManager.transaction(async (transactionManager) => {
+      try {
       const parcelDeliveries = dto.map((parcel) =>
           transactionManager.create(ParcelDeliveryEntity, parcel) as ParcelDeliveryEntity
       );
-      return await Promise.all(parcelDeliveries.map((parcel) => transactionManager.save(parcel)));
+        return await Promise.all(parcelDeliveries.map((parcel) => transactionManager.save(parcel)));
+        } catch (e) {
+        console.log(e)
+        throw new Error(e)
+      }
     });
   }
 
 
   async findOneById(id: ParcelDeliveryEntity['id']): Promise<ParcelDeliveryEntity> {
-    return await this.repository.findOneBy({ id })
+    const parcelDelivery =  await this.repository.findOneBy({ id })
+
+    if (!parcelDelivery) {
+      throw new Error('Parcel delivery with current id doesn\'t exist')
+    }
+
+    return parcelDelivery
   }
 
   async findAll(): Promise<ParcelDeliveryEntity[]> {

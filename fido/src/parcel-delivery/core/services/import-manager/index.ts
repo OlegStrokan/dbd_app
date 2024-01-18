@@ -20,7 +20,7 @@ export class ImportDataService implements IImportManagerService {
         private readonly parcelRepository: IParcelDeliveryRepository
     ) {}
 
-    @Cron('0 0 * * *')
+    @Cron('0 0 * * *', { name: 'ImportParcelsCronJob' })
     async fetchDataAndSaveToDb() {
         try {
             const rawData = fs.readFileSync('./parcel-events.json', 'utf8');
@@ -34,6 +34,7 @@ export class ImportDataService implements IImportManagerService {
         try {
             await this.parcelRepository.upsertMany(data);
         } catch (error) {
+            throw new Error('Error saving data to db')
         }
     }
 }

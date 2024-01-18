@@ -1,5 +1,5 @@
 
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/parcel-delivery";
 import {createDbTestingModule} from "../../../../infrastructure/common/db/create-db-module";
 import {IParcelDeliveryRepository} from "../index";
@@ -35,7 +35,7 @@ describe('ParcelDeliveryRepository', () => {
 
     it('should find all parcel deliveries', async () => {
         const parcels = await parcelDeliveryRepository.findAll();
-        expect(parcels).toHaveLength(2); // Assuming two default parcels are inserted
+        expect(parcels).toHaveLength(2);
     });
 
     it('should upsert one parcel delivery', async () => {
