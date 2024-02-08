@@ -1,5 +1,5 @@
-import {IPagination} from "../../../../shared/types/pagination";
 import {Optional} from "../../../../shared/types/optional";
+import {FindAllOptions} from "../../repositories/action-logger";
 
 
 export enum ActionType {
@@ -15,11 +15,6 @@ export enum KnownActionNames {
 export type ActionToLog = Omit<LoggerAction<KnownActionNames>, 'timestamp'>
 
 
-
-export interface FindAllOptions {
-    pagination: IPagination
-}
-
 export interface LoggerAction<TName extends string = string> {
     id: string;
     name: TName,
@@ -32,6 +27,6 @@ export interface LoggerAction<TName extends string = string> {
 
 export interface IActionLoggerService {
     getLoggedAction(options: FindAllOptions): Promise<LoggerAction[]>
-    logAction(action: Optional<ActionToLog, 'parentActionId'>): Promise<void>
+    logAction(action: Optional<ActionToLog, 'parentActionId'>): void
     attemptAction<T>(args: Omit<ActionToLog, 'type' | 'id' | 'parentActionId'>, func: () => Promise<T>): Promise<T>
 }
