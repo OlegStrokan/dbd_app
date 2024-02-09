@@ -1,26 +1,21 @@
-import {Inject, Injectable} from '@nestjs/common';
-import { IParcelDeliveryUseCase } from "./interfaces";
-import { CreateParcelDeliveryInput } from "./dto/create-parcel-delivery.input";
+import {Injectable} from '@nestjs/common';
+import { ICreateParcelDeliveryUseCase } from "./interfaces";
 import { ParcelDeliveryEntity } from "../../../infrastructure/entities/parcel-delivery";
 import {IParcelDeliveryRepository} from "../../repositories/parcel-delivery";
-import {getRepositoryToken, InjectRepository} from "@nestjs/typeorm";
+import {InjectRepository} from "@nestjs/typeorm";
 import {ParcelDeliveryRepository} from "../../../infrastructure/repositories/parcel-delivery";
+import {CreateParcelDeliveryDto} from "./dto/create-parcel-delivery.dto";
 
 @Injectable()
-export class ParcelDeliveryUseCase implements IParcelDeliveryUseCase {
+export class CreateParcelDeliveryUseCase implements ICreateParcelDeliveryUseCase {
 
   constructor(
       @InjectRepository(ParcelDeliveryRepository)
       public readonly parcelDeliveryRepository: IParcelDeliveryRepository,
   ) {}
 
-  async create(dto: CreateParcelDeliveryInput): Promise<ParcelDeliveryEntity> {
+  async create(dto: CreateParcelDeliveryDto): Promise<ParcelDeliveryEntity> {
     return this.parcelDeliveryRepository.upsertOne(dto);
   }
 
-  async getOne(id: number): Promise<ParcelDeliveryEntity> {
-   return await this.parcelDeliveryRepository.findOneById(id)
-
-
-  }
 }

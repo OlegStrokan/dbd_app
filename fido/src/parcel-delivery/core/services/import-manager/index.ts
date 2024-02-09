@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import {IParcelDeliveryRepository} from "../../repositories/parcel-delivery";
 import {IImportManagerService} from "./interfaces";
-import {CreateParcelDeliveryInput} from "../../use-cases/create-parcel-delivery/dto/create-parcel-delivery.input";
+import {CreateParcelDeliveryInput} from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
 import {InjectRepository} from "@nestjs/typeorm";
 import {ParcelDeliveryRepository} from "../../../infrastructure/repositories/parcel-delivery";
 import * as fs from "fs";

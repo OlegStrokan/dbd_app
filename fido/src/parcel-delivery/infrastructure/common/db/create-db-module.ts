@@ -1,10 +1,11 @@
 import {Test} from "@nestjs/testing";
 import {getRepositoryToken, TypeOrmModule} from "@nestjs/typeorm";
 import {ParcelDeliveryEntity} from "../../entities/parcel-delivery";
-import {ParcelDeliveryUseCase} from "../../../core/use-cases/create-parcel-delivery";
+import {CreateParcelDeliveryUseCase} from "../../../core/use-cases/create-parcel-delivery";
 import {ParcelDeliveryRepository} from "../../repositories/parcel-delivery";
 import {ImportDataService} from "../../../core/services/import-manager";
 import {ScheduleModule} from "@nestjs/schedule";
+import {GetParcelDeliveryUseCase} from "../../../core/use-cases/get-parcel-delivery";
 
 
 export const createDbTestingModule = async () => {
@@ -32,7 +33,8 @@ export const createDbTestingModule = async () => {
                 useClass: ParcelDeliveryRepository,
             },
             ImportDataService,
-            ParcelDeliveryUseCase,
+            CreateParcelDeliveryUseCase,
+            GetParcelDeliveryUseCase,
             ParcelDeliveryRepository
         ],
     }).compile();

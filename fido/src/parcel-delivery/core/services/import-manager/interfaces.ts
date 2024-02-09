@@ -1,4 +1,4 @@
-import {CreateParcelDeliveryInput} from "../../use-cases/create-parcel-delivery/dto/create-parcel-delivery.input";
+import {CreateParcelDeliveryInput} from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
 
 export interface IImportManagerService  {
     fetchDataAndSaveToDb(): Promise<void>,

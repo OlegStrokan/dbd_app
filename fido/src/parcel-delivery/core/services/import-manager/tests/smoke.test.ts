@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestingModule } from '@nestjs/testing';
 import { createDbTestingModule } from '../../../../infrastructure/common/db/create-db-module';
 import { ParcelDeliveryRepository } from '../../../../infrastructure/repositories/parcel-delivery';
 import * as fs from 'fs';
@@ -30,6 +30,7 @@ describe('ImportDataService', () => {
     });
 
     it('should fetch data and save to the database', async () => {
+
         const testData = {
             parcelDelivery: [
                 {

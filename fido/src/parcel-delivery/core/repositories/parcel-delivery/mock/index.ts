@@ -1,6 +1,6 @@
-import { getRandomParcelDelivery, getRandomParcelDeliveryInput } from "./data";
+import {createParcelDelivery, getRandomParcelDelivery} from "./data";
 
-export const ParcelDeliveryMocks = {
+export const parcelDeliveryMocks = {
   getOne: getRandomParcelDelivery,
-  getOneData: getRandomParcelDeliveryInput
+  createOne: createParcelDelivery
 }

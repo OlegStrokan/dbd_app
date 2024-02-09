@@ -3,7 +3,7 @@ import { TestingModule } from '@nestjs/testing';
 import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/parcel-delivery";
 import {createDbTestingModule} from "../../../../infrastructure/common/db/create-db-module";
 import {IParcelDeliveryRepository} from "../index";
-import {ParcelDeliveryMocks} from "../mock";
+import {parcelDeliveryMocks} from "../mock";
 
 describe('ParcelDeliveryRepository', () => {
     let parcelDeliveryRepository: IParcelDeliveryRepository;
@@ -15,8 +15,8 @@ describe('ParcelDeliveryRepository', () => {
 
 
         await parcelDeliveryRepository.upsertMany([
-            ParcelDeliveryMocks.getOneData(),
-            ParcelDeliveryMocks.getOneData(),
+            parcelDeliveryMocks.getOne(),
+            parcelDeliveryMocks.getOne(),
         ]);
 
     });
@@ -39,17 +39,14 @@ describe('ParcelDeliveryRepository', () => {
     });
 
     it('should upsert one parcel delivery', async () => {
-        const createdParcel = await parcelDeliveryRepository.upsertOne(ParcelDeliveryMocks.getOne({
-            name: 'Test Parcel',
-            parcelNumber: 12345,
-        }));
+        const createdParcel = await parcelDeliveryRepository.upsertOne(parcelDeliveryMocks.getOne());
         expect(createdParcel).toBeDefined();
     });
 
     it('should upsert many parcel deliveries', async () => {
         const parcelDeliveries =  [
-            ParcelDeliveryMocks.getOne({ name: 'Parcel 1', parcelNumber: 1002 }),
-            ParcelDeliveryMocks.getOne({ name: 'Parcel 2', parcelNumber: 1002 }),
+            parcelDeliveryMocks.getOne(),
+            parcelDeliveryMocks.getOne(),
         ];
         const createdParcels = await parcelDeliveryRepository.upsertMany(parcelDeliveries);
         expect(createdParcels).toHaveLength(parcelDeliveries.length);

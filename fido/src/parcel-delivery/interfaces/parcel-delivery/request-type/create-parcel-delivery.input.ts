@@ -5,6 +5,6 @@ export class CreateParcelDeliveryInput {
   @Field(() => String, { description: 'Example field (placeholder)' })
   name: string;
 
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  parcelNumber: number;
+  @Field(() => String, { description: 'Example field (placeholder)' })
+  parcelNumber: string;
 }

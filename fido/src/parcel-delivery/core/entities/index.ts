@@ -1,9 +1,9 @@
 import {Clonable} from "../../../shared/utils/clonable";
 import {Immutable} from "../../../shared/types/immutable";
 
-interface IParcelDelivery {
-    id: number;
-    parcelNumber: number;
+export interface IParcelDelivery {
+    id: string;
+    parcelNumber: string;
     name: string;
 }
 
