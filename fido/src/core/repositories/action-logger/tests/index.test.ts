@@ -1,0 +1,52 @@
+import {IActionLogRepository} from "../index";
+import {TestingModule} from "@nestjs/testing";
+import {createDbTestingModule} from "../../../../infrastructure/common/db/create-db-module";
+import {ActionLogRepository} from "../../../../infrastructure/repositories/action-logger";
+import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
+import {actionLogMocks} from "../mock";
+
+
+describe('ActionLogRepository', () => {
+    let actionLogRepository: IActionLogRepository
+    let module: TestingModule
+
+    beforeAll(async () => {
+        module = await createDbTestingModule();
+        actionLogRepository = module.get<IActionLogRepository>(ActionLogRepository)
+    })
+
+    beforeEach( async () => {
+        await clearRepos(module)
+    })
+
+    afterAll(async () => {
+        await clearRepos(module)
+    })
+
+    it('should insert action log ', async () => {
+        const createdActionLog  = actionLogRepository.insertOne(actionLogMocks.getOne())
+        expect(createdActionLog).toBeDefined()
+    });
+
+
+
+    it('should find correct action log ', async () => {
+        const actionToCreate =  actionLogMocks.getOne()
+         await actionLogMocks.createOne(actionToCreate, module)
+        const foundActionLog  = actionLogRepository.findOne(actionToCreate.id)
+        expect(foundActionLog).toBeDefined()
+        expect(foundActionLog).toEqual(actionToCreate)
+    });
+
+    it('should findAll correct action log ', async () => {
+        await actionLogMocks.createMany(3, () => ({
+            ...actionLogMocks.getOne(),
+        }), module)
+        const foundActionLogs  = actionLogRepository.findAll({ pagination: { limit: 10, offset: 0 } })
+        expect(foundActionLogs).toBeDefined()
+        expect(foundActionLogs).toHaveLength(1)
+    });
+
+
+})
+

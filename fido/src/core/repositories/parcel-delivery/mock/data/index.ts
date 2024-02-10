@@ -1,6 +1,6 @@
 import {faker} from "@faker-js/faker/locale/en_US";
-import {generateUuid} from "../../../../../../shared/utils/generateUuid";
-import {IParcelDelivery, ParcelDelivery} from "../../../../entities";
+import {generateUuid} from "../../../../../libs/generateUuid/generateUuid";
+import {IParcelDelivery, ParcelDelivery} from "../../../../entities/parcel-delivery";
 import {TestingModule} from "@nestjs/testing";
 import {IParcelDeliveryRepository} from "../../index";
 import {ParcelDeliveryRepository} from "../../../../../infrastructure/repositories/parcel-delivery";

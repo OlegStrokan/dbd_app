@@ -1,6 +1,6 @@
 import { CreateParcelDeliveryInput } from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
 import { ParcelDeliveryEntity } from "../../../infrastructure/entities/parcel-delivery";
-import {IParcelDelivery} from "../../entities";
+import {IParcelDelivery} from "../../entities/parcel-delivery";
 
 export interface IParcelDeliveryRepository {
   upsertOne(dto: CreateParcelDeliveryInput): Promise<ParcelDeliveryEntity>;
