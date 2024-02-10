@@ -2,15 +2,17 @@ import {Module} from '@nestjs/common';
 import {GraphQLModule} from "@nestjs/graphql";
 import {ApolloFederationDriver, ApolloFederationDriverConfig} from "@nestjs/apollo";
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {Index} from "./parcel-delivery/interfaces/parcel-delivery";
-import {CreateParcelDeliveryUseCase} from "./parcel-delivery/core/use-cases/create-parcel-delivery";
-import {ParcelDeliveryEntity} from "./parcel-delivery/infrastructure/entities/parcel-delivery";
+import {Index} from "./interfaces/parcel-delivery";
+import {CreateParcelDeliveryUseCase} from "./core/use-cases/create-parcel-delivery";
+import {ParcelDeliveryEntity} from "./infrastructure/entities/parcel-delivery";
 import {ConfigModule, ConfigService} from "@nestjs/config";
-import {AppConfig, DatabaseConfig} from "./parcel-delivery/infrastructure/common/config";
-import {ParcelDeliveryRepository} from "./parcel-delivery/infrastructure/repositories/parcel-delivery";
-import {ImportDataService} from "./parcel-delivery/core/services/import-manager";
+import {AppConfig, DatabaseConfig} from "./infrastructure/common/config";
+import {ParcelDeliveryRepository} from "./infrastructure/repositories/parcel-delivery";
+import {ImportDataService} from "./core/services/import-manager";
 import {ScheduleModule} from "@nestjs/schedule";
-import {ActionLogger} from "./parcel-delivery/core/services/action-logger";
+import {ActionLogger} from "./core/services/action-logger";
+import {ActionLogEntity} from "./infrastructure/entities/action-logger";
+import {ActionLogRepository} from "./infrastructure/repositories/action-logger";
 
 @Module({
     imports: [
@@ -33,7 +35,12 @@ import {ActionLogger} from "./parcel-delivery/core/services/action-logger";
             inject: [ConfigService],
         }),
         ScheduleModule.forRoot(),
-        TypeOrmModule.forFeature([ParcelDeliveryEntity, ParcelDeliveryRepository])
+        TypeOrmModule.forFeature([
+            ParcelDeliveryEntity,
+            ParcelDeliveryRepository,
+            ActionLogEntity,
+            ActionLogRepository
+        ])
     ],
     providers: [
         CreateParcelDeliveryUseCase,
