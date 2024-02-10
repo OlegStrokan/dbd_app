@@ -12,3 +12,7 @@ export type Immutable<T> = T extends ImmutablePrimitive
         : T extends Set<infer M>
             ? ImmutableSet<M>
             : ImmutableObject<T>
+
+export type Optional<TObject, Tkeys extends keyof TObject> = Omit<TObject, Tkeys> & Partial<TObject>
+
+export type Key  = number | string | symbol
