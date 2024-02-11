@@ -6,6 +6,8 @@ import {ParcelDeliveryRepository} from "../../repositories/parcel-delivery";
 import {ImportDataService} from "../../../core/services/import-manager";
 import {ScheduleModule} from "@nestjs/schedule";
 import {GetParcelDeliveryUseCase} from "../../../core/use-cases/get-parcel-delivery";
+import {ActionLogRepository} from "../../repositories/action-logger";
+import {ActionLogEntity} from "../../entities/action-logger";
 
 
 export const createDbTestingModule = async () => {
@@ -18,13 +20,13 @@ export const createDbTestingModule = async () => {
                 username: 'stroka01',
                 password: 'user',
                 database: 'test_db',
-                entities: [ParcelDeliveryEntity],
+                entities: [ParcelDeliveryEntity, ActionLogEntity],
                 synchronize: true,
                 migrations: [`${__dirname}/../../db/migrations/*{.ts,.js}`],
                 migrationsTableName: "migrations"
 
             }),
-            TypeOrmModule.forFeature([ParcelDeliveryEntity, ParcelDeliveryRepository]),
+            TypeOrmModule.forFeature([ParcelDeliveryEntity,  ActionLogEntity, ParcelDeliveryRepository, ActionLogRepository]),
             ScheduleModule.forRoot()
         ],
         providers: [
@@ -32,10 +34,15 @@ export const createDbTestingModule = async () => {
                 provide: getRepositoryToken(ParcelDeliveryRepository),
                 useClass: ParcelDeliveryRepository,
             },
+            {
+                provide: getRepositoryToken(ActionLogRepository),
+                useClass: ActionLogRepository,
+            },
             ImportDataService,
             CreateParcelDeliveryUseCase,
             GetParcelDeliveryUseCase,
-            ParcelDeliveryRepository
+            ParcelDeliveryRepository,
+            ActionLogRepository
         ],
     }).compile();
 
