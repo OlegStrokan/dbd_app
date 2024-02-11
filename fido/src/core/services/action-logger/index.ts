@@ -1,9 +1,9 @@
-import {ActionToLog, ActionType, IActionLoggerService, LoggerAction} from "./interfaces";
-import {Optional} from "../../../../shared/types/optional";
+import {ActionToLog, ActionType, IActionLoggerService, IActionLog} from "./interfaces";
 import {FindAllOptions, IActionLogRepository} from "../../repositories/action-logger";
 import {Logger} from "@nestjs/common";
 import {v4 as uuidv4} from 'uuid';
-import {toISO8601UTC} from "../../../../shared/libs/dates";
+import {toISO8601UTC} from "../../../libs/dates";
+import {Optional} from "../../../libs/typescript";
 
 
 export class ActionLogger implements IActionLoggerService {
@@ -15,7 +15,7 @@ export class ActionLogger implements IActionLoggerService {
     ) {
     }
 
-    public getLoggedAction = (options: FindAllOptions): Promise<LoggerAction[]> => {
+    public getLoggedAction = (options: FindAllOptions): Promise<IActionLog[]> => {
         return this.deps.storage.findAll(options)
     }
 

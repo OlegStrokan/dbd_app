@@ -1,5 +1,6 @@
-import {Optional} from "../../../../shared/types/optional";
 import {FindAllOptions} from "../../repositories/action-logger";
+import {Optional} from "../../../libs/typescript";
+import {AuthUser} from "../../types/auth-user";
 
 
 export enum ActionType {
@@ -12,21 +13,21 @@ export enum KnownActionNames {
     Test = 'Test'
 }
 
-export type ActionToLog = Omit<LoggerAction<KnownActionNames>, 'timestamp'>
+export type ActionToLog = Omit<IActionLog<KnownActionNames>, 'timestamp'>
 
 
-export interface LoggerAction<TName extends string = string> {
+export interface IActionLog<TName extends string = string> {
     id: string;
     name: TName,
     type: ActionType,
-    author: unknown,
+    author: AuthUser,
     parentActionId: string
     details?: Record<string, unknown>,
     timestamp: string
 }
 
 export interface IActionLoggerService {
-    getLoggedAction(options: FindAllOptions): Promise<LoggerAction[]>
+    getLoggedAction(options: FindAllOptions): Promise<IActionLog[]>
     logAction(action: Optional<ActionToLog, 'parentActionId'>): void
     attemptAction<T>(args: Omit<ActionToLog, 'type' | 'id' | 'parentActionId'>, func: () => Promise<T>): Promise<T>
 }
