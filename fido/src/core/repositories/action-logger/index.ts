@@ -9,5 +9,5 @@ export interface FindAllOptions {
 export interface IActionLogRepository {
     findOne(id: string): Promise<IActionLog>
     findAll(options: FindAllOptions): Promise<IActionLog[]>
-    insertOne(action: IActionLog): Promise<void>
+    insertOne(action: IActionLog): Promise<IActionLog>
 }

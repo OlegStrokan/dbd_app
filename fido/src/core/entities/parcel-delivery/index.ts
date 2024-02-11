@@ -1,5 +1,5 @@
-import {Clonable} from "../../../shared/utils/clonable";
-import {Immutable} from "../../../shared/types/immutable";
+import {Index} from "../../../libs/clonable";
+import {Immutable} from "../../../libs/typescript";
 
 export interface IParcelDelivery {
     id: string;
@@ -7,7 +7,7 @@ export interface IParcelDelivery {
     name: string;
 }
 
-export class ParcelDelivery implements Clonable<ParcelDelivery> {
+export class ParcelDelivery implements Index<ParcelDelivery> {
 
     constructor(private parcelDelivery: IParcelDelivery) {}
 
