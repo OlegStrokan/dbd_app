@@ -4,6 +4,7 @@ import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/
 import {createDbTestingModule} from "../../../../infrastructure/common/db/create-db-module";
 import {IParcelDeliveryRepository} from "../index";
 import {parcelDeliveryMocks} from "../mock";
+import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
 
 describe('ParcelDeliveryRepository', () => {
     let parcelDeliveryRepository: IParcelDeliveryRepository;
@@ -12,22 +13,24 @@ describe('ParcelDeliveryRepository', () => {
     beforeAll(async () => {
         module = await createDbTestingModule();
         parcelDeliveryRepository = module.get<IParcelDeliveryRepository>(ParcelDeliveryRepository)
-
-
-        await parcelDeliveryRepository.upsertMany([
-            parcelDeliveryMocks.getOne(),
-            parcelDeliveryMocks.getOne(),
-        ]);
-
     });
 
+    beforeEach(async () => {
+        await clearRepos(module)
+    })
+
     afterAll(async () => {
-        await parcelDeliveryRepository.deleteAll()
+        await clearRepos(module)
         await module.close();
 
     });
 
     it('should find one parcel delivery by ID', async () => {
+        // TODO make mock function for createMany parcels
+        await parcelDeliveryRepository.upsertMany([
+            parcelDeliveryMocks.getOne(),
+            parcelDeliveryMocks.getOne(),
+        ]);
         const parcels = await parcelDeliveryRepository.findAll();
         const foundParcel = await parcelDeliveryRepository.findOneById(parcels[0].id);
         expect(foundParcel).toBeDefined();

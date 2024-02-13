@@ -22,7 +22,7 @@ export const getRandomActionLog = (): IActionLog<KnownActionNames> => ({
 })
 
 
-export const createActionLog = async (overrides: Omit<IActionLog, 'id'>, module: TestingModule) => {
+export const createActionLog = async (overrides: Omit<IActionLog, 'id'>, module: TestingModule): Promise<IActionLog> => {
     const repository = module.get<IActionLogRepository>(ActionLogRepository)
 
     const actionLog: IActionLog = {
@@ -33,16 +33,15 @@ export const createActionLog = async (overrides: Omit<IActionLog, 'id'>, module:
     return await repository.insertOne(actionLog)
 }
 
-
 export const createManyActionLogs = async (
     count: number,
-    overrides: (i: number) => Omit<IActionLog, 'id'>, module: TestingModule) => {
+    overrides: (i: number) => Omit<IActionLog, 'id'>, module: TestingModule): Promise<IActionLog[]> => {
 
-    return makeArray(count, async (i) => {
+    return Promise.all(makeArray(count, async (i) => {
         const actionLog: IActionLog = {
             id: generateUuid(),
             ...overrides(i)
         }
-        await createActionLog(actionLog, module)
-    })
+        return await createActionLog(actionLog, module)
+    }))
 }

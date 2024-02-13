@@ -28,8 +28,6 @@ describe('ActionLogRepository', () => {
         expect(createdActionLog).toBeDefined()
     });
 
-
-
     it('should find correct action log ', async () => {
         const actionToCreate =  actionLogMocks.getOne()
          await actionLogMocks.createOne(actionToCreate, module)
@@ -44,7 +42,7 @@ describe('ActionLogRepository', () => {
         }), module)
         const foundActionLogs  = await actionLogRepository.findAll({ pagination: { limit: 10, offset: 0 } })
         expect(foundActionLogs).toBeDefined()
-        expect(foundActionLogs).toHaveLength(1)
+        expect(foundActionLogs).toHaveLength(3)
     });
 
 
