@@ -3,7 +3,7 @@ import { TestingModule } from '@nestjs/testing';
 import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/parcel-delivery";
 import {createDbTestingModule} from "../../../../infrastructure/common/db/create-db-module";
 import {IParcelDeliveryRepository} from "../index";
-import {parcelDeliveryMocks} from "../mock";
+import {parcelDeliveryMocks} from "../mocks";
 import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
 
 describe('ParcelDeliveryRepository', () => {

@@ -3,7 +3,7 @@ import {TestingModule} from "@nestjs/testing";
 import {createDbTestingModule} from "../../../../infrastructure/common/db/create-db-module";
 import {ActionLogRepository} from "../../../../infrastructure/repositories/action-logger";
 import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
-import {actionLogMocks} from "../mock";
+import {actionLogMocks} from "../mocks";
 
 
 describe('ActionLogRepository', () => {

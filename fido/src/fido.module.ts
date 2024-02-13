@@ -13,6 +13,8 @@ import {ScheduleModule} from "@nestjs/schedule";
 import {ActionLogger} from "./core/services/action-logger";
 import {ActionLogEntity} from "./infrastructure/entities/action-logger";
 import {ActionLogRepository} from "./infrastructure/repositories/action-logger";
+import {RedisRepository} from "./infrastructure/repositories/redis";
+import {GetParcelDeliveryUseCase} from "./core/use-cases/get-parcel-delivery";
 
 @Module({
     imports: [
@@ -38,12 +40,14 @@ import {ActionLogRepository} from "./infrastructure/repositories/action-logger";
         TypeOrmModule.forFeature([
             ParcelDeliveryEntity,
             ParcelDeliveryRepository,
+            RedisRepository,
             ActionLogEntity,
             ActionLogRepository
         ])
     ],
     providers: [
         CreateParcelDeliveryUseCase,
+        GetParcelDeliveryUseCase,
         Index,
         ImportDataService,
         ActionLogger

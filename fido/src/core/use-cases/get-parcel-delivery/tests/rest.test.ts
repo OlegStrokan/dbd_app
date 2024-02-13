@@ -4,7 +4,7 @@ import {IParcelDeliveryRepository} from "../../../repositories/parcel-delivery";
 import {GetParcelDeliveryUseCase} from "../index";
 import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/parcel-delivery";
 import {IGetParcelDeliveryUseCase} from "../interfaces";
-import {parcelDeliveryMocks} from "../../../repositories/parcel-delivery/mock";
+import {parcelDeliveryMocks} from "../../../repositories/parcel-delivery/mocks";
 
 describe('ParcelDeliveryService', () => {
     let parcelDeliveryService: IGetParcelDeliveryUseCase;
