@@ -12,11 +12,11 @@ export class ActionLogRepository implements IActionLogRepository {
     ) {
     }
 
-    async findOne(id: string): Promise<IActionLog> {
+    public async findOne(id: string): Promise<IActionLog> {
         const actionLog = await this.repository.findOneBy({ id })
         return  toTypeOrmLoggedActionEntity(actionLog)
     }
-    async findAll({ pagination}: FindAllOptions): Promise<IActionLog[]> {
+    public async findAll({ pagination}: FindAllOptions): Promise<IActionLog[]> {
         const actionLogs =  await this.repository.find({
             take: pagination.limit,
             skip: pagination.offset
@@ -25,9 +25,13 @@ export class ActionLogRepository implements IActionLogRepository {
         return actionLogs.map(toTypeOrmLoggedActionEntity)
     }
 
-    async insertOne(action: IActionLog): Promise<IActionLog> {
+    public async insertOne(action: IActionLog): Promise<IActionLog> {
         const actionLog  = this.repository.create(toTypeOrmLoggedActionInsert(action))
         const savedActionLog = await this.repository.save(actionLog)
         return toTypeOrmLoggedActionEntity(savedActionLog)
+    }
+
+    public async clear(): Promise<void> {
+        await this.repository.clear()
     }
 }

@@ -48,8 +48,8 @@ export class ParcelDeliveryRepository implements IParcelDeliveryRepository {
     return await this.repository.find()
   }
 
-  async deleteAll(): Promise<void> {
-     await this.repository.delete({});
+  public async clear(): Promise<void> {
+    await this.repository.clear()
   }
 }
 

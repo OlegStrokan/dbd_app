@@ -26,7 +26,12 @@ export const createDbTestingModule = async () => {
                 migrationsTableName: "migrations"
 
             }),
-            TypeOrmModule.forFeature([ParcelDeliveryEntity,  ActionLogEntity, ParcelDeliveryRepository, ActionLogRepository]),
+            TypeOrmModule.forFeature([
+                ParcelDeliveryEntity,
+                ActionLogEntity,
+                ParcelDeliveryRepository,
+                ActionLogRepository,
+            ]),
             ScheduleModule.forRoot()
         ],
         providers: [
