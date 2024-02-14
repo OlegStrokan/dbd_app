@@ -4,7 +4,7 @@ import { CreateParcelDeliveryUseCase } from "../../core/use-cases/create-parcel-
 import {CreateParcelDeliveryInput} from "./request-type/create-parcel-delivery.input";
 
 @Resolver(() => ParcelDeliveryEntity)
-export class Index {
+export class ParcelDeliveryResolver {
   constructor(private readonly parcelDeliveryService: CreateParcelDeliveryUseCase) {}
 
   @Mutation(() => ParcelDeliveryEntity)

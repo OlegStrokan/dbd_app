@@ -2,7 +2,7 @@ import {Module} from '@nestjs/common';
 import {GraphQLModule} from "@nestjs/graphql";
 import {ApolloFederationDriver, ApolloFederationDriverConfig} from "@nestjs/apollo";
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {Index} from "./interfaces/parcel-delivery";
+import {ParcelDeliveryResolver} from "./interfaces/parcel-delivery/parcelDeliveryResolver";
 import {CreateParcelDeliveryUseCase} from "./core/use-cases/create-parcel-delivery";
 import {ParcelDeliveryEntity} from "./infrastructure/entities/parcel-delivery";
 import {ConfigModule, ConfigService} from "@nestjs/config";
@@ -15,6 +15,7 @@ import {ActionLogEntity} from "./infrastructure/entities/action-logger";
 import {ActionLogRepository} from "./infrastructure/repositories/action-logger";
 import {RedisRepository} from "./infrastructure/repositories/redis";
 import {GetParcelDeliveryUseCase} from "./core/use-cases/get-parcel-delivery";
+import {RedisService} from "./core/services/redis";
 
 @Module({
     imports: [
@@ -48,9 +49,10 @@ import {GetParcelDeliveryUseCase} from "./core/use-cases/get-parcel-delivery";
     providers: [
         CreateParcelDeliveryUseCase,
         GetParcelDeliveryUseCase,
-        Index,
+        ParcelDeliveryResolver,
         ImportDataService,
-        ActionLogger
+        ActionLogger,
+        RedisService
     ],
 })
 export class FidoModule {

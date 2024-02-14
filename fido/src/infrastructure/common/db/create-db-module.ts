@@ -8,7 +8,11 @@ import {ScheduleModule} from "@nestjs/schedule";
 import {GetParcelDeliveryUseCase} from "../../../core/use-cases/get-parcel-delivery";
 import {ActionLogRepository} from "../../repositories/action-logger";
 import {ActionLogEntity} from "../../entities/action-logger";
+import {RedisService} from "../../../core/services/redis";
+import {RedisRepository} from "../../repositories/redis";
+import {redisClientFactory} from "../redis/index.factory";
 
+// TODO delete unnecessary imports
 
 export const createDbTestingModule = async () => {
     return await Test.createTestingModule({
@@ -31,8 +35,9 @@ export const createDbTestingModule = async () => {
                 ActionLogEntity,
                 ParcelDeliveryRepository,
                 ActionLogRepository,
+                RedisRepository,
             ]),
-            ScheduleModule.forRoot()
+            ScheduleModule.forRoot(),
         ],
         providers: [
             {
@@ -43,12 +48,20 @@ export const createDbTestingModule = async () => {
                 provide: getRepositoryToken(ActionLogRepository),
                 useClass: ActionLogRepository,
             },
+            {
+                provide: getRepositoryToken(RedisRepository),
+                useClass: RedisRepository,
+            },
             ImportDataService,
+            RedisService,
             CreateParcelDeliveryUseCase,
             GetParcelDeliveryUseCase,
+            RedisRepository,
             ParcelDeliveryRepository,
-            ActionLogRepository
+            ActionLogRepository,
+            redisClientFactory
         ],
+        exports: [redisClientFactory, RedisService]
     }).compile();
 
 }
