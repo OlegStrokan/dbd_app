@@ -5,6 +5,7 @@ import {ICreateParcelDeliveryUseCase} from "../interfaces";
 import {CreateParcelDeliveryUseCase} from "../index";
 import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/parcel-delivery";
 import {parcelDeliveryMocks} from "../../../repositories/parcel-delivery/mocks";
+import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
 
 describe('ParcelDeliveryService', () => {
   let parcelDeliveryService: ICreateParcelDeliveryUseCase;
@@ -19,7 +20,7 @@ describe('ParcelDeliveryService', () => {
   });
 
   afterAll(async () => {
-    await parcelDeliveryRepository.deleteAll()
+    await clearRepos(module)
     await module.close();
   });
 

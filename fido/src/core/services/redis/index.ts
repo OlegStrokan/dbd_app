@@ -1,9 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import {Inject, Injectable} from "@nestjs/common";
 import {IRedisRepository, RedisPrefixes} from "../../../core/repositories/redis";
+import {IRedisService} from "./interfaces";
+import * as console from "console";
+import {RedisRepository} from "../../../infrastructure/repositories/redis";
 
 @Injectable()
-export class RedisService {
-    constructor(private readonly redisRepository: IRedisRepository) {}
+export class RedisService implements IRedisService {
+    constructor(@Inject(RedisRepository)public readonly redisRepository: IRedisRepository) {}
 
     async getWithPrefix(prefix: RedisPrefixes, key: string): Promise<string | null> {
         return this.redisRepository.get(prefix, key);
@@ -24,5 +27,10 @@ export class RedisService {
     async clear(): Promise<void> {
         console.log('Method not implemented, but you can use it');
         return Promise.resolve();
+    }
+
+    async setAtomicOperation(prefix: RedisPrefixes, key: string, value: string, expiry: number): Promise<boolean> {
+        const result = await this.redisRepository.setNx(prefix, key, value, expiry);
+        return result === "OK";
     }
 }

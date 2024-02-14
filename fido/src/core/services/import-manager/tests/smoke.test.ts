@@ -6,6 +6,7 @@ import {IImportManagerService} from "../interfaces";
 import {IParcelDeliveryRepository} from "../../../repositories/parcel-delivery";
 import {ImportDataService} from "../index";
 import {SchedulerRegistry} from "@nestjs/schedule";
+import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
 
 describe('ImportDataService', () => {
     let importManagerService: IImportManagerService;
@@ -25,7 +26,7 @@ describe('ImportDataService', () => {
     });
 
     afterAll(async () => {
-        await parcelDeliveryRepository.deleteAll();
+       await clearRepos(module)
         await module.close();
     });
 

@@ -4,7 +4,7 @@ import {IParcelDelivery, ParcelDelivery} from "../../../../entities/parcel-deliv
 import {TestingModule} from "@nestjs/testing";
 import {IParcelDeliveryRepository} from "../../index";
 import {ParcelDeliveryRepository} from "../../../../../infrastructure/repositories/parcel-delivery";
-import {CreateParcelDeliveryInput} from "../../../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
+import {Optional} from "../../../../../libs/typescript";
 
 export const getRandomParcelDelivery = ({
     id = generateUuid(),
@@ -14,10 +14,10 @@ export const getRandomParcelDelivery = ({
 });
 
 
-export const createParcelDelivery = async (overrides: CreateParcelDeliveryInput, module: TestingModule): Promise<IParcelDelivery> => {
+export const createParcelDelivery = async (overrides: Optional<IParcelDelivery, 'id'>, module: TestingModule): Promise<IParcelDelivery> => {
     const repository = module.get<IParcelDeliveryRepository>(ParcelDeliveryRepository)
    const parcelDelivery = new ParcelDelivery({
-       id: generateUuid(),
+       id: overrides.id ?? generateUuid(),
        ...overrides
    })
     await repository.upsertOne(parcelDelivery.data)
