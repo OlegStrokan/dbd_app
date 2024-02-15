@@ -25,8 +25,7 @@ export class RedisService implements IRedisService {
     }
 
     async clear(): Promise<void> {
-        console.log('Method not implemented, but you can use it');
-        return Promise.resolve();
+        await this.redisRepository.clear()
     }
 
     async setAtomicOperation(prefix: RedisPrefixes, key: string, value: string, expiry: number): Promise<boolean> {

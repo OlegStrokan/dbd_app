@@ -11,10 +11,11 @@ import {RedisPrefixes} from "../../../repositories/redis";
 import {generateUuid} from "../../../../libs/generateUuid/generateUuid";
 import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
 
+
+// TODO - fix clear() method (last test fail because parcel exist after testing previous tests)
 describe('GetParcelDeliveryUseCase', () => {
     let parcelDeliveryUseCase: IGetParcelDeliveryUseCase;
     let redisService: IRedisService;
-    let parcelDeliveryRepository: IParcelDeliveryRepository
     let module: TestingModule;
     let parcelId: string;
     beforeAll(async () => {
@@ -22,7 +23,6 @@ describe('GetParcelDeliveryUseCase', () => {
 
         parcelDeliveryUseCase = module.get<IGetParcelDeliveryUseCase>(GetParcelDeliveryUseCase);
         redisService = module.get<IRedisService>(RedisService);
-        parcelDeliveryRepository = module.get<IParcelDeliveryRepository>(ParcelDeliveryRepository)
         parcelId = generateUuid()
 
     });
@@ -36,19 +36,32 @@ describe('GetParcelDeliveryUseCase', () => {
         await module.close();
     });
 
-
-    it('should create a parcel delivery if cache exist and verify its existence', async () => {
-
-        const createdParcel  = parcelDeliveryMocks.getOne({
+    const createdParcel = parcelDeliveryMocks.getOne({
             id: parcelId,
             name: "USB-C kabel 2m",
             parcelNumber: '200392903'
-        })
+    })
 
-        await redisService.setWithPrefix(RedisPrefixes.PARCEL, createdParcel.id, JSON.stringify(createdParcel))
+        it('should find a parcel delivery if cache exist', async () => {
 
-        const foundParcelDelivery = await parcelDeliveryUseCase.getOne(createdParcel.id);
+            await redisService.setWithPrefix(RedisPrefixes.PARCEL, createdParcel.id, JSON.stringify(createdParcel))
 
-        expect(foundParcelDelivery).toBeDefined();
-    });
+            const foundParcelDelivery = await parcelDeliveryUseCase.getOne(createdParcel.id);
+
+            expect(foundParcelDelivery).toEqual(createdParcel);
+        });
+
+
+        it('should find a parcel delivery when cache dont exist', async() => {
+
+            await parcelDeliveryMocks.createOne(createdParcel, module)
+
+            const foundParcelDelivery = await parcelDeliveryUseCase.getOne(createdParcel.id);
+
+            expect(foundParcelDelivery).toEqual(createdParcel);
+        });
+
+        it('should throw error when parcel delivery dont exist in cache and database', async () => {
+            await expect(async () => await parcelDeliveryUseCase.getOne(createdParcel.id)).rejects.toThrowError(Error)
+    })
 });

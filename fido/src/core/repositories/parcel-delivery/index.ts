@@ -7,5 +7,6 @@ export interface IParcelDeliveryRepository extends IClearableRepository {
   upsertOne(dto: CreateParcelDeliveryInput): Promise<ParcelDeliveryEntity>;
   upsertMany(dtos: CreateParcelDeliveryInput[]): Promise<ParcelDeliveryEntity[]>;
   findOneById(id: ParcelDeliveryEntity['id']): Promise<ParcelDeliveryEntity>
+  findByParcelNumber(id: ParcelDeliveryEntity['parcelNumber']): Promise<ParcelDeliveryEntity>
   findAll(): Promise<ParcelDeliveryEntity[]>
 }

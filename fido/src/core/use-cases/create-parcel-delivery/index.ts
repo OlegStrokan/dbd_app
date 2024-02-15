@@ -13,7 +13,17 @@ export class CreateParcelDeliveryUseCase implements ICreateParcelDeliveryUseCase
   ) {}
 
   async create(dto: CreateParcelDeliveryDto): Promise<ParcelDeliveryEntity> {
-    return this.parcelDeliveryRepository.upsertOne(dto);
+    const foundParcel = this.parcelDeliveryRepository.findByParcelNumber(dto.parcelNumber)
+
+
+    if (foundParcel) {
+      throw new Error('Parcel with current parcel number already exist ')
+    }
+
+    return await this.parcelDeliveryRepository.upsertOne(dto);
   }
+
+
+
 
 }

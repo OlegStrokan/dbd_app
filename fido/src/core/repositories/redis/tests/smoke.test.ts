@@ -64,7 +64,7 @@ describe('RedisRepository', () => {
         it('should clear Redis', async () => {
             await redisRepository.set(RedisPrefixes.PARCEL, redisTestKey, redisTestValue);
             await redisRepository.clear();
-            const value = await redisRepository.get(RedisPrefixes.PARCEL, redisTestValue);
+            const value = await redisRepository.get(RedisPrefixes.PARCEL, redisTestKey);
             expect(value).toBeNull();
         });
     })

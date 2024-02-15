@@ -6,33 +6,51 @@ import {CreateParcelDeliveryUseCase} from "../index";
 import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/parcel-delivery";
 import {parcelDeliveryMocks} from "../../../repositories/parcel-delivery/mocks";
 import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
+import {generateUuid} from "../../../../libs/generateUuid/generateUuid";
 
+// TODO clear() all data from database
 describe('ParcelDeliveryService', () => {
-  let parcelDeliveryService: ICreateParcelDeliveryUseCase;
-  let parcelDeliveryRepository: IParcelDeliveryRepository
-  let module: TestingModule;
-
-  beforeAll(async () => {
-    module = await createDbTestingModule();
-
-    parcelDeliveryService = module.get<ICreateParcelDeliveryUseCase>(CreateParcelDeliveryUseCase);
-    parcelDeliveryRepository = module.get<IParcelDeliveryRepository>(ParcelDeliveryRepository)
-  });
-
-  afterAll(async () => {
-    await clearRepos(module)
-    await module.close();
-  });
+    let parcelDeliveryService: ICreateParcelDeliveryUseCase;
+    let parcelDeliveryRepository: IParcelDeliveryRepository
+    let module: TestingModule;
+    let parcelId: string;
 
 
-  it('should create a parcel delivery and verify its existence', async () => {
+    beforeAll(async () => {
+        module = await createDbTestingModule();
 
-    const createdParcelDelivery = await parcelDeliveryService.create(parcelDeliveryMocks.getOne());
+        parcelDeliveryService = module.get<ICreateParcelDeliveryUseCase>(CreateParcelDeliveryUseCase);
+        parcelDeliveryRepository = module.get<IParcelDeliveryRepository>(ParcelDeliveryRepository)
 
-    expect(createdParcelDelivery).toBeDefined();
+        parcelId = generateUuid()
 
-    const retrievedParcelDelivery = await parcelDeliveryRepository.findOneById(createdParcelDelivery.id);
-    expect(retrievedParcelDelivery).toBeDefined();
-    expect(retrievedParcelDelivery.id).toEqual(createdParcelDelivery.id);
-  });
+    });
+
+    afterAll(async () => {
+        await clearRepos(module)
+        await module.close();
+    });
+
+    const mockParcel = parcelDeliveryMocks.getOne({
+        id: parcelId,
+        name: "USB-C kabel 2m",
+        parcelNumber: '200392903'
+    })
+
+
+    it('should create a parcel delivery and verify its existence', async () => {
+
+        const createdParcel = await parcelDeliveryService.create(mockParcel)
+
+        expect(createdParcel).toBeDefined();
+
+        const retrievedParcelDelivery = await parcelDeliveryRepository.findOneById(createdParcel.id);
+        expect(retrievedParcelDelivery).toBeDefined();
+        expect(retrievedParcelDelivery.id).toEqual(createdParcel.id);
+    });
+
+    it('should throw error when parcel already exist ', async () => {
+        await expect(async () => await parcelDeliveryService.create(mockParcel)).rejects.toThrowError(Error)
+
+    });
 });

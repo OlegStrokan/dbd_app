@@ -4,7 +4,9 @@ import {EntityManager, Repository} from "typeorm";
 import {IParcelDeliveryRepository} from "../../../core/repositories/parcel-delivery";
 import {ParcelDeliveryEntity} from "../../entities/parcel-delivery";
 import {CreateParcelDeliveryDto} from "../../../core/use-cases/create-parcel-delivery/dto/create-parcel-delivery.dto";
+import {ParcelDelivery} from "../../../core/entities/parcel-delivery";
 
+// TODO - add error classes instead default error
 @Injectable()
 export class ParcelDeliveryRepository implements IParcelDeliveryRepository {
   constructor(
@@ -16,7 +18,8 @@ export class ParcelDeliveryRepository implements IParcelDeliveryRepository {
   ) {}
 
   async upsertOne(dto: CreateParcelDeliveryDto): Promise<ParcelDeliveryEntity> {
-    const parcelDelivery = this.repository.create(dto);
+    const parcel  = ParcelDelivery.create(dto)
+    const parcelDelivery = this.repository.create(parcel.data);
     return await this.repository.save(parcelDelivery)
   }
 
@@ -42,6 +45,17 @@ export class ParcelDeliveryRepository implements IParcelDeliveryRepository {
     }
 
     return parcelDelivery
+  }
+
+  async findByParcelNumber(parcelNumber: ParcelDeliveryEntity['parcelNumber']): Promise<ParcelDeliveryEntity> {
+    const parcelDelivery = await this.repository.findOneBy({ parcelNumber })
+
+    if (!parcelDelivery) {
+      throw new Error('Parcel delivery with current parcel number doesn\'t exist')
+    }
+
+    return parcelDelivery
+
   }
 
   async findAll(): Promise<ParcelDeliveryEntity[]> {
