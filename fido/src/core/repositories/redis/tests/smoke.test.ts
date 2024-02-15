@@ -26,7 +26,7 @@ describe('RedisRepository', () => {
     describe('RedisRepository tests', () => {
         const redisTestKey = '20392309'
         const redisTestValue = JSON.stringify([{ id: redisTestKey, data: 'Hello World' }])
-        const redisTestExpiry = 1000
+        const redisTestExpiry = 1
 
         it('should set and get value from Redis', async () => {
             await redisRepository.set(RedisPrefixes.PARCEL, redisTestKey, redisTestValue);
@@ -42,7 +42,7 @@ describe('RedisRepository', () => {
 
         it('should set value with expiry and get it from Redis and failed after expiry will finish', async () => {
             await redisRepository.setWithExpiry(RedisPrefixes.PARCEL, redisTestKey, redisTestValue, redisTestExpiry);
-            await new Promise(resolve => setTimeout(resolve, redisTestExpiry + 10));
+            await new Promise(resolve => setTimeout(resolve, redisTestExpiry + 1000));
             const value = await redisRepository.get(RedisPrefixes.PARCEL, redisTestKey);
             expect(value).toBeNull();
         });

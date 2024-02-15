@@ -25,10 +25,10 @@ export class RedisRepository implements OnModuleDestroy, IRedisRepository {
     }
 
     async setWithExpiry(prefix: RedisPrefixes, key: string, value: string, expiry: number): Promise<void> {
-        await this.redisClient.set(`${prefix}:${key}`, value, 'PX', expiry)
+        await this.redisClient.set(`${prefix}:${key}`, value, 'EX', expiry)
     }
     async setNx(prefix: RedisPrefixes, key: string, value: string, expiry: number): Promise<string> {
-        return this.redisClient.set(`${prefix}:${key}`, value, 'PX', expiry, 'NX');
+        return this.redisClient.set(`${prefix}:${key}`, value, 'EX', expiry, 'NX');
 
     }
     async clear(): Promise<void> {
