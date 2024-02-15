@@ -40,14 +40,12 @@ describe('RedisRepository', () => {
             expect(value).toBe(redisTestValue);
         });
 
-        // TODO - investigate why expiry doesnt work
-        it.skip('should set value with expiry and get it from Redis and failed after expiry will finish', async () => {
+        it('should set value with expiry and get it from Redis and failed after expiry will finish', async () => {
             await redisRepository.setWithExpiry(RedisPrefixes.PARCEL, redisTestKey, redisTestValue, redisTestExpiry);
-            await new Promise(resolve => setTimeout(resolve, redisTestExpiry + 3000));
+            await new Promise(resolve => setTimeout(resolve, redisTestExpiry + 10));
             const value = await redisRepository.get(RedisPrefixes.PARCEL, redisTestKey);
             expect(value).toBeNull();
         });
-
 
         it('should set value with NX option and get it from Redis', async () => {
             const result = await redisRepository.setNx(RedisPrefixes.PARCEL, redisTestKey, redisTestValue, redisTestExpiry);
