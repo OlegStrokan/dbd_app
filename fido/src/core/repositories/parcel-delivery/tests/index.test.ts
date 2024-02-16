@@ -37,6 +37,10 @@ describe('ParcelDeliveryRepository', () => {
     });
 
     it('should find all parcel deliveries', async () => {
+        await parcelDeliveryRepository.upsertMany([
+            parcelDeliveryMocks.getOne(),
+            parcelDeliveryMocks.getOne(),
+        ]);
         const parcels = await parcelDeliveryRepository.findAll();
         expect(parcels).toHaveLength(2);
     });

@@ -13,7 +13,7 @@ export class CreateParcelDeliveryUseCase implements ICreateParcelDeliveryUseCase
   ) {}
 
   async create(dto: CreateParcelDeliveryDto): Promise<ParcelDeliveryEntity> {
-    const foundParcel = this.parcelDeliveryRepository.findByParcelNumber(dto.parcelNumber)
+    const foundParcel = await this.parcelDeliveryRepository.findByParcelNumber(dto.parcelNumber)
 
 
     if (foundParcel) {

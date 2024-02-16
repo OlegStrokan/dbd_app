@@ -7,8 +7,8 @@ import {ParcelDeliveryRepository} from "../../../../infrastructure/repositories/
 import {parcelDeliveryMocks} from "../../../repositories/parcel-delivery/mocks";
 import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
 import {generateUuid} from "../../../../libs/generateUuid/generateUuid";
+import {before} from "@nestjs/graphql/dist/plugin";
 
-// TODO clear() all data from database
 describe('ParcelDeliveryService', () => {
     let parcelDeliveryService: ICreateParcelDeliveryUseCase;
     let parcelDeliveryRepository: IParcelDeliveryRepository
@@ -26,8 +26,11 @@ describe('ParcelDeliveryService', () => {
 
     });
 
-    afterAll(async () => {
+    beforeEach(async () => {
         await clearRepos(module)
+    })
+
+    afterAll(async () => {
         await module.close();
     });
 
@@ -50,6 +53,7 @@ describe('ParcelDeliveryService', () => {
     });
 
     it('should throw error when parcel already exist ', async () => {
+        await parcelDeliveryService.create(mockParcel)
         await expect(async () => await parcelDeliveryService.create(mockParcel)).rejects.toThrowError(Error)
 
     });

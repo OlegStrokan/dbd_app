@@ -12,23 +12,20 @@ import {generateUuid} from "../../../../libs/generateUuid/generateUuid";
 import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
 
 
-// TODO - fix clear() method (last test fail because parcel exist after testing previous tests)
 describe('GetParcelDeliveryUseCase', () => {
     let parcelDeliveryUseCase: IGetParcelDeliveryUseCase;
     let redisService: IRedisService;
     let module: TestingModule;
-    let parcelId: string;
     beforeAll(async () => {
         module = await createDbTestingModule();
 
         parcelDeliveryUseCase = module.get<IGetParcelDeliveryUseCase>(GetParcelDeliveryUseCase);
         redisService = module.get<IRedisService>(RedisService);
-        parcelId = generateUuid()
 
     });
 
     beforeEach(async () => {
-        await redisService.deleteWithPrefix(RedisPrefixes.PARCEL, parcelId)
+        await redisService.deleteWithPrefix(RedisPrefixes.PARCEL, createdParcel.id)
         await clearRepos(module)
     })
 
@@ -37,7 +34,6 @@ describe('GetParcelDeliveryUseCase', () => {
     });
 
     const createdParcel = parcelDeliveryMocks.getOne({
-            id: parcelId,
             name: "USB-C kabel 2m",
             parcelNumber: '200392903'
     })

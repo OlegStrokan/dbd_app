@@ -12,8 +12,6 @@ import {RedisService} from "../../../core/services/redis";
 import {RedisRepository} from "../../repositories/redis";
 import {redisClientFactory} from "../redis/index.factory";
 
-// TODO delete unnecessary imports
-
 export const createDbTestingModule = async () => {
     return await Test.createTestingModule({
         imports: [
@@ -61,7 +59,6 @@ export const createDbTestingModule = async () => {
             ActionLogRepository,
             redisClientFactory
         ],
-        exports: [redisClientFactory, RedisService]
     }).compile();
 
 }

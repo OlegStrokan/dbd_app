@@ -48,13 +48,8 @@ export class ParcelDeliveryRepository implements IParcelDeliveryRepository {
   }
 
   async findByParcelNumber(parcelNumber: ParcelDeliveryEntity['parcelNumber']): Promise<ParcelDeliveryEntity> {
-    const parcelDelivery = await this.repository.findOneBy({ parcelNumber })
+    return await this.repository.findOneBy({ parcelNumber })
 
-    if (!parcelDelivery) {
-      throw new Error('Parcel delivery with current parcel number doesn\'t exist')
-    }
-
-    return parcelDelivery
 
   }
 
