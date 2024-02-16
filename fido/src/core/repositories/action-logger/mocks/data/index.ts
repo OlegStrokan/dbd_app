@@ -1,4 +1,4 @@
-import {ActionType, IActionLog, KnownActionNames} from "../../../../services/action-logger/interfaces";
+import {ActionStatus, IActionLog, KnownActionNames} from "../../../../services/action-logger/interfaces";
 import {faker} from "@faker-js/faker/locale/en_US";
 import {selectRandom} from "../../../../../libs/mocks/random";
 import {generateUuid} from "../../../../../libs/generateUuid/generateUuid";
@@ -12,7 +12,7 @@ export const getRandomActionLog = (): IActionLog<KnownActionNames> => ({
     id: generateUuid(),
     name: selectRandom(KnownActionNames),
     parentActionId: generateUuid(),
-    type: selectRandom(ActionType),
+    type: selectRandom(ActionStatus),
     details: JSON.parse(faker.datatype.json()),
     author: {
         id: generateUuid(),

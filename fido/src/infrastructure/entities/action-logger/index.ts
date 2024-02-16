@@ -1,12 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, CreateDateColumn } from 'typeorm';
 import { ObjectType, Field } from "@nestjs/graphql";
-import {ActionType} from "../../../core/services/action-logger/interfaces";
+import {ActionStatus} from "../../../core/services/action-logger/interfaces";
 
 
 export interface ActionLogCreateAttr {
     id: string;
     name: string,
-    type: ActionType,
+    type: ActionStatus,
     details?: string,
     parentActionId: string;
     authorId: string;
@@ -33,7 +33,7 @@ export class ActionLogEntity implements ActionLogCreateAttr {
 
     @Field()
     @Column({ length: 255 })
-    type: ActionType;
+    type: ActionStatus;
 
     @Field()
     @Column({ nullable: true })
