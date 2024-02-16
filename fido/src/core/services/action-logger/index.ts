@@ -1,4 +1,4 @@
-import {ActionToLog, ActionType, IActionLoggerService, IActionLog} from "./interfaces";
+import {ActionToLog, ActionStatus, IActionLoggerService, IActionLog} from "./interfaces";
 import {FindAllOptions, IActionLogRepository} from "../../repositories/action-logger";
 import {Logger} from "@nestjs/common";
 import {v4 as uuidv4} from 'uuid';
@@ -6,7 +6,7 @@ import {toISO8601UTC} from "../../../libs/dates";
 import {Optional} from "../../../libs/typescript";
 
 
-export class ActionLogger implements IActionLoggerService {
+export class ActionLoggerService implements IActionLoggerService {
     constructor(
         private readonly deps: {
             storage: IActionLogRepository,
@@ -56,7 +56,7 @@ export class ActionLogger implements IActionLoggerService {
 
         await this.logAction({
             ...args,
-            type: ActionType.Attempt,
+            type: ActionStatus.Attempt,
             id: parentActionId,
             parentActionId,
             details: {
@@ -68,7 +68,7 @@ export class ActionLogger implements IActionLoggerService {
 
             await this.logAction({
                 ...args,
-                type: ActionType.Success,
+                type: ActionStatus.Success,
                 id: parentActionId,
                 parentActionId,
                 details: {
@@ -80,7 +80,7 @@ export class ActionLogger implements IActionLoggerService {
         } catch (error) {
             await this.logAction({
                 ...args,
-                type: ActionType.Failure,
+                type: ActionStatus.Failure,
                 id: uuidv4(),
                 parentActionId,
                 details: {

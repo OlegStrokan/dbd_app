@@ -6,6 +6,7 @@ import {RedisPrefixes} from "../../repositories/redis";
 import {IRedisService} from "../../services/redis/interfaces";
 import {RedisService} from "../../services/redis";
 import {ParcelDeliveryRepository} from "../../../infrastructure/repositories/parcel-delivery";
+import {ParcelDeliveryNotFoundError} from "./error";
 
 @Injectable()
 export class GetParcelDeliveryUseCase implements IGetParcelDeliveryUseCase {
@@ -24,10 +25,13 @@ export class GetParcelDeliveryUseCase implements IGetParcelDeliveryUseCase {
         }
         const foundParcel = await this.parcelDeliveryRepository.findOneById(id);
 
-        if (foundParcel) {
-            await this.redisService.setWithExpiryAndPrefix(RedisPrefixes.PARCEL, id, JSON.stringify(foundParcel), 3000);
+        if (!foundParcel) {
+                throw new ParcelDeliveryNotFoundError('Parcel delivery with current id doesn\'t exist',
+                    { parcelDeliveryId: id })
+
         }
 
+        await this.redisService.setWithExpiryAndPrefix(RedisPrefixes.PARCEL, id, JSON.stringify(foundParcel), 3000);
         return foundParcel;
 
     }

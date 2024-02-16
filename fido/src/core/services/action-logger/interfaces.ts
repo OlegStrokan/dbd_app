@@ -3,14 +3,16 @@ import {Optional} from "../../../libs/typescript";
 import {AuthUser} from "../../types/auth-user";
 
 
-export enum ActionType {
+export enum ActionStatus {
     Attempt = 'attempt',
     Success = 'success',
     Failure = 'failure',
 }
 
+
 export enum KnownActionNames {
-    Test = 'Test'
+    ParcelDeliveryCreate = 'ParcelDeliveryCreate',
+    ImportManagerSaveToDb = 'ImportManagerSaveToDb',
 }
 
 export type ActionToLog = Omit<IActionLog<KnownActionNames>, 'timestamp'>
@@ -19,8 +21,8 @@ export type ActionToLog = Omit<IActionLog<KnownActionNames>, 'timestamp'>
 export interface IActionLog<TName extends string = string> {
     id: string;
     name: TName,
-    type: ActionType,
-    author: AuthUser,
+    type: ActionStatus,
+    author?: AuthUser,
     parentActionId: string
     details?: Record<string, unknown>,
     timestamp: string
