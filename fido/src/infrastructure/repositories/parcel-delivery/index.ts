@@ -6,7 +6,6 @@ import {ParcelDeliveryEntity} from "../../entities/parcel-delivery";
 import {CreateParcelDeliveryDto} from "../../../core/use-cases/create-parcel-delivery/dto/create-parcel-delivery.dto";
 import {ParcelDelivery} from "../../../core/entities/parcel-delivery";
 
-// TODO - add error classes instead default error
 @Injectable()
 export class ParcelDeliveryRepository implements IParcelDeliveryRepository {
   constructor(
