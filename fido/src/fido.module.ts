@@ -16,6 +16,8 @@ import {ActionLogRepository} from "./infrastructure/repositories/action-logger";
 import {RedisRepository} from "./infrastructure/repositories/redis";
 import {GetParcelDeliveryUseCase} from "./core/use-cases/get-parcel-delivery";
 import {RedisService} from "./core/services/redis";
+import {AuthService} from "./core/services/authorization";
+import {AuthConfig} from "./infrastructure/common/config/auth.config";
 
 @Module({
     imports: [
@@ -52,7 +54,9 @@ import {RedisService} from "./core/services/redis";
         ParcelDeliveryResolver,
         ImportDataService,
         ActionLoggerService,
-        RedisService
+        RedisService,
+        AuthService,
+        AuthConfig,
     ],
 })
 export class FidoModule {
