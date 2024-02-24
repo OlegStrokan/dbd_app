@@ -2,7 +2,6 @@ import {Module} from '@nestjs/common';
 import {GraphQLModule} from "@nestjs/graphql";
 import {ApolloFederationDriver, ApolloFederationDriverConfig} from "@nestjs/apollo";
 import {TypeOrmModule} from '@nestjs/typeorm';
-import {ParcelDeliveryResolver} from "./interfaces/parcel-delivery/parcelDeliveryResolver";
 import {CreateParcelDeliveryUseCase} from "./core/use-cases/create-parcel-delivery";
 import {ParcelDeliveryEntity} from "./infrastructure/entities/parcel-delivery";
 import {ConfigModule, ConfigService} from "@nestjs/config";
@@ -18,6 +17,7 @@ import {GetParcelDeliveryUseCase} from "./core/use-cases/get-parcel-delivery";
 import {RedisService} from "./core/services/redis";
 import {AuthService} from "./core/services/authorization";
 import {AuthConfig} from "./infrastructure/common/config/auth.config";
+import {ParcelDeliveryResolver} from "./interfaces/parcel-delivery";
 
 @Module({
     imports: [
