@@ -11,6 +11,8 @@ import {ActionLogEntity} from "../../entities/action-logger";
 import {RedisService} from "../../../core/services/redis";
 import {RedisRepository} from "../../repositories/redis";
 import {redisClientFactory} from "../redis/index.factory";
+import {AuthService} from "../../../core/services/authorization";
+import {AuthConfig} from "../config/auth.config";
 
 export const createDbTestingModule = async () => {
     return await Test.createTestingModule({
@@ -52,6 +54,8 @@ export const createDbTestingModule = async () => {
             },
             ImportDataService,
             RedisService,
+            AuthService,
+            AuthConfig,
             CreateParcelDeliveryUseCase,
             GetParcelDeliveryUseCase,
             RedisRepository,
