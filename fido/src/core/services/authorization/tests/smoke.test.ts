@@ -4,7 +4,7 @@ import {createDbTestingModule} from "../../../../infrastructure/common/db/create
 import {AuthService, IUser} from "../index";
 
 
-describe('RedisRepository', () => {
+describe('AuthRepository', () => {
     let module: TestingModule
     let authService: AuthService
 
@@ -22,13 +22,13 @@ describe('RedisRepository', () => {
         await module.close()
     })
 
-    describe('RedisService tests', () => {
+    describe('AuthService tests', () => {
         const testUser: IUser = {
-            name: 'testUser',
-            password: 'testPassword',
+            name: 'stroka01',
+            password: '258120Oleg!',
         };
 
-        it('should', async () => {
+        it('should authorize user', async () => {
            const result = await authService.authenticateUser(testUser)
             expect(result).toBeDefined()
         })

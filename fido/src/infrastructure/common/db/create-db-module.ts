@@ -13,6 +13,9 @@ import {RedisRepository} from "../../repositories/redis";
 import {redisClientFactory} from "../redis/index.factory";
 import {AuthService} from "../../../core/services/authorization";
 import {AuthConfig} from "../config/auth.config";
+import {ActionLoggerService} from "../../../core/services/action-logger";
+import {ConfigModule} from "@nestjs/config";
+import {AppConfig, DatabaseConfig} from "../config";
 
 export const createDbTestingModule = async () => {
     return await Test.createTestingModule({
@@ -37,6 +40,12 @@ export const createDbTestingModule = async () => {
                 ActionLogRepository,
                 RedisRepository,
             ]),
+            ConfigModule.forRoot({
+                isGlobal: true,
+                cache: true,
+                load: [AppConfig, DatabaseConfig],
+                envFilePath: `.env`,
+            }),
             ScheduleModule.forRoot(),
         ],
         providers: [
@@ -52,10 +61,11 @@ export const createDbTestingModule = async () => {
                 provide: getRepositoryToken(RedisRepository),
                 useClass: RedisRepository,
             },
+            AuthConfig,
+            AuthService,
             ImportDataService,
             RedisService,
-            AuthService,
-            AuthConfig,
+            ActionLoggerService,
             CreateParcelDeliveryUseCase,
             GetParcelDeliveryUseCase,
             RedisRepository,

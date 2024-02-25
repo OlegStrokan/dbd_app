@@ -1,4 +1,4 @@
-import {Inject, Injectable} from "@nestjs/common";
+import {Injectable} from "@nestjs/common";
 import {AuthenticationDetails, CognitoUser, CognitoUserPool} from "amazon-cognito-identity-js";
 import {AuthConfig} from "../../../infrastructure/common/config/auth.config";
 
@@ -13,7 +13,6 @@ export class AuthService {
     private readonly userPool: CognitoUserPool
 
     constructor(
-        @Inject('AuthConfig')
         private readonly authConfig: AuthConfig
     ) {
         this.userPool = new CognitoUserPool({
@@ -44,7 +43,14 @@ export class AuthService {
                 },
                 onFailure: err => {
                     reject(err)
-                }
+                },
+                newPasswordRequired: function(userAttributes, requiredAttributes) {
+                    delete userAttributes.email_verified;
+                    delete userAttributes.email
+                    newUser.completeNewPasswordChallenge("258120Oleg!", userAttributes, this);
+
+                },
+
             })
         })
     }

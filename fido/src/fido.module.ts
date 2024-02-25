@@ -31,6 +31,7 @@ import {ParcelDeliveryResolver} from "./interfaces/parcel-delivery";
             isGlobal: true,
             cache: true,
             load: [AppConfig, DatabaseConfig],
+            envFilePath: `.env`,
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
