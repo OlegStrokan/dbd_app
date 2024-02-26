@@ -2,14 +2,14 @@ import { TestingModule } from '@nestjs/testing';
 import { createDbTestingModule } from '../../../../infrastructure/common/db/create-db-module';
 import { ParcelDeliveryRepository } from '../../../../infrastructure/repositories/parcel-delivery';
 import * as fs from 'fs';
-import {IImportManagerService} from "../interfaces";
+import {IParcelImportService} from "../interfaces";
 import {IParcelDeliveryRepository} from "../../../repositories/parcel-delivery";
-import {ImportDataService} from "../index";
+import {ParcelImportService} from "../index";
 import {SchedulerRegistry} from "@nestjs/schedule";
 import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
 
 describe('ImportDataService', () => {
-    let importManagerService: IImportManagerService;
+    let importManagerService: IParcelImportService;
     let parcelDeliveryRepository: IParcelDeliveryRepository;
     let schedulerRegistry: SchedulerRegistry;
     let module: TestingModule;
@@ -17,7 +17,7 @@ describe('ImportDataService', () => {
     beforeAll(async () => {
         module = await createDbTestingModule();
 
-        importManagerService = module.get<IImportManagerService>(ImportDataService);
+        importManagerService = module.get<IParcelImportService>(ParcelImportService);
         parcelDeliveryRepository = module.get<IParcelDeliveryRepository>(
             ParcelDeliveryRepository,
         );
@@ -60,7 +60,7 @@ describe('ImportDataService', () => {
         jest.spyOn(Date, 'now').mockImplementation(() => new Date('2024-01-15T01:00:00').getTime());
 
         console.log(schedulerRegistry.getCronJobs())
-        schedulerRegistry.getCronJob('ImportParcelsCronJob');
+        schedulerRegistry.getCronJob('ParcelImportServiceCronJob');
 
         await new Promise(resolve => setTimeout(resolve, 100));
 

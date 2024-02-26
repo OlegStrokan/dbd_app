@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@nestjs/common';
 import {Cron} from '@nestjs/schedule';
 import {IParcelDeliveryRepository} from "../../repositories/parcel-delivery";
-import {IImportManagerService} from "./interfaces";
+import {IParcelImportService} from "./interfaces";
 import {CreateParcelDeliveryInput} from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
 import {ParcelDeliveryRepository} from "../../../infrastructure/repositories/parcel-delivery";
 import * as fs from "fs";
@@ -16,7 +16,7 @@ interface ParsedJson {
 }
 
 @Injectable()
-export class ImportDataService implements IImportManagerService {
+export class ParcelImportService implements IParcelImportService {
     constructor(
         @Inject(ParcelDeliveryRepository)
         private readonly parcelRepository: IParcelDeliveryRepository,
@@ -24,7 +24,7 @@ export class ImportDataService implements IImportManagerService {
         private readonly actionLogger: IActionLoggerService
     ) {}
 
-    @Cron('0 0 * * *', { name: 'ImportParcelsCronJob' })
+    @Cron('0 0 * * *', { name: 'ParcelImportServiceCronJob' })
     async fetchDataAndSaveToDb() {
          await this.actionLogger.attemptAction({
              name: KnownActionNames.ImportManagerSaveToDb,

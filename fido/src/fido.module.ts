@@ -7,7 +7,7 @@ import {ParcelDeliveryEntity} from "./infrastructure/entities/parcel-delivery";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {AppConfig, DatabaseConfig} from "./infrastructure/common/config";
 import {ParcelDeliveryRepository} from "./infrastructure/repositories/parcel-delivery";
-import {ImportDataService} from "./core/services/import-manager";
+import {ParcelImportService} from "./core/services/parcel-import";
 import {ScheduleModule} from "@nestjs/schedule";
 import {ActionLoggerService} from "./core/services/action-logger";
 import {ActionLogEntity} from "./infrastructure/entities/action-logger";
@@ -53,7 +53,7 @@ import {ParcelDeliveryResolver} from "./interfaces/parcel-delivery";
         CreateParcelDeliveryUseCase,
         GetParcelDeliveryUseCase,
         ParcelDeliveryResolver,
-        ImportDataService,
+        ParcelImportService,
         ActionLoggerService,
         RedisService,
         AuthService,
