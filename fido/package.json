@@ -20,9 +20,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node --require tsconfig-paths/register ./node_modules/typeorm/cli",
-    "migration:run": "npm run typeorm migration:run -- -d src/infrastructure/common/db/typeorm.config.ts",
-    "migration:generate": "npm run typeorm -- -d src/infrastructure/common/db/typeorm.config.ts migration:generate ./src/migrations",
-    "migration:create": "npm run typeorm -- migration:create ./src/migrations",
+    "migration:run": "npm run typeorm migration:run -- ./src/infrastructure/common/db/typeorm.config.ts",
+    "migration:generate": "npm run typeorm -- -d src/infrastructure/common/db/typeorm.config.ts migration:generate ./src/infrastructure/common/migrations/$npm_config_name",
+    "migration:create": "npm run typeorm -- migration:create ./src/infrastructure/common/migrations/$npm_config_name",
     "migration:revert": "npm run typeorm -- -d src/infrastructure/common/db/typeorm.config.ts migration:revert",
     "migration:show": "npm run typeorm migration:show -- -d src/infrastructure/common/db/typeorm.config.ts"
   },
@@ -67,7 +67,7 @@
     "supertest": "^6.1.3",
     "ts-jest": "28.0.8",
     "ts-loader": "^9.2.3",
-    "ts-node": "^10.0.0",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "4.1.0",
     "typeorm": "^0.3.20",
     "typescript": "^4.7.4"
