@@ -35,6 +35,7 @@ export class ParcelEventReadRepository
         })
          return result.map(toCoreParcelEvent)
 
+
     }
 
     async clear(): Promise<void> {

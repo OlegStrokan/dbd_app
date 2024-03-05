@@ -3,7 +3,7 @@ import {createIntegrationApiContainer} from "./container";
 
 export class IntegrationApiApplication implements IApplication {
     constructor(private readonly config: IntegrationApiApplication) {}
-    start(): Promise<void> {
+    start() {
         const container = createIntegrationApiContainer()
     }
 
