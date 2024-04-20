@@ -61,7 +61,6 @@ export class ParcelImportService implements IParcelImportService {
     }
 
     async consumeNatsMessages() {
-        
+
   }
-    }
 }
