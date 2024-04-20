@@ -1,11 +1,13 @@
-import Fastify, {FastifyServerOptions} from "fastify";
-import {IntegrationApiContainer} from "../dependency/application/container/inteface";
+import Fastify, { FastifyServerOptions } from "fastify";
 
-export const createIntegrationApiInterface = (
-    serverOptions: FastifyServerOptions,
-    container: IntegrationApiContainer,
+export const createIntegrationApiInterface = async (
+  serverOptions: FastifyServerOptions
 ) => {
-    const app = Fastify(serverOptions)
+  const app = Fastify(serverOptions);
 
-    return app
-}
+  app.get("/health", async () => {
+    return { status: "ok" };
+  });
+
+  return app;
+};

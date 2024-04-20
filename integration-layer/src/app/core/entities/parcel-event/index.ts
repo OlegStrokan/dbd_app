@@ -5,9 +5,6 @@ export interface IParcelEvent {
     parcelNumber: string;
 }
 
-
-
-
 export interface IParcelEventRead extends IParcelEvent {
     seq: string
 }

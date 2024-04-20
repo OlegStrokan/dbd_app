@@ -1,5 +1,5 @@
-import {Inject, Injectable} from '@nestjs/common';
-import {Cron} from '@nestjs/schedule';
+import {Inject, Injectable} from "@nestjs/common";
+import {Cron} from "@nestjs/schedule";
 import {IParcelDeliveryRepository} from "../../repositories/parcel-delivery";
 import {IParcelImportService} from "./interfaces";
 import {CreateParcelDeliveryInput} from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
@@ -8,8 +8,11 @@ import * as fs from "fs";
 import {ParcelDeliveryEntity} from "../../../infrastructure/entities/parcel-delivery";
 import {ImportManagerSaveError} from "./error";
 import {ActionLoggerService} from "../action-logger";
-import {IActionLoggerService, KnownActionNames} from "../action-logger/interfaces";
-
+import {
+    IActionLoggerService,
+    KnownActionNames,
+} from "../action-logger/interfaces";
+import {ClientProxy} from "@nestjs/microservices";
 
 interface ParsedJson {
     parcelDelivery: ParcelDeliveryEntity[];
@@ -17,35 +20,48 @@ interface ParsedJson {
 
 @Injectable()
 export class ParcelImportService implements IParcelImportService {
+    private client: ClientProxy;
+
     constructor(
         @Inject(ParcelDeliveryRepository)
         private readonly parcelRepository: IParcelDeliveryRepository,
         @Inject(ActionLoggerService)
-        private readonly actionLogger: IActionLoggerService
-    ) {}
+        private readonly actionLogger: IActionLoggerService,
+        @Inject('NATS_SERVICE') client: ClientProxy
+    ) {
+        this.client = client;
+    }
 
-    @Cron('0 0 * * *', { name: 'ParcelImportServiceCronJob' })
+    @Cron("0 0 * * *", {name: "ParcelImportServiceCronJob"})
     async fetchDataAndSaveToDb() {
-         await this.actionLogger.attemptAction({
-             name: KnownActionNames.ImportManagerSaveToDb,
-         }, async () => {
-            try {
-                const rawData = fs.readFileSync('./parcel-events.json', 'utf8');
-                const data: ParsedJson = JSON.parse(rawData);
+        await this.actionLogger.attemptAction(
+            {
+                name: KnownActionNames.ImportManagerSaveToDb,
+            },
+            async () => {
+                try {
+                    const rawData = fs.readFileSync("./parcel-events.json", "utf8");
+                    const data: ParsedJson = JSON.parse(rawData);
 
-                await this.saveDataToDatabase(data.parcelDelivery);
-            } catch (error) {
+                    await this.saveDataToDatabase(data.parcelDelivery);
+                } catch (error) {
+                }
             }
-        })
+        );
     }
 
     async saveDataToDatabase(data: CreateParcelDeliveryInput[]) {
         try {
             await this.parcelRepository.upsertMany(data);
         } catch (error) {
-            throw new ImportManagerSaveError('Error saving data to db', {
-                ...data
-            })
+            throw new ImportManagerSaveError("Error saving data to db", {
+                ...data,
+            });
         }
+    }
+
+    async consumeNatsMessages() {
+        
+  }
     }
 }

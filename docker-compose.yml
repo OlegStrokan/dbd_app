@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   parcel_delivery_dev_db:
@@ -17,7 +17,6 @@ services:
   parcel_delivery_test_db:
     container_name: parcel_delivery_test_db
     image: postgres:13
-
     environment:
       POSTGRES_USER: stroka01
       POSTGRES_PASSWORD: user
@@ -28,16 +27,41 @@ services:
       - pgdata_parcel_delivery_test_db:/var/lib/postgresql/data
     restart: always
 
+  exchange_db:
+    container_name: exchange_db
+    image: postgres:13
+    environment:
+      POSTGRES_USER: stroka01
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: exchange_db
+    ports:
+      - "8434:5432"
+    volumes:
+      - exchange_db:/var/lib/postgresql/data
+    restart: always
+
   cache:
     image: redis:6.2-alpine
     restart: always
     ports:
-      - '6379:6379'
+      - "6379:6379"
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes:
       - cache:/data
 
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+
 volumes:
   pgdata_parcel_delivery_dev_db: {}
   pgdata_parcel_delivery_test_db: {}
+  exchange_db: {}
   cache: {}
+
+networks:
+  default:
+    name: my_network
+    driver: bridge

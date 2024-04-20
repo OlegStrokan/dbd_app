@@ -5,8 +5,8 @@ import {IParcelDeliveryRepository} from "../../repositories/parcel-delivery";
 import {CreateParcelDeliveryDto} from "./dto/create-parcel-delivery.dto";
 import {ParcelDeliveryRepository} from "../../../infrastructure/repositories/parcel-delivery";
 import {ParcelDeliveryAlreadyExistError} from "./error";
-import {IActionLoggerService, KnownActionNames} from "@root/src/core/services/action-logger/interfaces";
-import {ActionLoggerService} from "@root/src/core/services/action-logger";
+import { IActionLoggerService, KnownActionNames } from '../../services/action-logger/interfaces';
+import { ActionLoggerService } from '../../services/action-logger';
 
 @Injectable()
 export class CreateParcelDeliveryUseCase implements ICreateParcelDeliveryUseCase {

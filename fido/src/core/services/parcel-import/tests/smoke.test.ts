@@ -1,73 +1,77 @@
-import { TestingModule } from '@nestjs/testing';
-import { createDbTestingModule } from '../../../../infrastructure/common/db/create-db-module';
-import { ParcelDeliveryRepository } from '../../../../infrastructure/repositories/parcel-delivery';
-import * as fs from 'fs';
-import {IParcelImportService} from "../interfaces";
-import {IParcelDeliveryRepository} from "../../../repositories/parcel-delivery";
-import {ParcelImportService} from "../index";
-import {SchedulerRegistry} from "@nestjs/schedule";
-import {clearRepos} from "../../../../infrastructure/common/config/clear.config";
+import { TestingModule } from "@nestjs/testing";
+import { createDbTestingModule } from "../../../../infrastructure/common/db/create-db-module";
+import { ParcelDeliveryRepository } from "../../../../infrastructure/repositories/parcel-delivery";
+import * as fs from "fs";
+import { IParcelImportService } from "../interfaces";
+import { IParcelDeliveryRepository } from "../../../repositories/parcel-delivery";
+import { ParcelImportService } from "../index";
+import { SchedulerRegistry } from "@nestjs/schedule";
+import { clearRepos } from "../../../../infrastructure/common/config/clear.config";
 
-describe('ImportDataService', () => {
-    let importManagerService: IParcelImportService;
-    let parcelDeliveryRepository: IParcelDeliveryRepository;
-    let schedulerRegistry: SchedulerRegistry;
-    let module: TestingModule;
+describe("ImportDataService", () => {
+  let importManagerService: IParcelImportService;
+  let parcelDeliveryRepository: IParcelDeliveryRepository;
+  let schedulerRegistry: SchedulerRegistry;
+  let module: TestingModule;
 
-    beforeAll(async () => {
-        module = await createDbTestingModule();
+  beforeAll(async () => {
+    module = await createDbTestingModule();
 
-        importManagerService = module.get<IParcelImportService>(ParcelImportService);
-        parcelDeliveryRepository = module.get<IParcelDeliveryRepository>(
-            ParcelDeliveryRepository,
-        );
-        schedulerRegistry = module.get<SchedulerRegistry>(SchedulerRegistry);
+    importManagerService =
+      module.get<IParcelImportService>(ParcelImportService);
+    parcelDeliveryRepository = module.get<IParcelDeliveryRepository>(
+      ParcelDeliveryRepository
+    );
+    schedulerRegistry = module.get<SchedulerRegistry>(SchedulerRegistry);
+  });
 
-    });
+  afterAll(async () => {
+    await clearRepos(module);
+    await module.close();
+  });
 
-    afterAll(async () => {
-       await clearRepos(module)
-        await module.close();
-    });
+  it("should fetch data and save to the database", async () => {
+    const testData = {
+      parcelDelivery: [
+        {
+          id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+          parcelNumber: 202380,
+          name: "Parcel 1",
+        },
+        {
+          id: "123e4567-e89b-12d3-a456-426614174001",
+          parcelNumber: 272890,
+          name: "Parcel 2",
+        },
+      ],
+    };
 
-    it('should fetch data and save to the database', async () => {
+    jest.spyOn(fs, "readFileSync").mockReturnValue(JSON.stringify(testData));
 
-        const testData = {
-            parcelDelivery: [
-                {
-                    id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-                    parcelNumber: 202380,
-                    name: "Parcel 1"
-                },
-                {
-                    id: "123e4567-e89b-12d3-a456-426614174001",
-                    parcelNumber: 272890,
-                    name: "Parcel 2"
-                }
-            ]
-        }
+    await importManagerService.fetchDataAndSaveToDb();
 
-        jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(testData));
+    const savedParcels = await parcelDeliveryRepository.findAll();
 
-        await importManagerService.fetchDataAndSaveToDb();
+    expect(savedParcels).toHaveLength(testData.parcelDelivery.length);
+  });
 
-        const savedParcels = await parcelDeliveryRepository.findAll();
+  it("should trigger the cron job and fetch data", async () => {
+    jest
+      .spyOn(Date, "now")
+      .mockImplementation(() => new Date("2024-01-15T01:00:00").getTime());
 
-        expect(savedParcels).toHaveLength(testData.parcelDelivery.length);
-    });
+    console.log(schedulerRegistry.getCronJobs());
+    schedulerRegistry.getCronJob("ParcelImportServiceCronJob");
 
-    it('should trigger the cron job and fetch data', async () => {
-        jest.spyOn(Date, 'now').mockImplementation(() => new Date('2024-01-15T01:00:00').getTime());
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
-        console.log(schedulerRegistry.getCronJobs())
-        schedulerRegistry.getCronJob('ParcelImportServiceCronJob');
+    const savedParcels = await parcelDeliveryRepository.findAll();
+    expect(savedParcels).toHaveLength(10);
 
-        await new Promise(resolve => setTimeout(resolve, 100));
+    jest.restoreAllMocks();
+  });
 
-        const savedParcels = await parcelDeliveryRepository.findAll();
-        expect(savedParcels).toHaveLength(10);
-
-        jest.restoreAllMocks();
-    });
+  it("should consume nats messages", async () => {
+    await importManagerService.consumeNatsMessages();
+  }, 100000);
 });
-

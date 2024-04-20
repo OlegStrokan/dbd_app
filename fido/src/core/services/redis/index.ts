@@ -1,7 +1,6 @@
 import {Inject, Injectable} from "@nestjs/common";
 import {IRedisRepository, RedisPrefixes} from "../../../core/repositories/redis";
 import {IRedisService} from "./interfaces";
-import * as console from "console";
 import {RedisRepository} from "../../../infrastructure/repositories/redis";
 
 @Injectable()

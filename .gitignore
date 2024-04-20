@@ -1,1 +1,4 @@
 /fido/dist/
+/fido/node_modules/
+integration-layer/node_modules
+exchange/node_modules
