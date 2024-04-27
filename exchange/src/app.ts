@@ -1,34 +1,27 @@
 import Fastify, { FastifyServerOptions } from "fastify";
-import { JSONCodec } from "nats";
-import NatsService from "./nats";
 import { DatabaseService } from "./infrastructure/database.config";
-import { ParcelRepository } from "./infrastructure/repositories/parcel-event";
-import { ParcelService } from "./core/parcel-event";
+import { ParcelEvent } from "./infrastructure/entity/parcel-event";
+import * as cron from "node-cron";
 
-export const createIntegrationApiInterface = async (
-  serverOptions: FastifyServerOptions
-) => {
+export const startCronJob = async () => {
+  const databaseService = new DatabaseService();
+  const connection = await databaseService.getConnection();
+  const parcelEventRepository = connection.getRepository(ParcelEvent);
+
+  cron.schedule("* * * * * *", async () => {
+    const parcelEvent = new ParcelEvent();
+    parcelEvent.id = Math.floor(Math.random() * 1000000).toString();
+    parcelEvent.parcelNumber = Math.floor(Math.random() * 1000000).toString();
+    parcelEvent.createdAt = new Date().toISOString();
+    parcelEvent.updatedAt = new Date().toISOString();
+    await parcelEventRepository.save(parcelEvent);
+    console.log("Parcel event created", parcelEvent);
+  });
+};
+
+export const createApp = async (serverOptions: FastifyServerOptions) => {
   const app = Fastify(serverOptions);
-
-  const natsService = new NatsService();
-  await natsService.connect("nats://localhost:4222", "parcel-event");
-
-  const nats = await natsService.getConnection;
-  const dbService = new DatabaseService();
-
-  setInterval(async () => {
-    const parcel = {
-      id: Math.floor(Math.random() * 1000000),
-      parcelNumber: Math.floor(Math.random() * 1000000),
-    };
-
-    const databaseService = new DatabaseService();
-    const connection = await databaseService.getConnection();
-    const parcelService = new ParcelService();
-    const createdParcel = await parcelService.create(parcel);
-    nats.publish("parcel-event", JSONCodec().encode(createdParcel));
-    console.log("Parcel sent to NATS", parcel);
-  }, 5000);
-
+  console.log("start app");
+  await startCronJob();
   return app;
 };

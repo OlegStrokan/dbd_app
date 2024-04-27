@@ -1,17 +1,12 @@
-import { createIntegrationApiInterface } from "./app";
+import { createApp } from "./app";
 
-const serverOptions = { logger: true };
-
-const startServer = async () => {
-  const app = await createIntegrationApiInterface(serverOptions);
-
-  app.listen(3000, (err, address) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.log(`Server listening at ${address}`);
-  });
+const start = async () => {
+  const app = await createApp({ logger: true });
+  try {
+    await app.listen(3002);
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
 };
-
-startServer();
+start();

@@ -1,5 +1,5 @@
 import { getConnectionManager, Connection } from "typeorm";
-import { ParcelEvent } from "./entities/parcel-event";
+import { ParcelEvent } from "./entity/parcel-event";
 
 export class DatabaseService {
   private connection: Promise<Connection>;
