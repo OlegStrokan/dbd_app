@@ -22,18 +22,10 @@ import { AuthService } from "./core/services/authorization";
 import { AuthConfig } from "./infrastructure/common/config/auth.config";
 import { ParcelDeliveryResolver } from "./interfaces/parcel-delivery";
 import { ClientsModule, Transport } from "@nestjs/microservices";
+import { NatsService } from "./core/services/nats";
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: "NATS_SERVICE",
-        transport: Transport.NATS,
-        options: {
-          servers: ["nats://localhost:4222"],
-        },
-      },
-    ]),
     GraphQLModule.forRoot<ApolloFederationDriverConfig>({
       driver: ApolloFederationDriver,
       autoSchemaFile: {
@@ -67,6 +59,7 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
     GetParcelDeliveryUseCase,
     ParcelDeliveryResolver,
     ParcelImportService,
+    NatsService,
     ActionLoggerService,
     RedisService,
     AuthService,

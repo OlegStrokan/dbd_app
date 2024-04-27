@@ -1,10 +1,8 @@
-
-
 export interface IParcelEvent {
-    guid: string;
-    parcelNumber: string;
+  guid: string;
+  parcelNumber: string;
 }
 
 export interface IParcelEventRead extends IParcelEvent {
-    seq: string
+  seq: string;
 }

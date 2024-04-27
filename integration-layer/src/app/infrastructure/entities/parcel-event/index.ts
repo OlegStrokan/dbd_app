@@ -1,22 +1,17 @@
-import {Column, Generated, PrimaryColumn} from "typeorm";
+// parcel.ts
+import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn } from "typeorm";
 
-export abstract class ParcelEventEntity {
-    @Column({ type: "int", generated: true })
-    @PrimaryColumn()
-    @Generated()
-    id: number;
+@Entity("PARCEL_EVENT")
+export class ParcelEvent {
+  @PrimaryColumn({ type: "varchar" })
+  id: string;
 
+  @Column({ type: "varchar" })
+  parcelNumber: string;
 
-    @Column({ type: 'nvarchar', length: 255 })
-    parcelNumber: string
+  @Column({ type: "varchar" })
+  createdAt: string;
 
-    @Column({ type: 'datetime', nullable: false })
-    createdAt: Date
-
-    @Column({ type: 'datetime', nullable: false })
-    updatedAt: Date
-
-    @Column({ type: "nvarchar", length: 100, nullable: true })
-    note: string | null
-
+  @Column({ type: "varchar" })
+  updatedAt: string;
 }

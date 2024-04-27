@@ -1,44 +1,62 @@
 import Fastify, { FastifyServerOptions } from "fastify";
-import { JSONCodec } from "nats";
-import NatsService from "./app/core/services/nats";
-import { createIntegrationApiInterface } from "./app/interface/api";
+import {
+  parcelEventResolver,
+  AvailableSchemas,
+} from "@common/schema-registry/src/index";
+import * as cron from "node-cron";
 
-const validateMessage = (message: any) => {
-  return message.parcelNumber % 2 === 0;
-};
+import { MoreThan } from "typeorm";
+import NatsService from "./app/nats";
+import { ParcelEvent } from "./app/infrastructure/entities/parcel-event";
+import { DatabaseService } from "./app/infrastructure/database.config";
+import { create } from "domain";
 
-const createResponse = (message: any) => {
-  return { status: "success", message };
-};
+let lastProcessedAt = null;
 
-const startServer = async () => {
-  const serverOptions = { logger: true };
-  const app = await createIntegrationApiInterface(serverOptions);
+export const startCronJob = async () => {
+  const databaseService = new DatabaseService();
+  const connection = await databaseService.getConnection();
+  const parcelEventRepository = connection.getRepository(ParcelEvent);
 
   const natsService = new NatsService();
   await natsService.connect("nats://localhost:4222", "parcel-event");
+  const nats = await natsService.getConnection;
 
-  const nc = natsService.getConnection;
-
-  const sub = nc.subscribe("parcel-event");
-  for await (const m of sub) {
-    const message = JSONCodec().decode(m.data);
-    console.log(`Received a message: ${m.subject} ${m.data}`);
-    const isValid = validateMessage(message);
-    if (isValid) {
-      console.log("Message is valid", message);
-      const responseMessage = createResponse(message);
-      nc.publish("fido-parcel", JSONCodec().encode(responseMessage));
+  cron.schedule("*/2 * * * * *", async () => {
+    let parcelEvents;
+    console.log(lastProcessedAt, "lastProcessedAt");
+    if (lastProcessedAt === null) {
+      parcelEvents = await parcelEventRepository.find({
+        order: { createdAt: "ASC" },
+        take: 1,
+      });
+    } else {
+      parcelEvents = await parcelEventRepository.find({
+        where: { createdAt: MoreThan(lastProcessedAt) },
+        order: { createdAt: "ASC" },
+      });
     }
-  }
-
-  app.listen(3000, (err, address) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
+    for (const parcelEvent of parcelEvents) {
+      console.log(parcelEvent, "parcelEvent");
+      try {
+        const { schema } = parcelEventResolver("v1");
+        const encodedParcel = schema.toBuffer(parcelEvent);
+        nats.publish("parcel-event", encodedParcel);
+      } catch (error) {
+        console.error("Error encoding parcel event:", error);
+      }
+      lastProcessedAt = parcelEvent.createdAt;
     }
-    console.log(`Server listening at ${address}`);
+
+    console.log("Parcel events published");
   });
 };
 
-startServer();
+export const createApp = async (serverOptions: FastifyServerOptions) => {
+  const app = Fastify(serverOptions);
+  console.log("start app");
+  await startCronJob();
+  return app;
+};
+
+createApp({ logger: true });

@@ -1,4 +1,6 @@
 /fido/dist/
 /fido/node_modules/
+common/schema-registry/node_modules
+exchange/node_modules
 integration-layer/node_modules
 exchange/node_modules

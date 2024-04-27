@@ -1,8 +1,9 @@
-import { connect, NatsConnection, Subscription } from "nats";
+import { connect, NatsConnection, Subscription, JSONCodec } from "nats";
 
 class NatsService {
   private connection: NatsConnection | null = null;
   private subscription: Subscription | null = null;
+  private jc = JSONCodec();
 
   constructor() {}
 

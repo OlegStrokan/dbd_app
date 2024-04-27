@@ -27,8 +27,8 @@ services:
       - pgdata_parcel_delivery_test_db:/var/lib/postgresql/data
     restart: always
 
-  exchange_db:
-    container_name: exchange_db
+  exchange:
+    container_name: exchange
     image: postgres:13
     environment:
       POSTGRES_USER: stroka01
