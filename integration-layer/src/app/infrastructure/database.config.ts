@@ -1,31 +1,12 @@
-import { getConnectionManager, Connection } from "typeorm";
-import { ParcelEvent } from "./entities/parcel-event";
+import { DataSource } from "typeorm";
 
-export class DatabaseService {
-  private connection: Promise<Connection>;
-
-  constructor() {
-    const connectionManager = getConnectionManager();
-    if (connectionManager.has("default")) {
-      this.connection = Promise.resolve(connectionManager.get("default"));
-    } else {
-      this.connection = connectionManager
-        .create({
-          name: "default",
-          type: "postgres",
-          host: "localhost",
-          port: 8434,
-          username: "stroka01",
-          password: "user",
-          database: "exchange_db",
-          entities: [ParcelEvent],
-          synchronize: false,
-        })
-        .connect();
-    }
-  }
-
-  getConnection() {
-    return this.connection;
-  }
-}
+export const AppDataSource = new DataSource({
+  name: "default",
+  type: "postgres",
+  host: "localhost",
+  port: 8434,
+  username: "stroka01",
+  password: "user",
+  database: "exchange_db",
+  entities: ["src/infrastructure/entity/**/index.ts"],
+});

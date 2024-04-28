@@ -14,4 +14,7 @@ export class ParcelEvent {
 
   @Column({ type: "varchar" })
   updatedAt: string;
+
+  @Column({ type: "float" })
+  weight: number;
 }

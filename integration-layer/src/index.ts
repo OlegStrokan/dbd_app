@@ -1,59 +1,65 @@
 import Fastify, { FastifyServerOptions } from "fastify";
-import {
-  parcelEventResolver,
-  AvailableSchemas,
-} from "@common/schema-registry/src/index";
+import { parcelEventResolver } from "@common/schema-registry/src/index";
 import * as cron from "node-cron";
-
-import { MoreThan } from "typeorm";
 import NatsService from "./app/nats";
 import { ParcelEvent } from "./app/infrastructure/entities/parcel-event";
-import { DatabaseService } from "./app/infrastructure/database.config";
-import { create } from "domain";
+import { AppDataSource } from "./app/infrastructure/database.config";
 
-let lastProcessedAt = null;
+const schemaResolvers = {
+  v1: parcelEventResolver("v1"),
+  v2: parcelEventResolver("v2"),
+};
 
 export const startCronJob = async () => {
-  const databaseService = new DatabaseService();
-  const connection = await databaseService.getConnection();
-  const parcelEventRepository = connection.getRepository(ParcelEvent);
-
   const natsService = new NatsService();
   await natsService.connect("nats://localhost:4222", "parcel-event");
   const nats = await natsService.getConnection;
 
   cron.schedule("*/2 * * * * *", async () => {
-    let parcelEvents;
-    console.log(lastProcessedAt, "lastProcessedAt");
-    if (lastProcessedAt === null) {
-      parcelEvents = await parcelEventRepository.find({
-        order: { createdAt: "ASC" },
-        take: 1,
-      });
-    } else {
-      parcelEvents = await parcelEventRepository.find({
-        where: { createdAt: MoreThan(lastProcessedAt) },
-        order: { createdAt: "ASC" },
-      });
-    }
-    for (const parcelEvent of parcelEvents) {
-      console.log(parcelEvent, "parcelEvent");
-      try {
-        const { schema } = parcelEventResolver("v1");
-        const encodedParcel = schema.toBuffer(parcelEvent);
-        nats.publish("parcel-event", encodedParcel);
-      } catch (error) {
-        console.error("Error encoding parcel event:", error);
-      }
-      lastProcessedAt = parcelEvent.createdAt;
-    }
+    const parcelEvents = await AppDataSource.manager.find(ParcelEvent, {
+      order: { createdAt: "DESC" },
+    });
 
-    console.log("Parcel events published");
+    const encodeParcelEvent = (parcelEvent, version) => {
+      console.log(version, "version");
+      const schemaResolver = schemaResolvers[version];
+      if (!schemaResolver) return null;
+
+      try {
+        const { schema } = schemaResolver;
+        return schema.toBuffer(parcelEvent);
+      } catch (error) {
+        return null;
+      }
+    };
+
+    for (const parcelEvent of parcelEvents) {
+      const encodedParcel = Object.keys(schemaResolvers)
+        .map((version) => ({
+          version,
+          data: encodeParcelEvent(parcelEvent, version),
+        }))
+        .find((result) => result.data !== null);
+
+      if (encodedParcel) {
+        console.log("Publishing parcel event:", encodedParcel.version);
+        nats.publish(
+          `parcel-event.${encodedParcel.version}`,
+          encodedParcel.data
+        );
+      } else {
+        console.error(
+          "Unsupported schema version for parcel event:",
+          parcelEvent
+        );
+      }
+    }
   });
 };
 
 export const createApp = async (serverOptions: FastifyServerOptions) => {
   const app = Fastify(serverOptions);
+  await AppDataSource.initialize().catch((error) => console.log(error));
   console.log("start app");
   await startCronJob();
   return app;
