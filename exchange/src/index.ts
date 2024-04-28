@@ -1,4 +1,5 @@
 import { createApp } from "./app";
+import "reflect-metadata";
 
 const start = async () => {
   const app = await createApp({ logger: true });

@@ -13,4 +13,7 @@ export class ParcelEvent {
 
   @Column()
   updatedAt: string;
+
+  @Column({ type: "float" })
+  weight: number;
 }
