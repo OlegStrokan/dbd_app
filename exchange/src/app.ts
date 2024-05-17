@@ -1,14 +1,13 @@
 import Fastify, { FastifyServerOptions } from "fastify";
-import { Worker, spawn } from "threads";
+import { initDb } from "./infrastructure/database.config";
+import { ParcelEventWorker } from "./workers/parcel-event/worker";
 
 export const createApp = async (serverOptions: FastifyServerOptions) => {
   const app = Fastify(serverOptions);
   console.log("start app");
+  await initDb();
 
-  const parcelEventWorker = await spawn(
-    new Worker("./workers/parcel-event/worker.ts")
-  );
-  await parcelEventWorker();
-
+  const parcelEventWorker = new ParcelEventWorker();
+  await parcelEventWorker.start();
   return app;
 };

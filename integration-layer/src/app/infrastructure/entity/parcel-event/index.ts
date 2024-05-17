@@ -1,8 +1,10 @@
-// parcel.ts
-import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn } from "typeorm";
 
 @Entity("PARCEL_EVENT")
 export class ParcelEvent {
+  constructor(init?: Partial<ParcelEvent>) {
+    Object.assign(this, init);
+  }
   @PrimaryColumn({ type: "varchar" })
   id: string;
 

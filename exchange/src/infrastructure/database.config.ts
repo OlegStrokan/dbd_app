@@ -14,5 +14,5 @@ export const AppDataSource = new DataSource({
 });
 
 export const initDb = async () => {
-  await AppDataSource.initialize().catch((error) => console.log(error));
+  return await AppDataSource.initialize().catch((error) => console.log(error));
 };
