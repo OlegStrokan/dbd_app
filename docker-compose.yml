@@ -1,3 +1,4 @@
+# TODO use .env file for environment variables
 version: "3.8"
 
 services:
