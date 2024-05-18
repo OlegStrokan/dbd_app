@@ -1,12 +1,22 @@
 import { getRandomParcelEventData } from "../../infrastructure/entity/parcel-event/mocks/getRandom";
 import { AppDataSource } from "../../infrastructure/database.config";
+import { createWorker } from "../create";
+import { logger } from "../../services/logger/index";
 
 export const createParcelEvent = async () => {
   const parcelEvent = getRandomParcelEventData();
   try {
     await AppDataSource.manager.save(parcelEvent);
   } catch (error) {
-    console.log("Error saving parcel event", error);
+    logger.error({ error }, "Error saving parcel event");
   }
-  console.log("Parcel event created", parcelEvent);
+  logger.info({ parcelEventId: parcelEvent.id }, "Parcel event created");
+};
+
+export const parcelEventWorker = {
+  name: "parcelEventWorker",
+  worker: createWorker({
+    function: createParcelEvent,
+    schedule: "* * * * * *",
+  }),
 };

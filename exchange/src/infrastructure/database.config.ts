@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
 import { ParcelEvent } from "./entity/parcel-event";
+import { logger } from "../services/logger";
 
 export const AppDataSource = new DataSource({
   name: "default",
@@ -14,5 +15,7 @@ export const AppDataSource = new DataSource({
 });
 
 export const initDb = async () => {
-  return await AppDataSource.initialize().catch((error) => console.log(error));
+  return await AppDataSource.initialize().catch((error) =>
+    logger.error({ error }, "Error initializing database")
+  );
 };
