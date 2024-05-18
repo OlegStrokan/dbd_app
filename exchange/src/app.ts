@@ -1,13 +1,17 @@
 import Fastify, { FastifyServerOptions } from "fastify";
 import { initDb } from "./infrastructure/database.config";
-import { ParcelEventWorker } from "./workers/parcel-event/worker";
+import { registerWorkers } from "./workers";
+import { logger } from "./services/logger";
 
 export const createApp = async (serverOptions: FastifyServerOptions) => {
+  serverOptions.logger = {
+    level: "info",
+  };
   const app = Fastify(serverOptions);
-  console.log("start app");
+
+  logger.info("start app");
   await initDb();
 
-  const parcelEventWorker = new ParcelEventWorker();
-  await parcelEventWorker.start();
+  await registerWorkers();
   return app;
 };
