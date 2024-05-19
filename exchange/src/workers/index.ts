@@ -1,17 +1,12 @@
 import { logger } from "../services/logger";
 import { createWorker } from "./create";
-import { createParcelEvent } from "./parcel-event/worker";
+import { createParcelEvent, parcelEventWorker } from "./parcel-event/worker";
 
-const workers = [
-  createWorker({
-    function: createParcelEvent,
-    schedule: "* * * * * *",
-  }),
-];
+const workers = [parcelEventWorker];
 
 export const registerWorkers = async () => {
-  workers.map((worker) => {
-    logger.info("Starting worker");
+  workers.map(({ worker, name }) => {
+    logger.info({ workerName: name }, "Starting worker");
     worker.start();
   });
 };
