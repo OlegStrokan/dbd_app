@@ -10,13 +10,13 @@ const configService = new ConfigService();
 export default new DataSource({
   type: "postgres",
   host: "localhost",
-  port: configService.get("DB_PORT"),
-  username: configService.get("DB_USER"),
-  password: configService.get("DB_PASSWORD"),
-  database: configService.get("DB_NAME"),
+  port: configService.get("DB_PORT") || 5433,
+  username: configService.get("DB_USER") || "stroka01",
+  password: configService.get("DB_PASSWORD") || "user",
+  database: configService.get("DB_NAME") || "dev_db",
   entities: [ParcelDeliveryEntity],
   synchronize: configService.get("nodenv") === "development",
   logging: configService.get("nodenv") === "development",
-  migrations: ["src/infrastructure/common/db/*{.ts,.js}"],
+  migrations: ["src/infrastructure/common/db/migrations/*{.ts,.js}"],
   migrationsTableName: "migrations",
 });
