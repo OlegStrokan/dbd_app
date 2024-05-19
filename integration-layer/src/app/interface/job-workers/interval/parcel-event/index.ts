@@ -4,8 +4,9 @@ import * as cron from "node-cron";
 import { schemaResolvers } from "../../../resolvers/parcel-event";
 import { NatsService } from "../../../../infrastructure/nats/index";
 import { NatsConnection } from "nats";
-
-export class ParcelEventWorker {
+import { IWorker } from "../../interface";
+import { logger } from "../../../../core/services/logger/index";
+export class ParcelEventWorker implements IWorker {
   private connection: NatsConnection | null = null;
 
   constructor() {}
@@ -16,7 +17,7 @@ export class ParcelEventWorker {
     return worker;
   }
 
-  private async init(connection: NatsConnection) {
+  async init(connection: NatsConnection) {
     this.connection = connection;
   }
 
@@ -29,7 +30,6 @@ export class ParcelEventWorker {
           });
 
           const encodeParcelEvent = (parcelEvent, version) => {
-            console.log(version, "version");
             const schemaResolver = schemaResolvers[version];
             if (!schemaResolver) return null;
 
@@ -50,25 +50,28 @@ export class ParcelEventWorker {
               .find((result) => result.data !== null);
 
             if (encodedParcel) {
-              console.log(
-                "Publishing parcel event:",
-                encodedParcel.version,
-                encodedParcel.data
+              logger.info(
+                {
+                  version: encodedParcel.version,
+                },
+                "Publishing parcel event:"
               );
               await this.connection.publish("parcel-event", encodedParcel.data);
             } else {
-              console.error(
-                "Unsupported schema version for parcel event:",
-                parcelEvent
+              logger.error(
+                {
+                  parcelEvent,
+                },
+                "Unsupported schema version for parcel event:"
               );
             }
           }
         } catch (error) {
-          console.error("Error processing parcel events", error);
+          logger.error({ error }, "Error processing parcel events");
         }
       });
     } catch (error) {
-      console.error("Error starting cron job", error);
+      logger.error({ error }, "Error starting cron job");
     }
   }
 }

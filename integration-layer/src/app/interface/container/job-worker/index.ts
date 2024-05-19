@@ -1,14 +1,24 @@
 import { NatsService } from "../../../infrastructure/nats/index";
+import { IWorker } from "../../job-workers/interface";
 import { ParcelEventWorker } from "../../job-workers/interval/parcel-event";
+import { registerWorkers } from "./register";
 
-export const createJobWorkerContainer = async (): Promise<{
-  parcelEventWorker: ParcelEventWorker;
-}> => {
-  const nats = new NatsService();
-  await nats.connect("nats://localhost:4222");
-  const parcelEventWorker = await ParcelEventWorker.create(nats);
+interface IRegisteredWorker {
+  worker: IWorker;
+  name: string;
+}
 
-  return {
-    parcelEventWorker,
+export interface IJobWorkerContainer {
+  workers: IRegisteredWorker[];
+}
+
+export const createJobWorkerContainer =
+  async (): Promise<IJobWorkerContainer> => {
+    const nats = new NatsService();
+    await nats.connect("nats://localhost:4222");
+
+    const workers = await registerWorkers(nats);
+    return {
+      workers: workers,
+    };
   };
-};

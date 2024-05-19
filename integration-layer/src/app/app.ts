@@ -9,7 +9,11 @@ import {
   Http2ServerResponse,
 } from "http2";
 import { createApiContainer } from "./interface/container/api";
-import { createJobWorkerContainer } from "./interface/container/job-worker";
+import {
+  IJobWorkerContainer,
+  createJobWorkerContainer,
+} from "./interface/container/job-worker";
+import { logger } from "./core/services/logger";
 
 export class IntegrationLayerApp {
   private server: FastifyInstance<
@@ -20,7 +24,7 @@ export class IntegrationLayerApp {
     FastifyTypeProviderDefault
   > | null = null;
   private container = null;
-  private jobWorkerContainer = null;
+  private jobWorkerContainer: IJobWorkerContainer = null;
   constructor() {}
 
   start = async () => {
@@ -28,25 +32,24 @@ export class IntegrationLayerApp {
       this.container = await createApiContainer();
       this.server = Fastify(this.container);
       this.jobWorkerContainer = await createJobWorkerContainer();
-      this.jobWorkerContainer.parcelEventWorker
-        .startCronJob()
-        .catch((error) => {
-          console.error("Error starting cron job:", error);
+      this.jobWorkerContainer.workers.forEach(({ worker, name }) => {
+        worker.startCronJob().catch((error) => {
+          logger.error({ error }, "Error starting cron job:");
         });
-      console.log("start app");
+      });
+      logger.info("start app");
     } catch (error) {
-      console.error("Error starting app", error);
+      console.log(error);
+      logger.error({ error }, "Error starting app");
     }
   };
 
   stop() {
     try {
       this.server.close();
+      logger.info("stop app");
     } catch (error) {
-      console.error("SERVER: Error stopping app", error);
+      logger.error({ error }, "SERVER: Error stopping app");
     }
   }
 }
-
-// this.jobWorkerContainer = await createJobWorkerContainer();
-// this.jobWorkerContainer.parcelEventWorker.start();
