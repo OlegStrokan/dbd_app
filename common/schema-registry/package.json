@@ -1,6 +1,6 @@
 {
-  "name": "common-schema-registry",
-  "version": "1.0.2",
+  "name": "@stroka01/schema-registry",
+  "version": "1.0.3",
   "main": "/dist/index.js",
   "files": [
     "dist"
