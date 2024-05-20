@@ -1,7 +1,10 @@
 {
-  "name": "@common/schema-registry",
-  "version": "1.0.0",
+  "name": "common-schema-registry",
+  "version": "1.0.2",
   "main": "/dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "tsnd --respawn --transpile-only --exit-child src/index.ts",
     "build": "tsc"
