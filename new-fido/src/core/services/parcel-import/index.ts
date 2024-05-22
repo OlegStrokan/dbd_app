@@ -1,10 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { Cron } from "@nestjs/schedule";
+import { Cron, CronExpression } from "@nestjs/schedule";
 import { IParcelDeliveryRepository } from "../../repositories/parcel-delivery";
 import { IParcelImportService } from "./interfaces";
 import { CreateParcelDeliveryInput } from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
 import { ParcelDeliveryRepository } from "../../../infrastructure/repositories/parcel-delivery";
-import * as fs from "fs";
 import { ParcelDeliveryEntity } from "../../../infrastructure/entities/parcel-delivery";
 import { ImportManagerSaveError } from "./error";
 import { ActionLoggerService } from "../action-logger";
@@ -14,6 +13,8 @@ import {
 } from "../action-logger/interfaces";
 import { ClientProxy } from "@nestjs/microservices";
 import { NatsService } from "../nats";
+import { Msg } from "nats";
+import { schemaResolvers } from "src/interfaces/parcel-delivery/avro-schema";
 
 interface ParsedJson {
   parcelDelivery: ParcelDeliveryEntity[];
@@ -21,6 +22,9 @@ interface ParsedJson {
 
 @Injectable()
 export class ParcelImportService implements IParcelImportService {
+  private messageBuffer: CreateParcelDeliveryInput[] = [];
+  private readonly batchSize = 10;
+
   constructor(
     @Inject(ParcelDeliveryRepository)
     private readonly parcelRepository: IParcelDeliveryRepository,
@@ -28,51 +32,56 @@ export class ParcelImportService implements IParcelImportService {
     private readonly actionLogger: IActionLoggerService,
     @Inject(NatsService)
     private readonly natsService: NatsService
-  ) {}
+  ) {
+    this.natsService.connect();
+  }
 
-  @Cron("0 0 * * *", { name: "ParcelImportServiceCronJob" })
-  async fetchDataAndSaveToDb() {
-    await this.actionLogger.attemptAction(
-      {
-        name: KnownActionNames.ImportManagerSaveToDb,
-      },
-      async () => {
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  consumeNatsMessages() {
+    const nats = this.natsService.getConnection;
+    const subject = "parcel-event";
+    console.log("init");
+    nats.subscribe(subject, {
+      callback: async (err: any, bufferMessage: Msg) => {
+        if (err) {
+          console.error("Error consuming NATS message:", err);
+          return;
+        }
+
         try {
-          const rawData = fs.readFileSync("./parcel-events.json", "utf8");
-          const data: ParsedJson = JSON.parse(rawData);
+          const decodedParcel = Object.keys(schemaResolvers)
+            .map((version) => ({
+              version,
+              data: schemaResolvers[version].schema.fromBuffer(
+                bufferMessage.data
+              ),
+            }))
+            .find((result) => result.data !== null);
 
-          await this.saveDataToDatabase(data.parcelDelivery);
-        } catch (error) {}
-      }
-    );
+          if (decodedParcel) {
+            const message = decodedParcel.data as CreateParcelDeliveryInput;
+            this.messageBuffer.push(message);
+            console.log(bufferMessage.data);
+            if (this.messageBuffer.length >= this.batchSize) {
+              console.log(this.messageBuffer.length);
+              await this.saveDataToDatabase(this.messageBuffer);
+              this.messageBuffer = [];
+            }
+          }
+        } catch (error) {
+          console.error("Error decoding buffer:", error);
+        }
+      },
+    });
   }
 
   async saveDataToDatabase(data: CreateParcelDeliveryInput[]) {
     try {
       await this.parcelRepository.upsertMany(data);
     } catch (error) {
-      throw new ImportManagerSaveError("Error saving data to db", {
+      throw new ImportManagerSaveError("error saving data to database", {
         ...data,
       });
-    }
-  }
-
-  async consumeNatsMessages() {
-    try {
-      await this.natsService.connect("nats://localhost:4222", "parcel-event");
-
-      const nats = this.natsService.getConnection;
-
-      const sub = nats.subscribe("parcel-event");
-
-      for await (const m of sub) {
-        const message = Buffer.from(m.data);
-        console.log(
-          `Received a message: ${m.subject} ${m.data}, ${message.toString()}`
-        );
-      }
-    } catch (error) {
-      console.error("Error consuming NATS messages:", error);
     }
   }
 }

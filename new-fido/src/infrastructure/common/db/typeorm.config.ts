@@ -14,7 +14,7 @@ export default new DataSource({
   username: configService.get("DB_USER") || "stroka01",
   password: configService.get("DB_PASSWORD") || "user",
   database: configService.get("DB_NAME") || "dev_db",
-  entities: [ParcelDeliveryEntity],
+  entities: ["src/infrastructure/entities/*/*{.ts,.js}"],
   synchronize: configService.get("nodenv") === "development",
   logging: configService.get("nodenv") === "development",
   migrations: ["src/infrastructure/common/db/migrations/*{.ts,.js}"],
