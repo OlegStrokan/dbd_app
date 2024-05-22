@@ -56,7 +56,11 @@ export class ParcelEventWorker implements IWorker {
                 },
                 "Publishing parcel event:"
               );
-              await this.connection.publish("parcel-event", encodedParcel.data);
+              await this.connection.publish(
+                "parcel-event",
+                encodedParcel.version,
+                encodedParcel.data
+              );
             } else {
               logger.error(
                 {

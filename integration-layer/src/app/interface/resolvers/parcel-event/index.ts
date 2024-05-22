@@ -1,4 +1,4 @@
-import { parcelEventResolver } from "@common/schema-registry/src";
+import { parcelEventResolver } from "@stroka01/schema-registry/dist";
 
 export const schemaResolvers = {
   v1: parcelEventResolver("v1"),
