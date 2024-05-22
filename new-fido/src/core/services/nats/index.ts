@@ -6,9 +6,8 @@ export class NatsService {
 
   constructor() {}
 
-  async connect(url: string, subject: string): Promise<void> {
-    this.connection = await connect({ servers: url });
-    this.subscription = this.connection.subscribe(subject);
+  async connect(): Promise<void> {
+    this.connection = await connect({ servers: "nats://localhost:4222" });
   }
 
   async disconnect(): Promise<void> {
