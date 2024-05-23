@@ -27,10 +27,11 @@ export class ParcelEventWorker implements IWorker {
         try {
           const parcelEvents = await AppDataSource.manager.find(ParcelEvent, {
             order: { createdAt: "DESC" },
+            take: 10,
           });
 
-          const encodeParcelEvent = (parcelEvent, version) => {
-            const schemaResolver = schemaResolvers[version];
+          const encodeParcelEvent = (parcelEvent) => {
+            const schemaResolver = schemaResolvers["v1"];
             if (!schemaResolver) return null;
 
             try {
@@ -42,12 +43,7 @@ export class ParcelEventWorker implements IWorker {
           };
 
           for (const parcelEvent of parcelEvents) {
-            const encodedParcel = Object.keys(schemaResolvers)
-              .map((version) => ({
-                version,
-                data: encodeParcelEvent(parcelEvent, version),
-              }))
-              .find((result) => result.data !== null);
+            const encodedParcel = encodeParcelEvent(parcelEvent);
 
             if (encodedParcel) {
               logger.info(
@@ -56,11 +52,7 @@ export class ParcelEventWorker implements IWorker {
                 },
                 "Publishing parcel event:"
               );
-              await this.connection.publish(
-                "parcel-event",
-                encodedParcel.version,
-                encodedParcel.data
-              );
+              await this.connection.publish("parcel-event", encodedParcel);
             } else {
               logger.error(
                 {
