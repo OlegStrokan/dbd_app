@@ -1,14 +1,14 @@
-import { createDbTestingModule } from '../../../../infrastructure/common/db/create-db-module';
-import { TestingModule } from '@nestjs/testing';
-import { IParcelDeliveryRepository } from '../../../repositories/parcel-delivery';
-import { ICreateParcelDeliveryUseCase } from '../interfaces';
-import { CreateParcelDeliveryUseCase } from '../index';
-import { ParcelDeliveryRepository } from '../../../../infrastructure/repositories/parcel-delivery';
-import { parcelDeliveryMocks } from '../../../repositories/parcel-delivery/mocks';
-import { clearRepos } from '../../../../infrastructure/common/config/clear.config';
-import { generateUuid } from '../../../../libs/generateUuid/generateUuid';
+import { createDbTestingModule } from "../../../../infrastructure/common/db/create-db-module";
+import { TestingModule } from "@nestjs/testing";
+import { IParcelDeliveryRepository } from "../../../repositories/parcel-delivery";
+import { ICreateParcelDeliveryUseCase } from "../interfaces";
+import { CreateParcelDeliveryUseCase } from "../index";
+import { ParcelDeliveryRepository } from "../../../../infrastructure/repositories/parcel-delivery";
+import { parcelDeliveryMocks } from "../../../repositories/parcel-delivery/mocks";
+import { clearRepos } from "../../../../infrastructure/common/config/clear.config";
+import { generateUuid } from "../../../../libs/generateUuid/generateUuid";
 
-describe('ParcelDeliveryService', () => {
+describe("ParcelDeliveryService", () => {
   let parcelDeliveryService: ICreateParcelDeliveryUseCase;
   let parcelDeliveryRepository: IParcelDeliveryRepository;
   let module: TestingModule;
@@ -18,10 +18,10 @@ describe('ParcelDeliveryService', () => {
     module = await createDbTestingModule();
 
     parcelDeliveryService = module.get<ICreateParcelDeliveryUseCase>(
-      CreateParcelDeliveryUseCase,
+      CreateParcelDeliveryUseCase
     );
     parcelDeliveryRepository = module.get<IParcelDeliveryRepository>(
-      ParcelDeliveryRepository,
+      ParcelDeliveryRepository
     );
 
     parcelId = generateUuid();
@@ -37,26 +37,26 @@ describe('ParcelDeliveryService', () => {
 
   const mockParcel = parcelDeliveryMocks.getOne({
     id: parcelId,
-    name: 'USB-C kabel 2m',
-    parcelNumber: '200392903',
+    // name: 'USB-C kabel 2m',
+    parcelNumber: "200392903",
   });
 
-  it('should create a parcel delivery and verify its existence', async () => {
+  it("should create a parcel delivery and verify its existence", async () => {
     const createdParcel = await parcelDeliveryService.create(mockParcel);
 
     expect(createdParcel).toBeDefined();
 
     const retrievedParcelDelivery = await parcelDeliveryRepository.findOneById(
-      createdParcel.id,
+      createdParcel.id
     );
     expect(retrievedParcelDelivery).toBeDefined();
     expect(retrievedParcelDelivery.id).toEqual(createdParcel.id);
   });
 
-  it('should throw error when parcel already exist ', async () => {
+  it("should throw error when parcel already exist ", async () => {
     await parcelDeliveryService.create(mockParcel);
     await expect(
-      async () => await parcelDeliveryService.create(mockParcel),
+      async () => await parcelDeliveryService.create(mockParcel)
     ).rejects.toThrowError(Error);
   });
 });

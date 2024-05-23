@@ -41,6 +41,20 @@ export class ParcelImportService implements IParcelImportService {
     const nats = this.natsService.getConnection;
     const subject = "parcel-event";
     console.log("init");
+
+    const decodeParcelEvent = (buffer) => {
+      const schemaResolver = schemaResolvers["v1"];
+      if (!schemaResolver) return null;
+
+      try {
+        const { schema } = schemaResolver;
+        return schema.fromBuffer(buffer);
+      } catch (error) {
+        console.log(error, "Error decoding buffer");
+        return null;
+      }
+    };
+
     nats.subscribe(subject, {
       callback: async (err: any, bufferMessage: Msg) => {
         if (err) {
@@ -49,19 +63,13 @@ export class ParcelImportService implements IParcelImportService {
         }
 
         try {
-          const decodedParcel = Object.keys(schemaResolvers)
-            .map((version) => ({
-              version,
-              data: schemaResolvers[version].schema.fromBuffer(
-                bufferMessage.data
-              ),
-            }))
-            .find((result) => result.data !== null);
+          const decodedParcel = decodeParcelEvent(bufferMessage.data);
 
           if (decodedParcel) {
-            const message = decodedParcel.data as CreateParcelDeliveryInput;
+            const message = decodedParcel as CreateParcelDeliveryInput;
+            console.log(message, "message");
             this.messageBuffer.push(message);
-            console.log(bufferMessage.data);
+
             if (this.messageBuffer.length >= this.batchSize) {
               console.log(this.messageBuffer.length);
               await this.saveDataToDatabase(this.messageBuffer);
@@ -80,7 +88,7 @@ export class ParcelImportService implements IParcelImportService {
       await this.parcelRepository.upsertMany(data);
     } catch (error) {
       throw new ImportManagerSaveError("error saving data to database", {
-        ...data,
+        error,
       });
     }
   }

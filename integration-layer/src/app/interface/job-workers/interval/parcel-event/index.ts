@@ -27,6 +27,7 @@ export class ParcelEventWorker implements IWorker {
         try {
           const parcelEvents = await AppDataSource.manager.find(ParcelEvent, {
             order: { createdAt: "DESC" },
+            // temporary shit
             take: 10,
           });
 
