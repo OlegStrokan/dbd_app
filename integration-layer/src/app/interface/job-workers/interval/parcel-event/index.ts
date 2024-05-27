@@ -6,8 +6,11 @@ import { NatsService } from "../../../../infrastructure/nats/index";
 import { NatsConnection } from "nats";
 import { IWorker } from "../../interface";
 import { logger } from "../../../../core/services/logger/index";
+import { MoreThan } from "typeorm";
+
 export class ParcelEventWorker implements IWorker {
   private connection: NatsConnection | null = null;
+  private lastSentAt: Date = new Date(0);
 
   constructor() {}
 
@@ -26,9 +29,8 @@ export class ParcelEventWorker implements IWorker {
       cron.schedule("* * * * * *", async () => {
         try {
           const parcelEvents = await AppDataSource.manager.find(ParcelEvent, {
+            where: { createdAt: MoreThan(this.lastSentAt.toISOString()) },
             order: { createdAt: "DESC" },
-            // temporary shit
-            take: 1,
           });
 
           const encodeParcelEvent = (parcelEvent) => {
@@ -54,6 +56,7 @@ export class ParcelEventWorker implements IWorker {
                 "Publishing parcel event:"
               );
               await this.connection.publish("parcel-event", encodedParcel);
+              this.lastSentAt = new Date(parcelEvent.createdAt);
             } else {
               logger.error(
                 {
