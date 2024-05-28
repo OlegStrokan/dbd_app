@@ -51,6 +51,7 @@ export class ParcelEventWorker implements IWorker {
             if (encodedParcel) {
               logger.info(
                 {
+                  parcelEvent: encodedParcel,
                   version: encodedParcel.version,
                 },
                 "Publishing parcel event:"
