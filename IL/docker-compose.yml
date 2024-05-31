@@ -15,15 +15,6 @@ services:
       - pgdata_parcel_delivery_dev_db:/var/lib/postgresql/data
     restart: always
 
-  app:
-    build:
-      context: .
-    ports:
-      - "9000:9000"
-    depends_on:
-      - exchange
-    restart: always
-
   parcel_delivery_test_db:
     container_name: parcel_delivery_test_db
     image: postgres:13
