@@ -4,16 +4,21 @@
   "main": "index.ts",
   "scripts": {
     "dev": "tsnd --respawn --transpile-only --exit-child src/index.ts",
-    "test": "tap --node-arg=--require=ts-node/register"
+    "test": "tap --node-arg=--require=ts-node/register",
+    "migration:run": "yarn typeorm migration:run -d ./src/app/infrastructure/database.config.ts",
+    "migration:generate": "yarn typeorm -d src/app/infrastructure/database.config.ts migration:generate ./src/app/infrastructure/migrations/migration/$npm_config_name",
+    "typeorm": "ts-node --require tsconfig-paths/register ./node_modules/typeorm/cli"
   },
   "license": "MIT",
   "dependencies": {
     "@stroka01/schema-registry": "^1.0.3",
     "avsc": "^5.7.7",
     "fastify": "^4.26.1",
+    "mongodb": "^6.7.0",
     "nats": "^2.21.0",
     "node-cron": "^3.0.3",
     "pg": "^8.11.5",
+    "tsconfig-paths": "^4.2.0",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
