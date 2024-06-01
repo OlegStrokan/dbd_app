@@ -13,6 +13,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "fastify": "^4.26.1",
     "node-cron": "^3.0.3",
     "reflect-metadata": "^0.2.2",

@@ -41,6 +41,19 @@ services:
       - exchange_db:/var/lib/postgresql/data
     restart: always
 
+  il_db:
+    container_name: il_db
+    image: postgres:13
+    environment:
+      POSTGRES_USER: stroka01
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: il_db
+    ports:
+      - "8435:5432"
+    volumes:
+      - il_db:/var/lib/postgresql/data
+    restart: always
+
   cache:
     image: redis:6.2-alpine
     restart: always
@@ -60,6 +73,7 @@ volumes:
   pgdata_parcel_delivery_dev_db: {}
   pgdata_parcel_delivery_test_db: {}
   exchange_db: {}
+  il_db: {}
   cache: {}
 
 networks:
