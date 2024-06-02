@@ -1,4 +1,5 @@
-import { AppDataSource } from "../../../../infrastructure/database.config";
+import { AppDataSource } from "../../../../infrastructure/exchange-database.config";
+import { ILDataSource } from "../../../../infrastructure/database.config";
 import { ParcelEvent } from "../../../../infrastructure/entity/parcel-event/index";
 import * as cron from "node-cron";
 import { schemaResolvers } from "../../../resolvers/parcel-event";
@@ -6,7 +7,8 @@ import { NatsService } from "../../../../infrastructure/nats/index";
 import { NatsConnection } from "nats";
 import { IWorker } from "../../interface";
 import { logger } from "../../../../core/services/logger/index";
-import { MoreThan } from "typeorm";
+import { MoreThan, MoreThanOrEqual } from "typeorm";
+import { Log } from "../../../../infrastructure/entity/log/index";
 
 export class ParcelEventWorker implements IWorker {
   private connection: NatsConnection | null = null;
@@ -17,6 +19,7 @@ export class ParcelEventWorker implements IWorker {
   static async create(nats: NatsService) {
     const worker = new ParcelEventWorker();
     await worker.init(nats.getConnection);
+    await worker.loadLastSentAt();
     return worker;
   }
 
@@ -24,12 +27,51 @@ export class ParcelEventWorker implements IWorker {
     this.connection = connection;
   }
 
+  async loadLastSentAt() {
+    try {
+      const log = await ILDataSource.manager.findOne(Log, {
+        where: { id: "uuid_is_overkill_here" },
+      });
+      if (log) {
+        this.lastSentAt = new Date(log.lastConsumedAt);
+      }
+    } catch (error) {
+      logger.error({ message: error.message }, "Error loading last sent at");
+    }
+  }
+
+  async saveLastSentAt(lastSentAt: Date) {
+    try {
+      const log = await ILDataSource.manager.findOne(Log, {
+        where: { id: "uuid_is_overkill_here" },
+      });
+
+      if (log) {
+        log.lastConsumedAt = lastSentAt.toISOString();
+        await ILDataSource.manager.update(Log, log.id, log);
+      } else {
+        const newLog = new Log({
+          id: "uuid_is_overkill_here",
+          lastConsumedAt: lastSentAt.toISOString(),
+        });
+        await ILDataSource.manager.save(newLog);
+      }
+      console.log(lastSentAt);
+      if (lastSentAt > this.lastSentAt) {
+        this.lastSentAt = lastSentAt;
+      }
+    } catch (error) {
+      logger.error({ error }, "Error saving last sent at");
+    }
+  }
   async startCronJob() {
     try {
       cron.schedule("* * * * * *", async () => {
         try {
           const parcelEvents = await AppDataSource.manager.find(ParcelEvent, {
-            where: { createdAt: MoreThan(this.lastSentAt.toISOString()) },
+            where: {
+              updatedAt: MoreThan(this.lastSentAt.toISOString()),
+            },
             order: { createdAt: "DESC" },
           });
 
@@ -51,13 +93,13 @@ export class ParcelEventWorker implements IWorker {
             if (encodedParcel) {
               logger.info(
                 {
-                  parcelEvent: encodedParcel,
                   version: encodedParcel.version,
                 },
                 "Publishing parcel event:"
               );
               await this.connection.publish("parcel-event", encodedParcel);
-              this.lastSentAt = new Date(parcelEvent.createdAt);
+              this.lastSentAt = new Date(parcelEvent.updatedAt);
+              await this.saveLastSentAt(this.lastSentAt);
             } else {
               logger.error(
                 {

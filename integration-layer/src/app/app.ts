@@ -39,7 +39,6 @@ export class IntegrationLayerApp {
       });
       logger.info("start app");
     } catch (error) {
-      console.log(error);
       logger.error({ error }, "Error starting app");
     }
   };

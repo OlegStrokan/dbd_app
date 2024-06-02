@@ -1,6 +1,5 @@
 import { logger } from "../services/logger";
-import { createWorker } from "./create";
-import { createParcelEvent, parcelEventWorker } from "./parcel-event/worker";
+import { parcelEventWorker } from "./parcel-event//worker";
 
 const workers = [parcelEventWorker];
 

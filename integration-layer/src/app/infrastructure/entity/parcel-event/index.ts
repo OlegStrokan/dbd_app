@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn } from "typeorm";
 
-@Entity("PARCEL_EVENT")
+@Entity("parcel_event")
 export class ParcelEvent {
   constructor(init?: Partial<ParcelEvent>) {
     Object.assign(this, init);

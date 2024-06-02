@@ -1,13 +1,14 @@
 import { DataSource } from "typeorm";
-import { ParcelEvent } from "./entity/parcel-event";
+import { Log } from "./entity/log";
 
-export const AppDataSource = new DataSource({
+export const ILDataSource = new DataSource({
   name: "default",
   type: "postgres",
   host: "localhost",
-  port: 8434,
+  port: 8435,
   username: "stroka01",
   password: "user",
-  database: "exchange_db",
-  entities: [ParcelEvent],
+  database: "il_db",
+  migrations: ["src/app/infrastructure/migrations/*.ts"],
+  entities: [Log],
 });
