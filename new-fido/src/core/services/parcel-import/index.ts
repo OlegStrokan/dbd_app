@@ -33,11 +33,14 @@ export class ParcelImportService implements IParcelImportService {
     @Inject(NatsService)
     private readonly natsService: NatsService
   ) {
-    this.natsService.connect();
+    this.init();
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
-  consumeNatsMessages() {
+  async init() {
+    await this.natsService.connect();
+    this.subscribeToNatsMessages();
+  }
+  subscribeToNatsMessages() {
     const nats = this.natsService.getConnection;
     const subject = "parcel-event";
     console.log("init");
@@ -66,8 +69,8 @@ export class ParcelImportService implements IParcelImportService {
           const decodedParcel = decodeParcelEvent(bufferMessage.data);
 
           if (decodedParcel) {
-            const message = decodedParcel as CreateParcelDeliveryInput;
-            console.log(message, "message");
+            const message = decodedParcel as any;
+            console.log(message.updatedAt, "message");
             this.messageBuffer.push(message);
 
             if (this.messageBuffer.length >= this.batchSize) {
@@ -83,12 +86,21 @@ export class ParcelImportService implements IParcelImportService {
     });
   }
 
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async consumeNatsMessages() {
+    if (this.messageBuffer.length >= this.batchSize) {
+      console.log(this.messageBuffer.length);
+      await this.saveDataToDatabase(this.messageBuffer);
+      this.messageBuffer = [];
+    }
+  }
+
   async saveDataToDatabase(data: CreateParcelDeliveryInput[]) {
     try {
       await this.parcelRepository.upsertMany(data);
     } catch (error) {
       throw new ImportManagerSaveError("error saving data to database", {
-        error,
+        message: error.message,
       });
     }
   }
