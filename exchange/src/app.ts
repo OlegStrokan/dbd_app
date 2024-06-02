@@ -7,6 +7,7 @@ export const createApp = async (serverOptions: FastifyServerOptions) => {
   serverOptions.logger = {
     level: "info",
   };
+
   const app = Fastify(serverOptions);
 
   logger.info("start app");

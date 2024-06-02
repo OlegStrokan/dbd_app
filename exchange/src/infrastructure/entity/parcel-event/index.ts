@@ -1,17 +1,17 @@
 import { Entity, PrimaryColumn, Column } from "typeorm";
 
-@Entity("PARCEL_EVENT")
+@Entity("parcel_event")
 export class ParcelEvent {
-  @PrimaryColumn()
+  @PrimaryColumn("varchar", { length: 36 })
   id: string;
 
-  @Column()
+  @Column("varchar", { length: 36 })
   parcelNumber: string;
 
-  @Column()
+  @Column("varchar")
   createdAt: string;
 
-  @Column()
+  @Column("varchar")
   updatedAt: string;
 
   @Column({ type: "float" })

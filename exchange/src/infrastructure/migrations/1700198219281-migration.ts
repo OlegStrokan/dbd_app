@@ -5,7 +5,7 @@ export class Migration1700198219281 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "PARCEL_EVENT" (
+      `CREATE TABLE "parcel_event" (
         "id" varchar PRIMARY KEY NOT NULL,
         "parcelNumber" varchar NOT NULL,
         "createdAt" varchar NOT NULL,
@@ -15,6 +15,6 @@ export class Migration1700198219281 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE "PARCEL_EVENT"`);
+    await queryRunner.query(`DROP TABLE "parcel_event"`);
   }
 }

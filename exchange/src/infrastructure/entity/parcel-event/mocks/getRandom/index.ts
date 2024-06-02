@@ -5,8 +5,18 @@ export const getRandomParcelEventData = (): ParcelEvent => {
   const parcelEvent = new ParcelEvent();
   parcelEvent.id = faker.datatype.uuid();
   parcelEvent.parcelNumber = faker.datatype.number().toString();
-  parcelEvent.createdAt = faker.date.past().toISOString();
-  parcelEvent.updatedAt = faker.date.recent().toISOString();
+
+  const date = new Date();
+  const dateString = `${date.getUTCFullYear()}-${String(
+    date.getUTCMonth() + 1
+  ).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}T${String(
+    date.getUTCHours()
+  ).padStart(2, "0")}:${String(date.getUTCMinutes()).padStart(2, "0")}:${String(
+    date.getUTCSeconds()
+  ).padStart(2, "0")}.000Z`;
+
+  parcelEvent.createdAt = dateString;
+  parcelEvent.updatedAt = dateString;
   parcelEvent.weight = parseFloat(faker.commerce.price());
   return parcelEvent;
 };
