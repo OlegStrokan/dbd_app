@@ -1,3 +1,4 @@
+/*
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { NatsService } from "../nats";
 
@@ -22,4 +23,4 @@ export class NatsStreamService implements OnModuleInit {
       console.error("Error consuming NATS messages:", error);
     }
   }
-}
+}*/
