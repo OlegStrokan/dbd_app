@@ -10,7 +10,7 @@ export const createParcelEvent = async () => {
   } catch (error) {
     logger.error({ error }, "Error saving parcel event");
   }
-  logger.info({ parcelEventId: parcelEvent.id }, "Parcel event created");
+  logger.info({ parcelEventId: parcelEvent.createdAt }, "Parcel event created");
 };
 
 export const parcelEventWorker = {
