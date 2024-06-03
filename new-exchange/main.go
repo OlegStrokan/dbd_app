@@ -1,16 +1,14 @@
 package main
 
-import "new-exchange/app/infrastructure/db"
+import (
+	. "new-exchange/app/workers/parcel-event"
+	"sync"
+)
 
 func main() {
-
-	gormDb := db.ConnectToDb()
-
-	defer func() {
-		sqlDB, err := gormDb.DB()
-		if err != nil {
-			panic("failed to get database instance")
-		}
-		sqlDB.Close()
-	}()
+	ParcelEventWorker()
+	// Wait forever
+	var wg sync.WaitGroup
+	wg.Add(1)
+	wg.Wait()
 }

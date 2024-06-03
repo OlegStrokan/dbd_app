@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func getRandomParcelEvent() ParcelEvent {
+func GetRandomParcelEvent() ParcelEvent {
 	return ParcelEvent{
 		Id:           faker.UUIDHyphenated(),
 		ParcelNumber: faker.UUIDHyphenated(),
