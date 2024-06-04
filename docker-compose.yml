@@ -28,7 +28,7 @@ services:
       - pgdata_parcel_delivery_test_db:/var/lib/postgresql/data
     restart: always
 
-  exchange:
+  exchange_db:
     container_name: exchange
     image: postgres:13
     environment:
@@ -39,6 +39,19 @@ services:
       - "8434:5432"
     volumes:
       - exchange_db:/var/lib/postgresql/data
+    restart: always
+
+  exchange_test_db:
+    container_name: exchange_test_db
+    image: postgres:13
+    environment:
+      POSTGRES_USER: stroka01
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: exchange_test_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - exchange_test_db:/var/lib/postgresql/data
     restart: always
 
   il_db:
@@ -73,6 +86,7 @@ volumes:
   pgdata_parcel_delivery_dev_db: {}
   pgdata_parcel_delivery_test_db: {}
   exchange_db: {}
+  exchange_test_db: {}
   il_db: {}
   cache: {}
 
