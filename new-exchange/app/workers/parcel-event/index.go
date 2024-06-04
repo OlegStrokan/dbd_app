@@ -19,7 +19,7 @@ var createParcelEvent = func(db *gorm.DB) {
 	}
 }
 
-func ParcelEventWorker() {
+func ParcelEventWorker() *gorm.DB {
 	log.Printf("Starting Parcel Event Worker\n")
 	testDbConfig := db.DbConfig{
 		Host:     "localhost",
@@ -40,4 +40,5 @@ func ParcelEventWorker() {
 	}
 
 	c.Start()
+	return db
 }

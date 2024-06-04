@@ -3,6 +3,7 @@ package parcel_event
 import (
 	"new-exchange/app/infrastructure/db"
 	. "new-exchange/app/infrastructure/entities/parcel-event"
+	. "new-exchange/app/utlis/tests"
 	"testing"
 )
 
@@ -16,7 +17,8 @@ func TestCreateParcelEvent(t *testing.T) {
 		DbName:   "exchange_test_db",
 	}
 	db := db.ConnectToDb(testDbConfig)
-	db.AutoMigrate(&ParcelEvent{})
+
+	ClearDB(db)
 
 	createParcelEvent(db)
 	var parcelEvent ParcelEvent
