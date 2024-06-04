@@ -1,11 +1,13 @@
 package main
 
 import (
-	. "new-exchange/app/workers/parcel-event"
+	"log"
+	. "new-exchange/app/workers"
 )
 
 func main() {
-	ParcelEventWorker()
+	log.Println("Starting app...")
+	RegisterWorkers()
 
 	select {}
 }
