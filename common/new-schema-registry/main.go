@@ -1,0 +1,1 @@
+package new_schema_registry
