@@ -1,5 +1,4 @@
-module github.com/OlegStrokan/apollo-microserices/common/new-schema-registry
-
+module github.com/OlegStrokan/apollo-microservices/common/new-schema-registry
 go 1.22
 
 require github.com/linkedin/goavro/v2 v2.13.0
