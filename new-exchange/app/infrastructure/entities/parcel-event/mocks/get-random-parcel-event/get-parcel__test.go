@@ -17,7 +17,7 @@ func TestGetRandomParcelEvent(t *testing.T) {
 func isParcelEventValid(t *testing.T, parcel *ParcelEvent) {
 	uuidRegex := regexp.MustCompile(`\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b`)
 
-	if !uuidRegex.MatchString(parcel.Id) {
+	if !uuidRegex.MatchString(parcel.ID) {
 		t.Errorf("Invalid Id: not in UUID format")
 	}
 

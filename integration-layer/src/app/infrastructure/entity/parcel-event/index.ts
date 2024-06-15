@@ -9,13 +9,13 @@ export class ParcelEvent {
   id: string;
 
   @Column({ type: "varchar" })
-  parcel_number: string;
+  parcelNumber: string;
 
   @Column({ type: "varchar" })
-  created_at: string;
+  createdAt: string;
 
   @Column({ type: "varchar" })
-  updated_at: string;
+  updatedAt: string;
 
   @Column({ type: "float" })
   weight: number;

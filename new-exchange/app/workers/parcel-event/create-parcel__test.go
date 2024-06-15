@@ -28,7 +28,7 @@ func TestCreateParcelEvent(t *testing.T) {
 	}
 
 	var newParcelEvent ParcelEvent
-	result = db.Where("id = ?", parcelEvent.Id).First(&newParcelEvent)
+	result = db.Where("id = ?", parcelEvent.ID).First(&newParcelEvent)
 	if result.Error != nil {
 		t.Errorf("Failed to find the new ParcelEvent in the database: %v", result.Error)
 	}

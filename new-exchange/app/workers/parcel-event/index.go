@@ -1,18 +1,19 @@
 package parcel_event
 
 import (
-	"github.com/robfig/cron/v3"
-	"gorm.io/gorm"
 	"log"
 	"new-exchange/app/infrastructure/db"
 	. "new-exchange/app/infrastructure/entities/parcel-event"
 	. "new-exchange/app/infrastructure/entities/parcel-event/mocks/get-random-parcel-event"
+
+	"github.com/robfig/cron/v3"
+	"gorm.io/gorm"
 )
 
 var createParcelEvent = func(db *gorm.DB) {
 	parcelEvent := GetRandomParcelEvent()
 	result := db.Create(&parcelEvent)
-	log.Println("Created parcel event", parcelEvent.Id)
+	log.Println("Created parcel event", parcelEvent.ID)
 	if result.Error != nil {
 		panic("failed to create parcel event")
 	}
