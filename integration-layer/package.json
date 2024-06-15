@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "dev": "tsnd --respawn --transpile-only --exit-child src/index.ts",
-    "test": "tap --node-arg=--require=ts-node/register",
+    "test": "vitest",
     "migration:run": "yarn typeorm migration:run -d ./src/app/infrastructure/database.config.ts",
     "migration:generate": "yarn typeorm -d src/app/infrastructure/database.config.ts migration:generate ./src/app/infrastructure/migrations/migration/$npm_config_name",
     "typeorm": "ts-node --require tsconfig-paths/register ./node_modules/typeorm/cli"
@@ -22,13 +22,14 @@
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
-    "@types/node": "^17.0.21",
+    "@types/node": "^20.14.2",
     "@types/tap": "^15.0.6",
     "pino": "^9.1.0",
     "pino-pretty": "^11.0.0",
     "sinon": "^13.0.1",
     "ts-node": "^10.7.0",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "vitest": "^1.6.0"
   }
 }

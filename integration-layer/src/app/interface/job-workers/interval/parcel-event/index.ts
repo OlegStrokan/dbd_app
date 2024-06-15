@@ -70,9 +70,9 @@ export class ParcelEventWorker implements IWorker {
         try {
           const parcelEvents = await AppDataSource.manager.find(ParcelEvent, {
             where: {
-              updatedAt: MoreThan(this.lastSentAt.toISOString()),
+              updated_at: MoreThan(this.lastSentAt.toISOString()),
             },
-            order: { createdAt: "DESC" },
+            order: { created_at: "DESC" },
           });
 
           const encodeParcelEvent = (parcelEvent) => {
@@ -98,7 +98,7 @@ export class ParcelEventWorker implements IWorker {
                 "Publishing parcel event:"
               );
               await this.connection.publish("parcel-event", encodedParcel);
-              this.lastSentAt = new Date(parcelEvent.updatedAt);
+              this.lastSentAt = new Date(parcelEvent.updated_at);
               await this.saveLastSentAt(this.lastSentAt);
             } else {
               logger.error(

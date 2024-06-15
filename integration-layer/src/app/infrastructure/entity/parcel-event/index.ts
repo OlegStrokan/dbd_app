@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn } from "typeorm";
 
-@Entity("parcel_event")
+@Entity("parcel_events")
 export class ParcelEvent {
   constructor(init?: Partial<ParcelEvent>) {
     Object.assign(this, init);
@@ -9,13 +9,13 @@ export class ParcelEvent {
   id: string;
 
   @Column({ type: "varchar" })
-  parcelNumber: string;
+  parcel_number: string;
 
   @Column({ type: "varchar" })
-  createdAt: string;
+  created_at: string;
 
   @Column({ type: "varchar" })
-  updatedAt: string;
+  updated_at: string;
 
   @Column({ type: "float" })
   weight: number;
