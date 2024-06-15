@@ -7,7 +7,7 @@ import { NatsService } from "../../../../infrastructure/nats/index";
 import { NatsConnection } from "nats";
 import { IWorker } from "../../interface";
 import { logger } from "../../../../core/services/logger/index";
-import { MoreThan, MoreThanOrEqual } from "typeorm";
+import { MoreThan } from "typeorm";
 import { Log } from "../../../../infrastructure/entity/log/index";
 
 export class ParcelEventWorker implements IWorker {
@@ -56,7 +56,7 @@ export class ParcelEventWorker implements IWorker {
         });
         await ILDataSource.manager.save(newLog);
       }
-      console.log(lastSentAt);
+
       if (lastSentAt > this.lastSentAt) {
         this.lastSentAt = lastSentAt;
       }
@@ -64,15 +64,16 @@ export class ParcelEventWorker implements IWorker {
       logger.error({ error }, "Error saving last sent at");
     }
   }
+
   async startCronJob() {
     try {
       cron.schedule("* * * * * *", async () => {
         try {
           const parcelEvents = await AppDataSource.manager.find(ParcelEvent, {
             where: {
-              updated_at: MoreThan(this.lastSentAt.toISOString()),
+              updatedAt: MoreThan(this.lastSentAt.toISOString()),
             },
-            order: { created_at: "DESC" },
+            order: { createdAt: "ASC" },
           });
 
           const encodeParcelEvent = (parcelEvent) => {
@@ -88,25 +89,29 @@ export class ParcelEventWorker implements IWorker {
           };
 
           for (const parcelEvent of parcelEvents) {
-            const encodedParcel = encodeParcelEvent(parcelEvent);
+            const updatedAtDate = new Date(parcelEvent.updatedAt);
+            if (updatedAtDate > this.lastSentAt) {
+              const encodedParcel = encodeParcelEvent(parcelEvent);
 
-            if (encodedParcel) {
-              logger.info(
-                {
-                  version: encodedParcel.version,
-                },
-                "Publishing parcel event:"
-              );
-              await this.connection.publish("parcel-event", encodedParcel);
-              this.lastSentAt = new Date(parcelEvent.updated_at);
-              await this.saveLastSentAt(this.lastSentAt);
-            } else {
-              logger.error(
-                {
-                  parcelEvent,
-                },
-                "Unsupported schema version for parcel event:"
-              );
+              if (encodedParcel) {
+                logger.info(
+                  {
+                    version: encodedParcel.version,
+                    id: parcelEvent.id,
+                  },
+                  "Publishing parcel event:"
+                );
+                await this.connection.publish("parcel-event", encodedParcel);
+                this.lastSentAt = updatedAtDate;
+                await this.saveLastSentAt(this.lastSentAt);
+              } else {
+                logger.error(
+                  {
+                    parcelEvent,
+                  },
+                  "Unsupported schema version for parcel event:"
+                );
+              }
             }
           }
         } catch (error) {
