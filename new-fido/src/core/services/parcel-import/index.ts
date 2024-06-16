@@ -13,6 +13,7 @@ import {
 import { NatsService } from "../nats";
 import { schemaResolvers } from "src/interfaces/parcel-delivery/avro-schema";
 import { JsMsg, StringCodec, AckPolicy } from "nats"; // Import AckPolicy from 'nats'
+import { createJetStreamConsumer } from "../nats/jetstream";
 
 @Injectable()
 export class ParcelImportService
@@ -35,7 +36,6 @@ export class ParcelImportService
 
   async init() {
     try {
-      await this.natsService.connect();
       await this.subscribeToNatsMessages();
     } catch (error) {
       console.error("Error connecting to NATS:", error);
@@ -43,59 +43,13 @@ export class ParcelImportService
   }
 
   async subscribeToNatsMessages() {
-    const nats = this.natsService.getConnection();
-    const jsm = this.natsService.getJetStreamManager();
-    const subject = "parcel-event";
-    const durableName = "parcel-import-service";
-
-    const sc = StringCodec();
-
     try {
-      // Ensure the stream and consumer are created
-      await jsm.streams.add({ name: "parcel-stream", subjects: [subject] });
-      await jsm.consumers.add("parcel-stream", {
-        durable_name: durableName,
-        ack_policy: AckPolicy.Explicit,
+      createJetStreamConsumer().then(() => {
+        console.log("JetStream consumer started");
       });
-
-      const opts = {
-        config: {
-          durable_name: durableName,
-        },
-        callback: async (err: any, msg: JsMsg) => {
-          if (err) {
-            console.error("Error consuming NATS message:", err);
-            return;
-          }
-
-          try {
-            const decodedParcel = this.decodeParcelEvent(msg.data);
-
-            if (decodedParcel) {
-              const message = decodedParcel as any;
-              console.log(message.updatedAt, "message");
-              this.messageBuffer.push(message);
-
-              if (this.messageBuffer.length >= this.batchSize) {
-                console.log(this.messageBuffer.length);
-                await this.saveDataToDatabase(this.messageBuffer);
-                this.messageBuffer = [];
-              }
-
-              await msg.ack();
-            }
-          } catch (error) {
-            console.error("Error decoding buffer:", error);
-          }
-        },
-      };
-
-      this.subscription = await nats.jetstream().subscribe(subject, opts);
-
       console.log("Subscribed to NATS messages with JetStream");
     } catch (error) {
       console.error("Error subscribing to NATS messages:", error);
-      // Handle subscription error gracefully
     }
   }
 
