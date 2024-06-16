@@ -1,21 +1,29 @@
-import { connect, NatsConnection, Subscription } from "nats";
+import { Injectable } from "@nestjs/common";
+import { connect, NatsConnection, JetStreamManager } from "nats";
 
+@Injectable()
 export class NatsService {
-  private connection: NatsConnection | null = null;
-  private subscription: Subscription | null = null;
+  private client: NatsConnection;
+  private jsm: JetStreamManager;
 
-  constructor() {}
+  async connect() {
+    this.client = await connect({ servers: "nats://localhost:4222" });
+    this.jsm = await this.client.jetstreamManager();
 
-  async connect(): Promise<void> {
-    this.connection = await connect({ servers: "nats://localhost:4222" });
+    console.log("Connected to NATS and JetStream");
   }
 
-  async disconnect(): Promise<void> {
-    await this.subscription?.drain();
-    await this.connection?.close();
+  getConnection(): NatsConnection {
+    return this.client;
   }
 
-  get getConnection(): NatsConnection | null {
-    return this.connection;
+  getJetStreamManager(): JetStreamManager {
+    return this.jsm;
+  }
+
+  async disconnect() {
+    if (this.client) {
+      await this.client.close();
+    }
   }
 }
