@@ -81,6 +81,8 @@ services:
     ports:
       - "4222:4222"
       - "8222:8222"
+    command:
+      - "--js"
 
 volumes:
   pgdata_parcel_delivery_dev_db: {}
