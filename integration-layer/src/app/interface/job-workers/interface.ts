@@ -1,6 +1,6 @@
-import { NatsConnection } from "nats";
+import { NatsService } from "../../infrastructure/nats";
 
 export interface IWorker {
-  init(connection: NatsConnection): Promise<void>;
+  init(natsService: NatsService): Promise<void>;
   startCronJob(): Promise<void>;
 }

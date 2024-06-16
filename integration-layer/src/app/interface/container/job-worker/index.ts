@@ -15,7 +15,6 @@ export interface IJobWorkerContainer {
 export const createJobWorkerContainer =
   async (): Promise<IJobWorkerContainer> => {
     const nats = new NatsService();
-    await nats.connect("nats://localhost:4222");
 
     const workers = await registerWorkers(nats);
     return {

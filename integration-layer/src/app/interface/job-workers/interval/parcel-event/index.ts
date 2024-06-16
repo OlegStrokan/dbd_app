@@ -4,28 +4,26 @@ import { ParcelEvent } from "../../../../infrastructure/entity/parcel-event/inde
 import * as cron from "node-cron";
 import { schemaResolvers } from "../../../resolvers/parcel-event";
 import { NatsService } from "../../../../infrastructure/nats/index";
-import { NatsConnection } from "nats";
+import { JetStreamClient, NatsConnection } from "nats";
 import { IWorker } from "../../interface";
 import { logger } from "../../../../core/services/logger/index";
 import { MoreThan } from "typeorm";
 import { Log } from "../../../../infrastructure/entity/log/index";
+import { getJetStreamConnection } from "../../../../infrastructure/nats/jetstream";
 
 export class ParcelEventWorker implements IWorker {
-  private connection: NatsConnection | null = null;
   private lastSentAt: Date = new Date(0);
 
   constructor() {}
 
-  static async create(nats: NatsService) {
+  static async create() {
     const worker = new ParcelEventWorker();
-    await worker.init(nats.getConnection);
+    await worker.init();
     await worker.loadLastSentAt();
     return worker;
   }
 
-  async init(connection: NatsConnection) {
-    this.connection = connection;
-  }
+  async init() {}
 
   async loadLastSentAt() {
     try {
@@ -94,22 +92,42 @@ export class ParcelEventWorker implements IWorker {
               const encodedParcel = encodeParcelEvent(parcelEvent);
 
               if (encodedParcel) {
-                logger.info(
-                  {
-                    version: encodedParcel.version,
-                    id: parcelEvent.id,
-                  },
-                  "Publishing parcel event:"
-                );
-                await this.connection.publish("parcel-event", encodedParcel);
-                this.lastSentAt = updatedAtDate;
-                await this.saveLastSentAt(this.lastSentAt);
+                let success = false;
+                let retries = 0;
+                while (!success && retries < 3) {
+                  // Retry up to 3 times
+                  try {
+                    const nats = await getJetStreamConnection();
+                    await nats.publish("parcel-event", encodedParcel);
+                    logger.info(
+                      {
+                        version: encodedParcel.version,
+                        id: parcelEvent.id,
+                      },
+                      "Publishing parcel event:"
+                    );
+                    this.lastSentAt = updatedAtDate;
+                    await this.saveLastSentAt(this.lastSentAt);
+                    success = true;
+                  } catch (error) {
+                    logger.error(
+                      { error, id: parcelEvent.id },
+                      "Error publishing parcel event"
+                    );
+                    retries++;
+                  }
+                }
+
+                if (!success) {
+                  logger.error(
+                    { parcelEvent },
+                    "Failed to publish parcel event after retries"
+                  );
+                }
               } else {
                 logger.error(
-                  {
-                    parcelEvent,
-                  },
-                  "Unsupported schema version for parcel event:"
+                  { parcelEvent },
+                  "Unsupported schema version for parcel event"
                 );
               }
             }

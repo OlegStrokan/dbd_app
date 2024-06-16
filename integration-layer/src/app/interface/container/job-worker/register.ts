@@ -5,7 +5,7 @@ export const registerWorkers = async (nats) => {
   return [
     {
       name: "parcel-event-worker",
-      worker: await ParcelEventWorker.create(nats),
+      worker: await ParcelEventWorker.create(),
     },
   ];
 };
