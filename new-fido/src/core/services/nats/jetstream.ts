@@ -1,46 +1,81 @@
-import { connect, consumerOpts, AckPolicy, NatsConnection } from "nats";
+import { Injectable, OnModuleDestroy } from "@nestjs/common";
+import { connect, consumerOpts, AckPolicy, NatsConnection, JsMsg } from "nats";
 
-const server = "nats://localhost:4222";
+@Injectable()
+export class JetStreamConsumerService implements OnModuleDestroy {
+  private nats: NatsConnection;
+  private subscription: any;
+  private server = "nats://localhost:4222";
 
-export const createJetStreamConsumer = async () => {
-  try {
-    const nats = await connect({ servers: server });
-
-    const jetStream = nats.jetstream();
-
-    const opts = consumerOpts();
-    opts.durable("parcel-event-consumer");
-    opts.manualAck();
-    opts.ackExplicit();
-    opts.deliverTo("parcel-event-subscription");
-    opts.ackWait(60 * 1000); // Wait for up to 60 seconds for ack
-
-    const subscription = await jetStream.subscribe("parcel-event", opts);
-
-    (async () => {
-      for await (const msg of subscription) {
-        try {
-          const data = msg.data.toString(); // Process your message data here
-          console.log("Received parcel event:", { data });
-
-          // Process the message
-          msg.ack();
-        } catch (error) {
-          console.error("Error processing message:", { error });
-          // Optionally, do not ack to retry later
-        }
-      }
-    })()
-      .then(() => {
-        console.log("Subscription closed");
-      })
-      .catch((error) => {
-        console.error("Error in subscription:", { error });
-      });
-
-    return subscription;
-  } catch (error) {
-    console.error("Error creating JetStream consumer:", { error });
-    throw error;
+  async connect(consumerName: string, streamName: string, subjectName: string) {
+    this.nats = await connect({ servers: this.server });
+    await this.subscribe(consumerName, streamName, subjectName);
   }
-};
+
+  private async subscribe(
+    consumerName: string,
+    streamName: string,
+    subjectName: string
+  ) {
+    try {
+      const jetStream = this.nats.jetstream();
+
+      const opts = consumerOpts();
+      opts.durable(consumerName);
+      opts.manualAck();
+      opts.ackExplicit();
+      opts.deliverTo(`${streamName}-subscription`);
+      opts.ackWait(60 * 1000);
+
+      this.subscription = await jetStream.subscribe(subjectName, opts);
+
+      (async () => {
+        for await (const msg of this.subscription) {
+          await this.handleMessage(msg);
+        }
+      })()
+        .then(() => {
+          console.log("Subscription closed");
+        })
+        .catch((error) => {
+          console.error("Error in subscription:", { error });
+        });
+
+      console.log(
+        `Subscribed to NATS messages with JetStream on subject ${subjectName}`
+      );
+    } catch (error) {
+      console.error("Error subscribing to NATS messages:", error);
+    }
+  }
+
+  private async handleMessage(msg: JsMsg) {
+    try {
+      const data = msg.data.toString();
+      console.log("Received parcel event:", { data });
+
+      msg.ack();
+    } catch (error) {
+      console.error("Error processing message:", { error });
+    }
+  }
+
+  async onModuleDestroy() {
+    if (this.subscription) {
+      try {
+        await this.subscription.unsubscribe();
+        console.log("Unsubscribed from NATS messages");
+      } catch (error) {
+        console.error("Error unsubscribing from NATS messages:", error);
+      }
+    }
+    if (this.nats) {
+      try {
+        await this.nats.close();
+        console.log("NATS connection closed on module destroy.");
+      } catch (error) {
+        console.error("Error disconnecting from NATS:", error);
+      }
+    }
+  }
+}
