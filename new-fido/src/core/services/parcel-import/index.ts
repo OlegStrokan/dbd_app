@@ -10,10 +10,8 @@ import {
   IActionLoggerService,
   KnownActionNames,
 } from "../action-logger/interfaces";
-import { NatsService } from "../nats";
 import { schemaResolvers } from "src/interfaces/parcel-delivery/avro-schema";
-import { JsMsg, StringCodec, AckPolicy } from "nats"; // Import AckPolicy from 'nats'
-import { createJetStreamConsumer } from "../nats/jetstream";
+import { JetStreamConsumerService } from "../nats/jetstream";
 
 @Injectable()
 export class ParcelImportService
@@ -21,15 +19,14 @@ export class ParcelImportService
 {
   private messageBuffer: CreateParcelDeliveryInput[] = [];
   private readonly batchSize = 10;
-  private subscription: any;
 
   constructor(
     @Inject(ParcelDeliveryRepository)
     private readonly parcelRepository: IParcelDeliveryRepository,
     @Inject(ActionLoggerService)
     private readonly actionLogger: IActionLoggerService,
-    @Inject(NatsService)
-    private readonly natsService: NatsService
+    @Inject(JetStreamConsumerService)
+    private readonly jetStreamConsumerService: JetStreamConsumerService
   ) {
     this.init();
   }
@@ -44,10 +41,11 @@ export class ParcelImportService
 
   async subscribeToNatsMessages() {
     try {
-      createJetStreamConsumer().then(() => {
-        console.log("JetStream consumer started");
-      });
-      console.log("Subscribed to NATS messages with JetStream");
+      await this.jetStreamConsumerService.connect(
+        "parcel-event-consumer",
+        "event",
+        "parcel-event"
+      );
     } catch (error) {
       console.error("Error subscribing to NATS messages:", error);
     }
@@ -86,16 +84,8 @@ export class ParcelImportService
   }
 
   async onModuleDestroy() {
-    if (this.subscription) {
-      try {
-        await this.subscription.unsubscribe();
-        console.log("Unsubscribed from NATS messages");
-      } catch (error) {
-        console.error("Error unsubscribing from NATS messages:", error);
-      }
-    }
     try {
-      await this.natsService.disconnect();
+      await this.jetStreamConsumerService.onModuleDestroy();
       console.log("NATS connection closed on module destroy.");
     } catch (error) {
       console.error("Error disconnecting from NATS:", error);

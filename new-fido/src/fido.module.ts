@@ -19,6 +19,7 @@ import { ParcelDeliveryResolver } from "./interfaces/parcel-delivery/resolver";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { NatsService } from "./core/services/nats";
 import Redis from "ioredis";
+import { JetStreamConsumerService } from "./core/services/nats/jetstream";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -51,6 +52,7 @@ import Redis from "ioredis";
     ParcelDeliveryRepository,
     // TODO update it with redis factory class
     RedisService,
+    JetStreamConsumerService,
     {
       provide: "RedisClient",
       useFactory: () => {
