@@ -9,7 +9,16 @@ import (
 	"github.com/bxcodec/faker/v3"
 )
 
-func GetRandomParcelEvent() ParcelEvent {
+func GetRandomParcelEventV1() ParcelEvent {
+	return ParcelEvent{
+		ID:           faker.UUIDHyphenated(),
+		ParcelNumber: faker.CCNumber(),
+		CreatedAt:    time.Now().UTC().Format(time.RFC3339),
+		UpdatedAt:    time.Now().UTC().Format(time.RFC3339),
+	}
+}
+
+func GetRandomParcelEventV2() ParcelEvent {
 	weight := rand.Float64() * 1000
 	weightStr := strconv.FormatFloat(weight, 'f', 2, 64)
 	return ParcelEvent{

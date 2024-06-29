@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetRandomParcelEvent(t *testing.T) {
-	parcelEvent := GetRandomParcelEvent()
+	parcelEvent := GetRandomParcelEventV2())
 	isParcelEventValid(t, &parcelEvent)
 
 }

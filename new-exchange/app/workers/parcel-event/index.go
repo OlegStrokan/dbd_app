@@ -11,9 +11,9 @@ import (
 )
 
 var createParcelEvent = func(db *gorm.DB) {
-	parcelEvent := GetRandomParcelEvent()
+	parcelEvent := GetRandomParcelEventV1()
 	result := db.Create(&parcelEvent)
-	log.Println("Created parcel event", parcelEvent.ID)
+	log.Println("Created parcel event", "ID: ", parcelEvent.ID, "weight", parcelEvent.Weight)
 	if result.Error != nil {
 		panic("failed to create parcel event")
 	}
