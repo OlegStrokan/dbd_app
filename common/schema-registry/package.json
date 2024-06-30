@@ -1,0 +1,24 @@
+{
+  "name": "@stroka01/schema-registry",
+  "version": "1.0.4",
+  "main": "/dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsnd --respawn --transpile-only --exit-child src/index.ts",
+    "build": "tsc"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "avsc": "^5.7.7"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "@types/tap": "^15.0.6",
+    "sinon": "^13.0.1",
+    "ts-node": "^10.7.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
+  }
+}
