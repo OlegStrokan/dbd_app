@@ -1,15 +1,21 @@
 import { Injectable, OnModuleDestroy } from "@nestjs/common";
-import { connect, consumerOpts, AckPolicy, NatsConnection, JsMsg } from "nats";
+import { connect, consumerOpts, NatsConnection, JsMsg } from "nats";
 
 @Injectable()
 export class JetStreamConsumerService implements OnModuleDestroy {
   private nats: NatsConnection;
   private subscription: any;
   private server = "nats://localhost:4222";
+  private messageBuffer: JsMsg[] = [];
 
   async connect(consumerName: string, streamName: string, subjectName: string) {
-    this.nats = await connect({ servers: this.server });
-    await this.subscribe(consumerName, streamName, subjectName);
+    try {
+      this.nats = await connect({ servers: this.server });
+      await this.subscribe(consumerName, streamName, subjectName);
+    } catch (error) {
+      console.error("Error connecting to NATS:", error);
+      throw error;
+    }
   }
 
   private async subscribe(
@@ -29,53 +35,35 @@ export class JetStreamConsumerService implements OnModuleDestroy {
 
       this.subscription = await jetStream.subscribe(subjectName, opts);
 
-      (async () => {
-        for await (const msg of this.subscription) {
-          await this.handleMessage(msg);
-        }
-      })()
-        .then(() => {
-          console.log("Subscription closed");
-        })
-        .catch((error) => {
-          console.error("Error in subscription:", { error });
-        });
-
-      console.log(
-        `Subscribed to NATS messages with JetStream on subject ${subjectName}`
-      );
+      for await (const msg of this.subscription) {
+        this.messageBuffer.push(msg); // Push received message to buffer
+      }
     } catch (error) {
       console.error("Error subscribing to NATS messages:", error);
+      throw error; // Propagate the error for handling in the caller (ParcelImportService or other)
     }
   }
 
-  private async handleMessage(msg: JsMsg) {
-    try {
-      const data = msg.data.toString();
-      console.log("Received parcel event:", { data });
+  getMessageBuffer(): JsMsg[] {
+    return this.messageBuffer;
+  }
 
-      msg.ack();
-    } catch (error) {
-      console.error("Error processing message:", { error });
-    }
+  clearMessageBuffer(): void {
+    this.messageBuffer = [];
   }
 
   async onModuleDestroy() {
-    if (this.subscription) {
-      try {
+    try {
+      if (this.subscription) {
         await this.subscription.unsubscribe();
         console.log("Unsubscribed from NATS messages");
-      } catch (error) {
-        console.error("Error unsubscribing from NATS messages:", error);
       }
-    }
-    if (this.nats) {
-      try {
+      if (this.nats) {
         await this.nats.close();
         console.log("NATS connection closed on module destroy.");
-      } catch (error) {
-        console.error("Error disconnecting from NATS:", error);
       }
+    } catch (error) {
+      console.error("Error disconnecting from NATS:", error);
     }
   }
 }
