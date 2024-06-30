@@ -8,6 +8,7 @@ import { ImportManagerSaveError } from "./error";
 import { JetStreamConsumerService } from "../nats/jetstream";
 import { schemaResolvers } from "../../../interfaces/parcel-delivery/avro-schema";
 
+// TODO - this functional working fine, but logs displayed not correct
 @Injectable()
 export class ParcelImportService
   implements IParcelImportService, OnModuleDestroy
@@ -29,7 +30,6 @@ export class ParcelImportService
       await this.subscribeToNatsMessages();
     } catch (error) {
       console.error("Error connecting to NATS:", error);
-      // Handle or log the error as needed
     }
   }
 
@@ -64,10 +64,10 @@ export class ParcelImportService
     try {
       const messages = this.jetStreamConsumerService.getMessageBuffer();
       if (messages.length > 0) {
-        console.log(`Processing ${messages.length} messages...`);
         const processedMessages = messages.map((msg) =>
           this.decodeParcelEvent(msg.data)
         );
+
         await this.saveDataToDatabase(processedMessages);
         this.jetStreamConsumerService.clearMessageBuffer();
       } else {
@@ -81,7 +81,7 @@ export class ParcelImportService
   async saveDataToDatabase(data: CreateParcelDeliveryInput[]) {
     try {
       await this.parcelRepository.upsertMany(data);
-      console.log("Saved to database:", data);
+      console.log("Saved to database:");
     } catch (error) {
       console.error("Error saving data to database:", error);
       throw new ImportManagerSaveError("Error saving data to database", {
