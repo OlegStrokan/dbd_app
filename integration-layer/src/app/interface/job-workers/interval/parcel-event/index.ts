@@ -13,6 +13,7 @@ import { OperationFunction, retry } from "../../../../utils/retry/index";
 export class ParcelEventWorker implements IWorker {
   private lastSentAt: Date = new Date(0);
   private subjectName: string = "parcel-event";
+  private schemaVersion: string = "v1";
 
   constructor() {}
 
@@ -74,8 +75,8 @@ export class ParcelEventWorker implements IWorker {
             order: { createdAt: "ASC" },
           });
 
-          const encodeParcelEvent = (parcelEvent) => {
-            const schemaResolver = schemaResolvers["v1"];
+          const encodeParcelEvent = (parcelEvent: ParcelEvent) => {
+            const schemaResolver = schemaResolvers[this.schemaVersion];
             if (!schemaResolver) return null;
 
             try {
@@ -97,7 +98,7 @@ export class ParcelEventWorker implements IWorker {
                   await nats.publish(this.subjectName, encodedParcel);
                   logger.info(
                     {
-                      version: encodedParcel.version,
+                      version: this.schemaVersion,
                       id: parcelEvent.id,
                     },
                     "Publishing parcel event:"

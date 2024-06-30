@@ -5,26 +5,19 @@ import { IParcelImportService } from "./interfaces";
 import { CreateParcelDeliveryInput } from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
 import { ParcelDeliveryRepository } from "../../../infrastructure/repositories/parcel-delivery";
 import { ImportManagerSaveError } from "./error";
-import { ActionLoggerService } from "../action-logger";
-import {
-  IActionLoggerService,
-  KnownActionNames,
-} from "../action-logger/interfaces";
-import { schemaResolvers } from "src/interfaces/parcel-delivery/avro-schema";
 import { JetStreamConsumerService } from "../nats/jetstream";
+import { schemaResolvers } from "../../../interfaces/parcel-delivery/avro-schema";
 
 @Injectable()
 export class ParcelImportService
   implements IParcelImportService, OnModuleDestroy
 {
-  private messageBuffer: CreateParcelDeliveryInput[] = [];
   private readonly batchSize = 10;
+  private readonly schemaVersion = "v1";
 
   constructor(
     @Inject(ParcelDeliveryRepository)
     private readonly parcelRepository: IParcelDeliveryRepository,
-    @Inject(ActionLoggerService)
-    private readonly actionLogger: IActionLoggerService,
     @Inject(JetStreamConsumerService)
     private readonly jetStreamConsumerService: JetStreamConsumerService
   ) {
@@ -36,6 +29,7 @@ export class ParcelImportService
       await this.subscribeToNatsMessages();
     } catch (error) {
       console.error("Error connecting to NATS:", error);
+      // Handle or log the error as needed
     }
   }
 
@@ -48,36 +42,49 @@ export class ParcelImportService
       );
     } catch (error) {
       console.error("Error subscribing to NATS messages:", error);
+      // Handle or log the error as needed
     }
   }
 
   decodeParcelEvent(buffer: Uint8Array) {
-    const schemaResolver = schemaResolvers["v1"];
+    const schemaResolver = schemaResolvers[this.schemaVersion];
     if (!schemaResolver) return null;
 
     try {
       const { schema } = schemaResolver;
       return schema.fromBuffer(buffer);
     } catch (error) {
-      console.log(error, "Error decoding buffer");
+      console.error("Error decoding buffer:", error);
       return null;
     }
   }
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   async consumeNatsMessages() {
-    if (this.messageBuffer.length >= this.batchSize) {
-      console.log(this.messageBuffer.length);
-      await this.saveDataToDatabase(this.messageBuffer);
-      this.messageBuffer = [];
+    try {
+      const messages = this.jetStreamConsumerService.getMessageBuffer();
+      if (messages.length > 0) {
+        console.log(`Processing ${messages.length} messages...`);
+        const processedMessages = messages.map((msg) =>
+          this.decodeParcelEvent(msg.data)
+        );
+        await this.saveDataToDatabase(processedMessages);
+        this.jetStreamConsumerService.clearMessageBuffer();
+      } else {
+        console.log("No messages to process.");
+      }
+    } catch (error) {
+      console.error("Error consuming messages:", error);
     }
   }
 
   async saveDataToDatabase(data: CreateParcelDeliveryInput[]) {
     try {
       await this.parcelRepository.upsertMany(data);
+      console.log("Saved to database:", data);
     } catch (error) {
-      throw new ImportManagerSaveError("error saving data to database", {
+      console.error("Error saving data to database:", error);
+      throw new ImportManagerSaveError("Error saving data to database", {
         message: error.message,
       });
     }
