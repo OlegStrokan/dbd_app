@@ -49,6 +49,10 @@
             "NATS.Client.JetStream": {
               "target": "Package",
               "version": "[2.3.0-preview.1, )"
+            },
+            "NCrontab.Signed": {
+              "target": "Package",
+              "version": "[3.3.3, )"
             }
           },
           "imports": [

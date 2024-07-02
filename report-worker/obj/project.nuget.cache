@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "h4gRgLVDBHvlYxwt6eQJ8AEM6qVyx/XD3qsrqFNojJvbeN12KqFxXOOGG3MoHBqNRchBK+B3XQXDATIXhgHnzg==",
+  "dgSpecHash": "XfnfDmMUWRCsUiZNk/jBLrZ/T0neRV6NoXAVFEDG69Mu6rLZZ4xAe+XmPW2g6Chp50HZGzEj7FI6wgVLhkf7Og==",
   "success": true,
   "projectFilePath": "/Users/stroka01/Development/apollo-microservices/report-worker/report-worker.csproj",
   "expectedPackageFiles": [
@@ -32,6 +32,7 @@
     "/Users/stroka01/.nuget/packages/nats.client/1.1.5/nats.client.1.1.5.nupkg.sha512",
     "/Users/stroka01/.nuget/packages/nats.client.core/2.3.0-preview.1/nats.client.core.2.3.0-preview.1.nupkg.sha512",
     "/Users/stroka01/.nuget/packages/nats.client.jetstream/2.3.0-preview.1/nats.client.jetstream.2.3.0-preview.1.nupkg.sha512",
+    "/Users/stroka01/.nuget/packages/ncrontab.signed/3.3.3/ncrontab.signed.3.3.3.nupkg.sha512",
     "/Users/stroka01/.nuget/packages/system.diagnostics.diagnosticsource/7.0.1/system.diagnostics.diagnosticsource.7.0.1.nupkg.sha512",
     "/Users/stroka01/.nuget/packages/system.diagnostics.eventlog/7.0.0/system.diagnostics.eventlog.7.0.0.nupkg.sha512",
     "/Users/stroka01/.nuget/packages/system.io.pipelines/8.0.0/system.io.pipelines.8.0.0.nupkg.sha512",
