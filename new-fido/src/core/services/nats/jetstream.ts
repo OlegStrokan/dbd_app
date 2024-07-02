@@ -7,6 +7,7 @@ export class JetStreamConsumerService implements OnModuleDestroy {
   private subscription: any;
   private server = "nats://localhost:4222";
   private messageBuffer: JsMsg[] = [];
+  private bufferLock: boolean = false;
 
   async connect(consumerName: string, streamName: string, subjectName: string) {
     try {
@@ -36,20 +37,36 @@ export class JetStreamConsumerService implements OnModuleDestroy {
       this.subscription = await jetStream.subscribe(subjectName, opts);
 
       for await (const msg of this.subscription) {
-        this.messageBuffer.push(msg); // Push received message to buffer
+        await this.acquireBufferLock();
+        this.messageBuffer.push(msg);
+        this.releaseBufferLock();
       }
     } catch (error) {
       console.error("Error subscribing to NATS messages:", error);
-      throw error; // Propagate the error for handling in the caller (ParcelImportService or other)
+      throw error;
     }
   }
 
-  getMessageBuffer(): JsMsg[] {
-    return this.messageBuffer;
+  async getMessageBuffer(): Promise<JsMsg[]> {
+    await this.acquireBufferLock();
+    const currentBuffer = [...this.messageBuffer];
+    this.releaseBufferLock();
+    return currentBuffer;
   }
 
   clearMessageBuffer(): void {
-    this.messageBuffer = [];
+    this.messageBuffer = []; // Clear the buffer
+  }
+
+  private async acquireBufferLock() {
+    while (this.bufferLock) {
+      await new Promise((resolve) => setTimeout(resolve, 10)); // Wait until lock is released
+    }
+    this.bufferLock = true; // Acquire the lock
+  }
+
+  private releaseBufferLock() {
+    this.bufferLock = false; // Release the lock
   }
 
   async onModuleDestroy() {
