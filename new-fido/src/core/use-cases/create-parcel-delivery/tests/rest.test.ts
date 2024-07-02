@@ -47,10 +47,10 @@ describe("ParcelDeliveryService", () => {
     expect(createdParcel).toBeDefined();
 
     const retrievedParcelDelivery = await parcelDeliveryRepository.findOneById(
-      createdParcel.id
+      createdParcel.data.id
     );
     expect(retrievedParcelDelivery).toBeDefined();
-    expect(retrievedParcelDelivery.id).toEqual(createdParcel.id);
+    expect(retrievedParcelDelivery.data.id).toEqual(createdParcel.data.id);
   });
 
   it("should throw error when parcel already exist ", async () => {

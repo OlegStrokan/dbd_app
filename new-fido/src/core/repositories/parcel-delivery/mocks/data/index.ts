@@ -1,13 +1,13 @@
-import { faker } from "@faker-js/faker/locale/en_US";
-import { generateUuid } from "../../../../../libs/generateUuid/generateUuid";
 import {
   IParcelDelivery,
   ParcelDelivery,
-} from "../../../../entities/parcel-delivery";
+} from "@app/core/entities/parcel-delivery";
+import { ParcelDeliveryRepository } from "@app/infrastructure/repositories/parcel-delivery";
+import { generateUuid } from "@app/libs/generateUuid/generateUuid";
+import { Optional } from "@app/libs/typescript";
+import { faker } from "@faker-js/faker/locale/en_US";
 import { TestingModule } from "@nestjs/testing";
-import { IParcelDeliveryRepository } from "../../index";
-import { ParcelDeliveryRepository } from "../../../../../infrastructure/repositories/parcel-delivery";
-import { Optional } from "../../../../../libs/typescript";
+import { IParcelDeliveryRepository } from "../..";
 
 export const getRandomParcelDelivery = ({
   id = generateUuid(),
@@ -30,5 +30,7 @@ export const createParcelDelivery = async (
   });
   await repository.upsertOne(parcelDelivery.data);
 
-  return await repository.findOneById(parcelDelivery.data.id);
+  return await (
+    await repository.findOneById(parcelDelivery.data.id)
+  ).data;
 };

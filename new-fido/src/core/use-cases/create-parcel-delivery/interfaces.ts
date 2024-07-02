@@ -1,6 +1,6 @@
-import { CreateParcelDeliveryInput } from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
-import { ParcelDeliveryEntity } from "../../../infrastructure/entities/parcel-delivery";
+import { CreateParcelDeliveryInput } from "../../../interfaces/parcel-delivery/request-type";
+import { ParcelDelivery } from "@app/core/entities/parcel-delivery";
 
 export interface ICreateParcelDeliveryUseCase {
-  create(dto: CreateParcelDeliveryInput): Promise<ParcelDeliveryEntity>
+  create(dto: CreateParcelDeliveryInput): Promise<ParcelDelivery>;
 }

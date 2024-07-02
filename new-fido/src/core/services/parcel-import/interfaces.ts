@@ -1,4 +1,4 @@
-import { CreateParcelDeliveryInput } from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
+import { CreateParcelDeliveryInput } from "../../../interfaces/parcel-delivery/request-type";
 
 export interface IParcelImportService {
   saveDataToDatabase(data: CreateParcelDeliveryInput[]): Promise<void>;

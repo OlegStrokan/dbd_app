@@ -2,7 +2,7 @@ import { Inject, Injectable, OnModuleDestroy } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { IParcelDeliveryRepository } from "../../repositories/parcel-delivery";
 import { IParcelImportService } from "./interfaces";
-import { CreateParcelDeliveryInput } from "../../../interfaces/parcel-delivery/request-type/create-parcel-delivery.input";
+import { CreateParcelDeliveryInput } from "../../../interfaces/parcel-delivery/request-type";
 import { ParcelDeliveryRepository } from "../../../infrastructure/repositories/parcel-delivery";
 import { ImportManagerSaveError } from "./error";
 import { JetStreamConsumerService } from "../nats/jetstream";
@@ -42,7 +42,6 @@ export class ParcelImportService
       );
     } catch (error) {
       console.error("Error subscribing to NATS messages:", error);
-      // Handle or log the error as needed
     }
   }
 
@@ -59,10 +58,10 @@ export class ParcelImportService
     }
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_30_SECONDS)
   async consumeNatsMessages() {
     try {
-      const messages = this.jetStreamConsumerService.getMessageBuffer();
+      const messages = await this.jetStreamConsumerService.getMessageBuffer();
       if (messages.length > 0) {
         const processedMessages = messages.map((msg) =>
           this.decodeParcelEvent(msg.data)
