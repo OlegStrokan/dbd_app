@@ -1,7 +1,6 @@
 using NATS.Client;
 using NATS.Client.JetStream;
 using NCrontab;
-using System.Data.SqlClient;
 using System.Text;
 
 

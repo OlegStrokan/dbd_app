@@ -1,10 +1,17 @@
 import { Injectable, OnModuleDestroy } from "@nestjs/common";
-import { connect, consumerOpts, NatsConnection, JsMsg } from "nats";
+import {
+  connect,
+  consumerOpts,
+  NatsConnection,
+  JsMsg,
+  JetStreamSubscription,
+  StringCodec,
+} from "nats";
 
 @Injectable()
 export class JetStreamConsumerService implements OnModuleDestroy {
   private nats: NatsConnection;
-  private subscription: any;
+  private subscription: JetStreamSubscription;
   private server = "nats://localhost:4222";
   private messageBuffer: JsMsg[] = [];
   private bufferLock: boolean = false;
@@ -26,7 +33,6 @@ export class JetStreamConsumerService implements OnModuleDestroy {
   ) {
     try {
       const jetStream = this.nats.jetstream();
-
       const opts = consumerOpts();
       opts.durable(consumerName);
       opts.manualAck();
@@ -37,13 +43,29 @@ export class JetStreamConsumerService implements OnModuleDestroy {
       this.subscription = await jetStream.subscribe(subjectName, opts);
 
       for await (const msg of this.subscription) {
-        await this.acquireBufferLock();
-        this.messageBuffer.push(msg);
-        this.releaseBufferLock();
+        await this.processMessage(msg);
       }
     } catch (error) {
       console.error("Error subscribing to NATS messages:", error);
       throw error;
+    }
+  }
+
+  private async processMessage(msg: JsMsg) {
+    try {
+      await this.acquireBufferLock();
+      this.messageBuffer.push(msg);
+      this.releaseBufferLock();
+
+      // Simulate message processing
+      console.log(`Processing message: ${msg.subject} ${msg.seq}`);
+      const sc = StringCodec();
+      console.log(`Message content: ${sc.decode(msg.data)}`);
+
+      // Acknowledge the message after processing
+      msg.ack();
+    } catch (error) {
+      console.error("Error processing message:", error);
     }
   }
 

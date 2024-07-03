@@ -12,9 +12,19 @@
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.1.35" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+        <PackageReference Include="Moq" Version="4.20.70" />
         <PackageReference Include="NATS.Client" Version="1.1.5" />
         <PackageReference Include="NATS.Client.JetStream" Version="2.3.0-preview.1" />
         <PackageReference Include="NCrontab.Signed" Version="3.3.3" />
         <PackageReference Include="Npgsql" Version="8.0.3" />
+        <PackageReference Include="NUnit" Version="4.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="tests\packages.config" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\packages.config" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\obj\report-worker.Tests.csproj.nuget.dgspec.json" />
     </ItemGroup>
 </Project>
