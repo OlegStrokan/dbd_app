@@ -1,4 +1,5 @@
 using System.Data;
+using Npgsql;
 
 public class DbConnection
 {
@@ -17,6 +18,6 @@ public class DbConnection
 
     public IDbConnection GetConnection()
     {
-        return connectionFactory(connectionString);
+        return new NpgsqlConnection(connectionString);
     }
 }
