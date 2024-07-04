@@ -64,7 +64,7 @@
             },
             "NUnit": {
               "target": "Package",
-              "version": "[4.1.0, )"
+              "version": "[3.13.3, )"
             },
             "Npgsql": {
               "target": "Package",

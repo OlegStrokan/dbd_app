@@ -3,10 +3,14 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
+        
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-report_worker-46A8ABE7-589D-4335-9A65-BB829CB905A8</UserSecretsId>
         <RootNamespace>report_worker</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,7 +21,7 @@
         <PackageReference Include="NATS.Client.JetStream" Version="2.3.0-preview.1" />
         <PackageReference Include="NCrontab.Signed" Version="3.3.3" />
         <PackageReference Include="Npgsql" Version="8.0.3" />
-        <PackageReference Include="NUnit" Version="4.1.0" />
+        <PackageReference Include="NUnit" Version="3.13.3" />
     </ItemGroup>
 
     <ItemGroup>
@@ -26,5 +30,41 @@
       <_ContentIncludedByDefault Remove="report-worker.Tests\obj\project.assets.json" />
       <_ContentIncludedByDefault Remove="report-worker.Tests\obj\project.packagespec.json" />
       <_ContentIncludedByDefault Remove="report-worker.Tests\obj\report-worker.Tests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.deps.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests.deps.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.deps.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests.deps.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.deps.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests.deps.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.deps.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests.deps.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\report-worker.Tests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\report-worker.Tests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\report-worker.Tests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="report-worker.Tests\bin\Debug\net7.0\report-worker.Tests\obj\report-worker.Tests.csproj.nuget.dgspec.json" />
     </ItemGroup>
 </Project>
