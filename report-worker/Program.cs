@@ -11,7 +11,6 @@ namespace ReportWorkerApp
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) =>
                 {
-                    // Register services
                     services.AddSingleton<IConnection>(NATSConnection());
                     services.AddSingleton<ParcelDeliveryRepository>(sp => new ParcelDeliveryRepository(GetConnectionString()));
                     services.AddHostedService<ReportWorker>();

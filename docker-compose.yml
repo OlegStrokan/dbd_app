@@ -54,6 +54,19 @@ services:
       - exchange_test_db:/var/lib/postgresql/data
     restart: always
 
+  report_worker_test_db:
+    container_name: report_worker
+    image: postgres:13
+    environment:
+      POSTGRES_USER: stroka01
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: report_worker_test_db
+    ports:
+      - "8436:5432"
+    volumes:
+      - report_worker_test_db:/var/lib/postgresql/data
+    restart: always
+
   il_db:
     container_name: il_db
     image: postgres:13
@@ -106,6 +119,7 @@ volumes:
   il_db: {}
   cache: {}
   tracing: {}
+  report_worker_test_db: {}
 
 networks:
   default:

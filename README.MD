@@ -5,7 +5,7 @@
 - Nest.js - main app (fintech part)
 - Fastify - Integration layer, workers, schemas
 - Golang - client db application (new-exchange)
-- C# - worker for creating report everyday
+- C# - cron worker for creating report everyday
 - Jest/Vitests - unit/integration tests
 - PostgreSQL - main db
 - Typeorm - orm
