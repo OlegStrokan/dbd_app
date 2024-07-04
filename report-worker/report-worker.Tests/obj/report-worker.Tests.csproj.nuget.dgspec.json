@@ -46,6 +46,10 @@
               "target": "Package",
               "version": "[7.0.1, )"
             },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.10.0, )"
+            },
             "Moq": {
               "target": "Package",
               "version": "[4.20.70, )"
@@ -58,10 +62,6 @@
               "target": "Package",
               "version": "[2.3.0-preview.1, )"
             },
-            "NCrontab.Signed": {
-              "target": "Package",
-              "version": "[3.3.3, )"
-            },
             "NUnit": {
               "target": "Package",
               "version": "[3.13.3, )"
@@ -69,6 +69,10 @@
             "Npgsql": {
               "target": "Package",
               "version": "[8.0.3, )"
+            },
+            "Quartz": {
+              "target": "Package",
+              "version": "[3.10.0, )"
             }
           },
           "imports": [
@@ -131,7 +135,7 @@
           "dependencies": {
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
-              "version": "[17.5.0, )"
+              "version": "[17.10.0, )"
             },
             "Moq": {
               "target": "Package",
@@ -152,6 +156,10 @@
             "Npgsql": {
               "target": "Package",
               "version": "[8.0.3, )"
+            },
+            "Quartz": {
+              "target": "Package",
+              "version": "[3.10.0, )"
             },
             "coverlet.collector": {
               "target": "Package",

@@ -1,121 +1,144 @@
+using System;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NATS.Client;
 using NATS.Client.JetStream;
-using NCrontab;
-using System.Text;
+using Quartz;
+using Quartz.Impl;
 
-
-namespace report_worker;
-
-public class ReportWorker : BackgroundService
+namespace report_worker
 {
-    private readonly ILogger<ReportWorker> _logger;
-    private readonly IConnection _natsConnection;
-    private readonly ParcelDeliveryRepository _parcelDeliveryRepository;
-    private IJetStream _jetStream;
-    private IJetStreamManagement _jetStreamManagement;
-    private readonly string _reportRequestSubject = "report.requests";
-    private readonly string _reportResponseSubject = "report.responses";
-    private readonly string _stream = "reports";
-    private CrontabSchedule _schedule;
-    private DateTime _nextRun;
-
-    public ReportWorker(ILogger<ReportWorker> logger, IConnection natsConnection, ParcelDeliveryRepository parcelDeliveryRepository
-    )
+    public class ReportWorker : BackgroundService
     {
-        _logger = logger;
-        _natsConnection = natsConnection;
-        _parcelDeliveryRepository = parcelDeliveryRepository;
-        
-        InitializeJetStream();
-        
-        _schedule = CrontabSchedule.Parse("*  * * * *"); // every day at 7 am
-        _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
-    }
+        private readonly ILogger<ReportWorker> _logger;
+        private readonly IConnection _natsConnection;
+        private readonly IParcelDeliveryRepository _parcelDeliveryRepository;
+        private IJetStream _jetStream;
+        private IJetStreamManagement _jetStreamManagement;
+        private readonly string _reportRequestSubject = "report.requests";
+        private readonly string _reportResponseSubject = "report.responses";
+        private readonly string _stream = "reports";
+        private IScheduler _scheduler;
 
-    private void InitializeJetStream()
-    {
-        _jetStream = _natsConnection.CreateJetStreamContext();
-        _jetStreamManagement = _natsConnection.CreateJetStreamManagementContext();
-
-        try
+        public ReportWorker(ILogger<ReportWorker> logger, IConnection natsConnection, IParcelDeliveryRepository parcelDeliveryRepository)
         {
-            var streams = _jetStreamManagement.GetStreams();
-            bool streamExist = streams.Any(s => s.Config.Name == _stream);
-            if (!streamExist)
+            _logger = logger;
+            _natsConnection = natsConnection;
+            _parcelDeliveryRepository = parcelDeliveryRepository;
+
+            InitializeJetStream();
+        }
+
+        private void InitializeJetStream()
+        {
+            _jetStream = _natsConnection.CreateJetStreamContext();
+            _jetStreamManagement = _natsConnection.CreateJetStreamManagementContext();
+
+            try
             {
+                var streams = _jetStreamManagement.GetStreams() ?? Array.Empty<StreamInfo>();
+                var streamExist = streams.Any(s => s.Config.Name == _stream);
+                if (streamExist) return;
+
                 var config = StreamConfiguration.Builder()
                     .WithName(_stream)
                     .WithSubjects(_reportRequestSubject, _reportResponseSubject)
                     .Build();
 
                 _jetStreamManagement.AddStream(config);
-                _logger.LogInformation($"Created stream '{_stream} with subjects '{_reportRequestSubject}' and '{_reportResponseSubject}'");
+                _logger.LogInformation($"Created stream '{_stream}' with subjects '{_reportRequestSubject}' and '{_reportResponseSubject}'");
             }
-        }
-        catch (NATSBadSubscriptionException ex)
-        {
-            _logger.LogError($"Error creating  stream {_stream}: {ex.Message}");
-            throw;
-        }
-
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        _logger.LogInformation("Report Worker running at {Time}", DateTimeOffset.Now);
-
-
-        var consumerOptions = ConsumerConfiguration.Builder()
-            .WithDurable("report-worker")
-            .Build();
-
-        var pushSubscribeOptions = PushSubscribeOptions.Builder()
-            .WithConfiguration(consumerOptions)
-            .Build();
-
-        _jetStream.PushSubscribeAsync(_reportRequestSubject, OnReportRequestReceived, false, pushSubscribeOptions);
-
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            var now = DateTime.Now;
-            if (now > _nextRun)
+            catch (NATSBadSubscriptionException ex)
             {
-                _logger.LogInformation("Generating scheduled report at: {Time}", DateTimeOffset.Now);
-
-                var report = GenerateReport();
-
-                await _jetStream.PublishAsync(_reportRequestSubject, report);
-
-                _nextRun = _schedule.GetNextOccurrence(DateTime.Now);
+                _logger.LogError($"Error creating stream {_stream}: {ex.Message}");
+                throw;
             }
+        }
 
-            await Task.Delay(1000, stoppingToken);
+        public override async Task StartAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Report Worker started.");
+
+            // Initialize JetStream and Quartz scheduler
+            InitializeJetStream();
+            await ScheduleQuartzJob();
+
+            await base.StartAsync(cancellationToken);
+        }
+
+        private async Task ScheduleQuartzJob()
+        {
+            _logger.LogInformation("Scheduling Quartz job...");
+
+            _scheduler = await new StdSchedulerFactory().GetScheduler();
+            await _scheduler.Start();
+
+            // Define the job and tie it to our JobHandler
+            var jobDetail = JobBuilder.Create<GenerateReportJob>()
+                .WithIdentity("generateReportJob", "reportGroup")
+                .Build();
+
+            // Trigger the job to run now, and then every second
+            var trigger = TriggerBuilder.Create()
+                .WithIdentity("generateReportTrigger", "reportGroup")
+                .StartNow()
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInSeconds(1)
+                    .RepeatForever())
+                .Build();
+
+            await _scheduler.ScheduleJob(jobDetail, trigger);
+        }
+
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Report Worker stopping.");
+
+            // Shutdown Quartz scheduler
+            await _scheduler.Shutdown();
+
+            await base.StopAsync(cancellationToken);
+        }
+
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            // This method will not be used for scheduling purposes with Quartz
+            return Task.CompletedTask;
         }
     }
 
-    private async void OnReportRequestReceived(object sender, MsgHandlerEventArgs args)
+    // JobHandler class to generate report
+    public class GenerateReportJob : IJob
     {
-      _logger.LogInformation("Received a manual report generation request");
+        private readonly ILogger<GenerateReportJob> _logger;
+        private readonly IJetStream _jetStream;
+        private readonly string _reportRequestSubject;
 
-      var report = GenerateReport();
+        public GenerateReportJob(ILogger<GenerateReportJob> logger, IConnection natsConnection)
+        {
+            _logger = logger;
+            _jetStream = natsConnection.CreateJetStreamContext();
+            _reportRequestSubject = "report.requests"; // Use the same subject as in ReportWorker
+        }
 
-      await _jetStream.PublishAsync(_reportRequestSubject, report);
-      
-      args.Message.Ack();
-    }
+        public async Task Execute(IJobExecutionContext context)
+        {
+            _logger.LogInformation("Generating scheduled report at: {Time}", DateTimeOffset.Now);
 
-    public override async Task StopAsync(CancellationToken stoppingToken)
-    {
-        _logger.LogInformation("Report Worker is stopping");
-        await base.StopAsync(stoppingToken);
-    }
+            var report = GenerateReport();
 
-    private byte[] GenerateReport()
-    {
-        decimal totalSum = _parcelDeliveryRepository.GetSum();
+            await _jetStream.PublishAsync(_reportRequestSubject, report);
+        }
 
-        byte[] convertedSum = Encoding.UTF8.GetBytes(totalSum.ToString());
-        
-        return convertedSum;
+        private byte[] GenerateReport()
+        {
+            // Simulating report generation
+            var totalSum = 1000; // Example: Replace with your logic to calculate report
+            var convertedSum = Encoding.UTF8.GetBytes(totalSum.ToString());
+            return convertedSum;
+        }
     }
 }

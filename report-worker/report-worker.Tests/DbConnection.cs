@@ -1,9 +1,10 @@
 using System.Data;
 using Moq;
 using Npgsql;
+using NUnit.Framework;
+
 
 namespace report_worker.Tests;
-using NUnit.Framework;
 
 [TestFixture]
 public class DbConnectionTests

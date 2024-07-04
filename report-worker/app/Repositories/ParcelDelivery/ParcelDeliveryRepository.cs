@@ -4,7 +4,7 @@ namespace report_worker;
 using Dapper;
 using System.Linq;
     
-public class ParcelDeliveryRepository : DbConnection
+public class ParcelDeliveryRepository : DbConnection, IParcelDeliveryRepository
 {
     public ParcelDeliveryRepository(string connectionString) : base(connectionString)
     {
