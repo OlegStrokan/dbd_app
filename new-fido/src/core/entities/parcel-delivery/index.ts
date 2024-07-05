@@ -1,4 +1,4 @@
-import { Index } from "../../../libs/clonable";
+import { Clonable } from "../../../libs/clonable";
 import { Immutable } from "../../../libs/typescript";
 import { generateUuid } from "../../../libs/generateUuid/generateUuid";
 
@@ -7,7 +7,7 @@ export interface IParcelDelivery {
   parcelNumber: string;
 }
 
-export class ParcelDelivery implements Index<ParcelDelivery> {
+export class ParcelDelivery implements Clonable<ParcelDelivery> {
   constructor(private parcelDelivery: IParcelDelivery) {}
 
   static create = (parcelData: Omit<IParcelDelivery, "id">) =>

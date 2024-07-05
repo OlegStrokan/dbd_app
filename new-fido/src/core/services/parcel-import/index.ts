@@ -1,4 +1,5 @@
-import { Inject, Injectable, OnModuleDestroy } from "@nestjs/common";
+// parcel-import.service.ts
+import { Injectable, Inject, OnModuleDestroy } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { IParcelDeliveryRepository } from "../../repositories/parcel-delivery";
 import { IParcelImportService } from "./interfaces";
@@ -8,13 +9,15 @@ import { ImportManagerSaveError } from "./error";
 import { JetStreamConsumerService } from "../nats/jetstream";
 import { schemaResolvers } from "../../../interfaces/parcel-delivery/avro-schema";
 
-// TODO - this functional working fine, but logs displayed not correct
 @Injectable()
 export class ParcelImportService
   implements IParcelImportService, OnModuleDestroy
 {
   private readonly batchSize = 10;
   private readonly schemaVersion = "v1";
+  private readonly consumerName = "parcel-event-consumer";
+  private readonly streamName = "parcels";
+  private readonly subjectName = "parcel-event";
 
   constructor(
     @Inject(ParcelDeliveryRepository)
@@ -36,9 +39,9 @@ export class ParcelImportService
   async subscribeToNatsMessages() {
     try {
       await this.jetStreamConsumerService.connect(
-        "parcel-event-consumer",
-        "event",
-        "parcel-event"
+        this.consumerName,
+        this.streamName,
+        this.subjectName
       );
     } catch (error) {
       console.error("Error subscribing to NATS messages:", error);
@@ -61,16 +64,19 @@ export class ParcelImportService
   @Cron(CronExpression.EVERY_30_SECONDS)
   async consumeNatsMessages() {
     try {
-      const messages = await this.jetStreamConsumerService.getMessageBuffer();
+      const messages = await this.jetStreamConsumerService.getMessageBuffer(
+        this.subjectName
+      );
+      console.log(messages.length);
       if (messages.length > 0) {
         const processedMessages = messages.map((msg) =>
           this.decodeParcelEvent(msg.data)
         );
 
         await this.saveDataToDatabase(processedMessages);
-        this.jetStreamConsumerService.clearMessageBuffer();
+        this.jetStreamConsumerService.clearMessageBuffer(this.subjectName);
       } else {
-        console.log("No messages to process.");
+        console.log("No messages to process for", this.subjectName);
       }
     } catch (error) {
       console.error("Error consuming messages:", error);
@@ -80,7 +86,7 @@ export class ParcelImportService
   async saveDataToDatabase(data: CreateParcelDeliveryInput[]) {
     try {
       await this.parcelRepository.upsertMany(data);
-      console.log("Saved to database:");
+      console.log("Saved to database for", this.subjectName);
     } catch (error) {
       console.error("Error saving data to database:", error);
       throw new ImportManagerSaveError("Error saving data to database", {
@@ -92,7 +98,10 @@ export class ParcelImportService
   async onModuleDestroy() {
     try {
       await this.jetStreamConsumerService.onModuleDestroy();
-      console.log("NATS connection closed on module destroy.");
+      console.log(
+        "NATS connection closed on module destroy for",
+        this.subjectName
+      );
     } catch (error) {
       console.error("Error disconnecting from NATS:", error);
     }

@@ -13,14 +13,11 @@ import { ActionLogRepository } from "./infrastructure/repositories/action-logger
 import { RedisRepository } from "./infrastructure/repositories/redis";
 import { GetParcelDeliveryUseCase } from "./core/use-cases/get-parcel-delivery";
 import { RedisService } from "./core/services/redis";
-// import { AuthService } from './core/services/authorization';
-// import { AuthConfig } from './infrastructure/common/config/auth.config';
 import { ParcelDeliveryResolver } from "./interfaces/parcel-delivery/resolver";
-import { ClientsModule, Transport } from "@nestjs/microservices";
-import { NatsService } from "./core/services/nats";
 import Redis from "ioredis";
 import { JetStreamConsumerService } from "./core/services/nats/jetstream";
 import { ParcelDeliveryMapper } from "./interfaces/parcel-delivery/mappers";
+import { NatsJetStreamModule } from "./core/services/nats/jetstream.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -38,13 +35,13 @@ import { ParcelDeliveryMapper } from "./interfaces/parcel-delivery/mappers";
     }),
     ScheduleModule.forRoot(),
     TypeOrmModule.forFeature([ParcelDeliveryEntity, ActionLogEntity]),
+    NatsJetStreamModule,
   ],
   providers: [
     CreateParcelDeliveryUseCase,
     GetParcelDeliveryUseCase,
     ParcelDeliveryResolver,
     ParcelImportService,
-    NatsService,
     ActionLoggerService,
     //  AuthService,
     // AuthConfig,
@@ -53,8 +50,8 @@ import { ParcelDeliveryMapper } from "./interfaces/parcel-delivery/mappers";
     ParcelDeliveryRepository,
     // TODO update it with redis factory class
     RedisService,
-    JetStreamConsumerService,
     ParcelDeliveryMapper,
+    JetStreamConsumerService,
     {
       provide: "RedisClient",
       useFactory: () => {
