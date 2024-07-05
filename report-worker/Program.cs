@@ -1,8 +1,7 @@
 
 using NATS.Client;
-using report_worker;
 
-namespace ReportWorkerApp
+namespace report_worker
 {
     class Program
     {

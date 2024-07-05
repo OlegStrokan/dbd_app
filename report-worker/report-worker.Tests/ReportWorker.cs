@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NATS.Client;
 using NATS.Client.JetStream;
