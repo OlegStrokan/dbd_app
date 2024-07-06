@@ -9,7 +9,7 @@ import { ParcelImportService } from "./services/parcel-import";
 import { CreateParcelDeliveryUseCase } from "./use-cases/create-parcel-delivery";
 import { GetParcelDeliveryUseCase } from "./use-cases/get-parcel-delivery";
 import { ParcelDeliveryMapper } from "./resolver/mappers";
-import { JetStreamConsumerService } from "@app/services/nats/jetstream";
+import { JetStreamConsumerService } from "@app/services/nats/nats-consumer.service";
 import { RedisModule } from "@app/services/redis/redis.module";
 import { ActionLoggerModule } from "@app/services/action-logger/action-logger.module";
 

@@ -4,7 +4,7 @@ import { Cron, CronExpression } from "@nestjs/schedule";
 import { IParcelImportService } from "./interfaces";
 import { ParcelDeliveryRepository } from "@app/parcel-delivery/infrastructure/repository/parcel-delivery";
 import { IParcelDeliveryRepository } from "@app/parcel-delivery/repository";
-import { JetStreamConsumerService } from "@app/services/nats/jetstream";
+import { JetStreamConsumerService } from "@app/services/nats/nats-consumer.service";
 import { schemaResolvers } from "@app/parcel-delivery/resolver/avro-schema";
 import { CreateParcelDeliveryInput } from "@app/parcel-delivery/resolver/request-type";
 import { ImportManagerSaveError } from "./error";

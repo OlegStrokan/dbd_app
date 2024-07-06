@@ -4,7 +4,7 @@ import { FidoModule } from "./fido.module";
 
 async function bootstrap() {
   // start tracing
-  await otelSDK.start();
+  otelSDK.start();
 
   const app = await NestFactory.create(FidoModule);
   // start app
