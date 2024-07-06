@@ -7,6 +7,6 @@ import { ActionLogRepository } from "./infractructure/repository";
 @Module({
   imports: [TypeOrmModule.forFeature([ActionLogEntity])],
   providers: [ActionLoggerService, ActionLogRepository],
-  exports: [],
+  exports: [ActionLoggerService, ActionLogRepository],
 })
 export class ActionLoggerModule {}

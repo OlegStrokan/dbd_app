@@ -1,6 +1,13 @@
 // nats-jetstream.module.ts
-import { Module, Global, OnModuleDestroy, Inject } from "@nestjs/common";
-import { connect, NatsConnection, JetStreamManager } from "nats";
+import {
+  Module,
+  Global,
+  OnModuleDestroy,
+  Inject,
+  OnModuleInit,
+} from "@nestjs/common";
+import { connect, NatsConnection } from "nats";
+import { JetStreamConsumerService } from "./jetstream";
 
 @Global()
 @Module({
@@ -19,13 +26,25 @@ import { connect, NatsConnection, JetStreamManager } from "nats";
       },
       inject: ["NATS_CONNECTION"],
     },
+    JetStreamConsumerService, // Add the service to providers
   ],
-  exports: ["NATS_CONNECTION", "JETSTREAM_CLIENT"],
+  exports: ["NATS_CONNECTION", "JETSTREAM_CLIENT", JetStreamConsumerService], // Export the service
 })
-export class NatsJetStreamModule implements OnModuleDestroy {
+export class NatsJetStreamModule implements OnModuleDestroy, OnModuleInit {
   constructor(
-    @Inject("NATS_CONNECTION") private readonly natsConnection: NatsConnection
+    @Inject("NATS_CONNECTION") private readonly natsConnection: NatsConnection,
+    private readonly jetStreamConsumerService: JetStreamConsumerService // Inject the service
   ) {}
+
+  async onModuleInit() {
+    // TODO - add initialization report worker
+    // Connect the consumer service when the module is initialized
+    //  await this.jetStreamConsumerService.connect(
+    //   "report-worker",
+    //   "reports",
+    //   "report.requests"
+    // );
+  }
 
   async onModuleDestroy() {
     await this.natsConnection.close();

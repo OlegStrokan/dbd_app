@@ -20,11 +20,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node --require tsconfig-paths/register ./node_modules/typeorm/cli",
-    "migration:run": "npm run typeorm migration:run -- -d ./src/infrastructure/common/db/typeorm.config.ts",
-    "migration:generate": "npm run typeorm -- -d ./src/infrastructure/common/db/typeorm.config.ts migration:generate ./src/infrastructure/common/db/migrations/migrations/$npm_config_name",
-    "migration:create": "npm run typeorm -- migration:create ./src/infrastructure/common/migrations/$npm_config_name",
-    "migration:revert": "npm run typeorm -- -d ./src/infrastructure/common/db/typeorm.config.ts migration:revert",
-    "migration:show": "npm run typeorm migration:show -- -d ./src/infrastructure/common/db/typeorm.config.ts"
+    "migration:run": "yarn typeorm migration:run -- -d ./src/services/database/typeorm.config.ts",
+    "migration:generate": "yarn typeorm -- -d ./src/services/database/typeorm.config.ts migration:generate ./src/services/database/migrations/$npm_config_name",
+    "migration:create": "yarn typeorm -- migration:create ./src/services/database/migrations/$npm_config_name",
+    "migration:revert": "yarn typeorm -- -d ./src/services/database/typeorm.config.ts migration:revert",
+    "migration:show": "yarn typeorm migration:show -- -d ./src/services/database/typeorm.config.ts"
   },
   "dependencies": {
     "@apollo/server": "^4.10.4",

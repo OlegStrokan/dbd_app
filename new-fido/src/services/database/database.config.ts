@@ -11,6 +11,6 @@ export const DbConfig = registerAs("database", () => ({
   entities: [ParcelDeliveryEntity],
   synchronize: process.env.NODE_ENV === "development",
   logging: process.env.NODE_ENV === "development",
-  migrations: [`${__dirname}/../../db/migrations/*{.ts,.js}`],
+  migrations: [`${__dirname}/../../migrations/*{.ts,.js}`],
   migrationsTableName: "migrations",
 }));

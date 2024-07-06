@@ -1,7 +1,8 @@
 import { DataSource } from "typeorm";
 import { ConfigService } from "@nestjs/config";
 import { config } from "dotenv";
-import { ParcelDeliveryEntity } from "../../parcel-delivery/infrastructure/entity/parcel-delivery";
+import { ParcelDeliveryEntity } from "@app/parcel-delivery/infrastructure/entity/parcel-delivery";
+import { ActionLogEntity } from "../action-logger/entity";
 
 config();
 
@@ -14,9 +15,9 @@ export default new DataSource({
   username: configService.get("DB_USER") || "stroka01",
   password: configService.get("DB_PASSWORD") || "user",
   database: configService.get("DB_NAME") || "dev_db",
-  entities: ["src/infrastructure/entities/*/*{.ts,.js}"],
+  entities: [ParcelDeliveryEntity, ActionLogEntity],
   synchronize: configService.get("nodenv") === "development",
   logging: configService.get("nodenv") === "development",
-  migrations: ["src/infrastructure/common/db/migrations/*{.ts,.js}"],
+  migrations: ["src/services/database/migrations/*{.ts,.js}"],
   migrationsTableName: "migrations",
 });

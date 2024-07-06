@@ -15,7 +15,7 @@ export class ParcelImportService
 {
   private readonly schemaVersion = "v1";
   private readonly consumerName = "parcel-event-consumer";
-  private readonly streamName = "parcels";
+  private readonly streamName = "parcel-event";
   private readonly subjectName = "parcel-event";
 
   constructor(
@@ -29,6 +29,7 @@ export class ParcelImportService
 
   async init() {
     try {
+      console.log("nats jetstream");
       await this.subscribeToNatsMessages();
     } catch (error) {
       console.error("Error connecting to NATS:", error);

@@ -12,9 +12,11 @@ import { ParcelDeliveryModule } from "./parcel-delivery/parcel-delivery.module";
 import { ReportModule } from "./report/report.module";
 import { ActionLoggerModule } from "./services/action-logger/action-logger.module";
 import { RedisModule } from "./services/redis/redis.module";
+import { JetStreamConsumerService } from "./services/nats/jetstream";
 @Module({
   imports: [
     RedisModule,
+    NatsJetStreamModule,
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
@@ -30,18 +32,19 @@ import { RedisModule } from "./services/redis/redis.module";
     }),
     ScheduleModule.forRoot(),
     TypeOrmModule.forFeature([ParcelDeliveryEntity, ActionLogEntity]),
-    NatsJetStreamModule,
-  ],
-  providers: [
     ParcelDeliveryModule,
     ReportModule,
     ActionLoggerModule,
     //  AuthService,
     // AuthConfig,
+  ],
+  providers: [
     {
       provide: RedisRepository,
       useClass: RedisRepository,
     },
+    JetStreamConsumerService,
   ],
+  exports: [JetStreamConsumerService],
 })
 export class FidoModule {}
