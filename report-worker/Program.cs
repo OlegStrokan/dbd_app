@@ -1,7 +1,13 @@
 
+using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NATS.Client;
+using report_worker;
 
-namespace report_worker
+namespace ReportWorkerApp
 {
     class Program
     {
@@ -10,6 +16,7 @@ namespace report_worker
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) =>
                 {
+                    // Register services
                     services.AddSingleton<IConnection>(NATSConnection());
                     services.AddSingleton<ParcelDeliveryRepository>(sp => new ParcelDeliveryRepository(GetConnectionString()));
                     services.AddHostedService<ReportWorker>();
