@@ -2,7 +2,6 @@ namespace report_worker;
 
 
 using Dapper;
-using System.Linq;
     
 public class ParcelDeliveryRepository : DbConnection
 {

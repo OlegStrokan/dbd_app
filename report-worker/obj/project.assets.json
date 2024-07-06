@@ -483,15 +483,6 @@
           "lib/net6.0/NATS.Client.JetStream.dll": {}
         }
       },
-      "NCrontab.Signed/3.3.3": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/NCrontab.Signed.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/NCrontab.Signed.dll": {}
-        }
-      },
       "Npgsql/8.0.3": {
         "type": "package",
         "dependencies": {
@@ -1411,24 +1402,6 @@
         "nats.client.jetstream.nuspec"
       ]
     },
-    "NCrontab.Signed/3.3.3": {
-      "sha512": "YzLZyFiovVnAvvsTDnQygC82KhQyJIMsBspTYvHaK4Fp73UgUCni05mIQgOMZIZDlnO8Mg9fcNi5fpDArgQO4A==",
-      "type": "package",
-      "path": "ncrontab.signed/3.3.3",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "COPYING.txt",
-        "lib/net35/NCrontab.Signed.dll",
-        "lib/net35/NCrontab.Signed.pdb",
-        "lib/netstandard1.0/NCrontab.Signed.dll",
-        "lib/netstandard1.0/NCrontab.Signed.pdb",
-        "lib/netstandard2.0/NCrontab.Signed.dll",
-        "lib/netstandard2.0/NCrontab.Signed.pdb",
-        "ncrontab.signed.3.3.3.nupkg.sha512",
-        "ncrontab.signed.nuspec"
-      ]
-    },
     "Npgsql/8.0.3": {
       "sha512": "6WEmzsQJCZAlUG1pThKg/RmeF6V+I0DmBBBE/8YzpRtEzhyZzKcK7ulMANDm5CkxrALBEC8H+5plxHWtIL7xnA==",
       "type": "package",
@@ -1650,7 +1623,6 @@
       "Microsoft.Extensions.Hosting >= 7.0.1",
       "NATS.Client >= 1.1.5",
       "NATS.Client.JetStream >= 2.3.0-preview.1",
-      "NCrontab.Signed >= 3.3.3",
       "Npgsql >= 8.0.3"
     ]
   },
@@ -1706,10 +1678,6 @@
           "NATS.Client.JetStream": {
             "target": "Package",
             "version": "[2.3.0-preview.1, )"
-          },
-          "NCrontab.Signed": {
-            "target": "Package",
-            "version": "[3.3.3, )"
           },
           "Npgsql": {
             "target": "Package",
