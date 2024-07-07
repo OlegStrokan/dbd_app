@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { IMessageBufferService } from "./interface";
+import { IMessageBufferService } from "./message-buffer-interface";
 import { JsMsg } from "nats";
 
 @Injectable()

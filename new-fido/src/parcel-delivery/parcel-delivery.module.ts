@@ -5,11 +5,10 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ParcelDeliveryEntity } from "./infrastructure/entity/parcel-delivery";
 import { ParcelDeliveryRepository } from "./infrastructure/repository/parcel-delivery";
 import { ParcelDeliveryResolver } from "./resolver/resolver";
-import { ParcelImportService } from "./services/parcel-import";
 import { CreateParcelDeliveryUseCase } from "./use-cases/create-parcel-delivery";
 import { GetParcelDeliveryUseCase } from "./use-cases/get-parcel-delivery";
 import { ParcelDeliveryMapper } from "./resolver/mappers";
-import { JetStreamConsumerService } from "@app/services/nats/nats-consumer.service";
+import { JetStreamService } from "@app/services/jet-stream/jet-stream.service";
 import { RedisModule } from "@app/services/redis/redis.module";
 import { ActionLoggerModule } from "@app/services/action-logger/action-logger.module";
 
@@ -21,16 +20,14 @@ import { ActionLoggerModule } from "@app/services/action-logger/action-logger.mo
   ],
   providers: [
     ParcelDeliveryRepository,
-    ParcelImportService,
     CreateParcelDeliveryUseCase,
     GetParcelDeliveryUseCase,
     ParcelDeliveryResolver,
     ParcelDeliveryMapper,
-    JetStreamConsumerService,
+    JetStreamService,
   ],
   exports: [
     ParcelDeliveryRepository,
-    ParcelImportService,
     CreateParcelDeliveryUseCase,
     GetParcelDeliveryUseCase,
     ParcelDeliveryMapper,

@@ -3,7 +3,6 @@ import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { ParcelDeliveryEntity } from "../../parcel-delivery/infrastructure/entity/parcel-delivery";
 import { CreateParcelDeliveryUseCase } from "../../parcel-delivery/use-cases/create-parcel-delivery";
 import { ParcelDeliveryRepository } from "../../parcel-delivery/infrastructure/repository/parcel-delivery";
-import { ParcelImportService } from "../../parcel-delivery/services/parcel-import";
 import { ScheduleModule } from "@nestjs/schedule";
 import { GetParcelDeliveryUseCase } from "../../parcel-delivery/use-cases/get-parcel-delivery";
 import { ActionLogRepository } from "../action-logger/infractructure/repository";
@@ -64,7 +63,6 @@ export const createDbTestingModule = async () => {
       },
       //  AuthConfig,
       // AuthService,
-      ParcelImportService,
       ActionLoggerService,
       CreateParcelDeliveryUseCase,
       GetParcelDeliveryUseCase,
