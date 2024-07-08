@@ -11,7 +11,6 @@ import { CronExpression, Cron } from "@nestjs/schedule";
 @Injectable()
 export class ParcelEventWorker implements OnModuleDestroy, IWorker {
   private readonly subjectName: SUBJECTS = SUBJECTS.PARCEL_EVENT;
-  private readonly cronRule: CronExpression;
 
   constructor(
     private readonly jetStreamService: JetStreamService,
@@ -20,11 +19,7 @@ export class ParcelEventWorker implements OnModuleDestroy, IWorker {
     private readonly decodeService: DecodingDataService
   ) {}
 
-  private getCronRule(): CronExpression {
-    return this.cronRule;
-  }
-
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_SECOND)
   async consumeNatsMessages(): Promise<void> {
     console.log("init worker");
     try {
