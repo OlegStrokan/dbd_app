@@ -10,27 +10,23 @@ import { CronExpression, Cron } from "@nestjs/schedule";
 // TODO delete console logs and add logger from nest
 @Injectable()
 export class ParcelEventWorker implements OnModuleDestroy, IWorker {
-  private readonly subjectName: SUBJECTS;
+  private readonly subjectName: SUBJECTS = SUBJECTS.PARCEL_EVENT;
   private readonly cronRule: CronExpression;
 
   constructor(
     private readonly jetStreamService: JetStreamService,
     private readonly messageBufferService: MessageBufferService,
     private readonly parcelRepository: ParcelDeliveryRepository,
-    private readonly decodeService: DecodingDataService,
-    @Inject("SUBJECTS") subjectName: SUBJECTS,
-    @Inject("CRON_RULE") cronRunle: CronExpression
-  ) {
-    this.subjectName = subjectName;
-    this.cronRule = cronRunle;
-  }
+    private readonly decodeService: DecodingDataService
+  ) {}
 
   private getCronRule(): CronExpression {
     return this.cronRule;
   }
 
-  @Cron("getCronRule")
+  @Cron(CronExpression.EVERY_MINUTE)
   async consumeNatsMessages(): Promise<void> {
+    console.log("init worker");
     try {
       const messages = await this.messageBufferService.getMessageBuffer(
         this.subjectName

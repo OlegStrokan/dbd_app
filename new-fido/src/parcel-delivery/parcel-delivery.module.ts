@@ -13,9 +13,9 @@ import { RedisModule } from "@app/services/redis/redis.module";
 import { ActionLoggerModule } from "@app/services/action-logger/action-logger.module";
 import { DecodingDataModule } from "@app/services/decoding-data/decoding-data.module";
 import { NatsJetStreamModule } from "@app/services/jet-stream/jet-stream.module";
-import { SUBJECTS } from "@app/services/jet-stream/subjects";
 import { MessageBufferModule } from "@app/services/message-buffer/message-buffer.module";
-import { ScheduleModule, CronExpression } from "@nestjs/schedule";
+import { ScheduleModule } from "@nestjs/schedule";
+import { ParcelEventWorker } from "./workers/parcel-event.worker";
 
 @Module({
   imports: [
@@ -33,10 +33,9 @@ import { ScheduleModule, CronExpression } from "@nestjs/schedule";
     CreateParcelDeliveryUseCase,
     GetParcelDeliveryUseCase,
     ParcelDeliveryResolver,
+    ParcelEventWorker,
     ParcelDeliveryMapper,
     JetStreamService,
-    { provide: "SUBJECTS", useValue: SUBJECTS.PARCEL_EVENT },
-    { provide: "CRON_RULE", useValue: CronExpression.EVERY_MINUTE },
   ],
   exports: [
     ParcelDeliveryRepository,
