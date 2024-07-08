@@ -1,17 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { IBufferToDbService } from "./buffer-to-db.interface";
-import { IMessageBufferService } from "../message-buffer/message-buffer-interface";
-import { Cron, CronExpression } from "@nestjs/schedule";
-import { JetStreamService } from "../jet-stream/jet-stream.service";
-import { IJetStreamService } from "../jet-stream/jet-stream.interface";
-import { MessageBufferService } from "../message-buffer/message-buffer.service";
-import { DecodingDataService } from "../decoding-data/decoding-data.service";
 import { ParcelDeliveryRepository } from "@app/parcel-delivery/infrastructure/repository/parcel-delivery";
-import { SUBJECTS } from "../jet-stream/subjects";
+import { DecodingDataService } from "@app/services/decoding-data/decoding-data.service";
+import { JetStreamService } from "@app/services/jet-stream/jet-stream.service";
+import { SUBJECTS } from "@app/services/jet-stream/subjects";
+import { MessageBufferService } from "@app/services/message-buffer/message-buffer.service";
+import { IWorker } from "@app/shared/interfaces/types/worker/IWorker";
+import { Inject, Injectable, OnModuleDestroy } from "@nestjs/common";
+import { CronExpression, Cron } from "@nestjs/schedule";
 
 // TODO delete console logs and add logger from nest
 @Injectable()
-export class BufferToDbService<T, D> implements IBufferToDbService {
+export class ParcelEventWorker implements OnModuleDestroy, IWorker {
   private readonly subjectName: SUBJECTS;
   private readonly cronRule: CronExpression;
 
@@ -20,8 +18,8 @@ export class BufferToDbService<T, D> implements IBufferToDbService {
     private readonly messageBufferService: MessageBufferService,
     private readonly parcelRepository: ParcelDeliveryRepository,
     private readonly decodeService: DecodingDataService,
-    subjectName: SUBJECTS,
-    cronRunle: CronExpression
+    @Inject("SUBJECTS") subjectName: SUBJECTS,
+    @Inject("CRON_RULE") cronRunle: CronExpression
   ) {
     this.subjectName = subjectName;
     this.cronRule = cronRunle;

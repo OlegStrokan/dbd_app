@@ -11,10 +11,8 @@ import { ParcelDeliveryModule } from "./parcel-delivery/parcel-delivery.module";
 import { ReportModule } from "./report/report.module";
 import { ActionLoggerModule } from "./services/action-logger/action-logger.module";
 import { RedisModule } from "./services/redis/redis.module";
-import { WorkerModule } from "./worker/worker.module";
 import { DecodingDataModule } from "./services/decoding-data/decoding-data.module";
 import { MessageBufferModule } from "./services/message-buffer/message-buffer.module";
-import { BufferToDbModule } from "./services/buffer-to-db/buffer-to-db.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -32,15 +30,12 @@ import { BufferToDbModule } from "./services/buffer-to-db/buffer-to-db.module";
     }),
     TypeOrmModule.forFeature([ParcelDeliveryEntity, ActionLogEntity]),
     RedisModule,
-    WorkerModule,
     NatsJetStreamModule,
     DecodingDataModule,
     MessageBufferModule,
-    BufferToDbModule,
     ParcelDeliveryModule,
     ReportModule,
     ActionLoggerModule,
-    WorkerModule,
     //  AuthService,
     // AuthConfig,
   ],
