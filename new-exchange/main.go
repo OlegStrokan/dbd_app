@@ -2,12 +2,21 @@ package main
 
 import (
 	"log"
-	. "new-exchange/app/workers"
+	// db "new-exchange/app/workers/parcel-event"
+	workers "new-exchange/app/workers"
 )
 
 func main() {
 	log.Println("Starting app...")
-	RegisterWorkers()
-
+	workers.RegisterWorkers()
 	select {}
 }
+
+func seed() {
+	log.Println("Starting app...")
+	
+	// db.SaveDataToDatabase()
+
+
+}
+
