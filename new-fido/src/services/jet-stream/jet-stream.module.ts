@@ -39,7 +39,7 @@ export class NatsJetStreamModule implements OnModuleDestroy, OnModuleInit {
 
   constructor(
     @Inject("NATS_CONNECTION") private readonly natsConnection: NatsConnection,
-    private readonly jetStreamConsumerService: IJetStreamService
+    private readonly jetStreamConsumerService: JetStreamService
   ) {}
 
   async onModuleInit() {

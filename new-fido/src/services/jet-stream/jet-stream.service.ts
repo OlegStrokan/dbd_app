@@ -8,6 +8,7 @@ import {
 } from "nats";
 import { IMessageBufferService } from "../message-buffer/message-buffer-interface";
 import { IJetStreamService } from "./jet-stream.interface";
+import { MessageBufferService } from "../message-buffer/message-buffer.service";
 
 @Injectable()
 export class JetStreamService implements IJetStreamService {
@@ -15,7 +16,7 @@ export class JetStreamService implements IJetStreamService {
 
   constructor(
     @Inject("NATS_CONNECTION") private readonly natsConnection: NatsConnection,
-    private readonly messageBufferService: IMessageBufferService
+    private readonly messageBufferService: MessageBufferService
   ) {}
 
   async connect(consumerName: string, streamName: string, subjectName: string) {

@@ -4,19 +4,23 @@ import { IMessageBufferService } from "../message-buffer/message-buffer-interfac
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { JetStreamService } from "../jet-stream/jet-stream.service";
 import { IJetStreamService } from "../jet-stream/jet-stream.interface";
+import { MessageBufferService } from "../message-buffer/message-buffer.service";
+import { DecodingDataService } from "../decoding-data/decoding-data.service";
+import { ParcelDeliveryRepository } from "@app/parcel-delivery/infrastructure/repository/parcel-delivery";
+import { SUBJECTS } from "../jet-stream/subjects";
 
 // TODO delete console logs and add logger from nest
 @Injectable()
 export class BufferToDbService<T, D> implements IBufferToDbService {
-  private readonly subjectName: string;
+  private readonly subjectName: SUBJECTS;
   private readonly cronRule: CronExpression;
 
   constructor(
-    private readonly jetStreamService: IJetStreamService,
-    private readonly messageBufferService: IMessageBufferService,
-    private readonly saveDataToDatabase: (data: D[]) => Promise<void>,
-    private readonly decodeEvent: (buffer: Uint8Array) => T,
-    subjectName: string,
+    private readonly jetStreamService: JetStreamService,
+    private readonly messageBufferService: MessageBufferService,
+    private readonly parcelRepository: ParcelDeliveryRepository,
+    private readonly decodeService: DecodingDataService,
+    subjectName: SUBJECTS,
     cronRunle: CronExpression
   ) {
     this.subjectName = subjectName;
@@ -35,11 +39,13 @@ export class BufferToDbService<T, D> implements IBufferToDbService {
       );
       if (messages.length > 0) {
         const processedMessage = messages.map((msg) =>
-          this.decodeEvent(msg.data)
+          this.decodeService.decodeEvent(msg.data)
         );
 
         // TODO delete type assertion
-        await this.saveDataToDatabase(processedMessage as unknown as D[]);
+        await this.parcelRepository.upsertMany(
+          processedMessage as unknown as any[]
+        );
         this.messageBufferService.clearMessageBuffer(this.subjectName);
       } else {
         console.log(`No messages to process for ${this.subjectName}`);

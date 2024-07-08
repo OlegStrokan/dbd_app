@@ -11,7 +11,6 @@ import { ParcelDeliveryModule } from "./parcel-delivery/parcel-delivery.module";
 import { ReportModule } from "./report/report.module";
 import { ActionLoggerModule } from "./services/action-logger/action-logger.module";
 import { RedisModule } from "./services/redis/redis.module";
-import { JetStreamService } from "./services/jet-stream/jet-stream.service";
 import { WorkerModule } from "./worker/worker.module";
 import { DecodingDataModule } from "./services/decoding-data/decoding-data.module";
 import { MessageBufferModule } from "./services/message-buffer/message-buffer.module";
