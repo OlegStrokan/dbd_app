@@ -13,8 +13,10 @@ import { ActionLoggerModule } from "./services/action-logger/action-logger.modul
 import { RedisModule } from "./services/redis/redis.module";
 import { DecodingDataModule } from "./services/decoding-data/decoding-data.module";
 import { MessageBufferModule } from "./services/message-buffer/message-buffer.module";
+import { ScheduleModule } from "@nestjs/schedule";
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,

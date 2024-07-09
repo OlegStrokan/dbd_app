@@ -20,7 +20,6 @@ import { ParcelEventWorker } from "./workers/parcel-event.worker";
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-
     TypeOrmModule.forFeature([ParcelDeliveryEntity]),
     RedisModule,
     ActionLoggerModule,
@@ -36,6 +35,7 @@ import { ParcelEventWorker } from "./workers/parcel-event.worker";
     ParcelEventWorker,
     ParcelDeliveryMapper,
     JetStreamService,
+    ParcelEventWorker,
   ],
   exports: [
     ParcelDeliveryRepository,
