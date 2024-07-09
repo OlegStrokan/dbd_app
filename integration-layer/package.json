@@ -6,7 +6,9 @@
     "dev": "tsnd --respawn --transpile-only --exit-child src/index.ts",
     "test": "vitest",
     "migration:run": "yarn typeorm migration:run -d ./src/app/infrastructure/database.config.ts",
+    "migration:run:test": "yarn typeorm migration:run -d ./src/app/infrastructure/test-database.config.ts",
     "migration:generate": "yarn typeorm -d src/app/infrastructure/database.config.ts migration:generate ./src/app/infrastructure/migrations/migration/$npm_config_name",
+    "migration:generate:test": "yarn typeorm -d src/app/infrastructure/test-database.config.ts migration:generate ./src/app/infrastructure/test-migrations/migration/$npm_config_name",
     "typeorm": "ts-node --require tsconfig-paths/register ./node_modules/typeorm/cli"
   },
   "license": "MIT",
@@ -30,6 +32,7 @@
     "ts-node": "^10.7.0",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.5.5",
+    "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0"
   }
 }
