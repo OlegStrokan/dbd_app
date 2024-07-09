@@ -7,7 +7,7 @@ import { IWorker } from "../../interface";
 import { logger } from "../../../../core/services/logger/index";
 import { MoreThan } from "typeorm";
 import { Log } from "../../../../infrastructure/entity/log/index";
-import { getJetStreamConnection } from "../../../../infrastructure/nats/jetstream";
+import { getJetStreamConnection } from "../../../../infrastructure/jetstream/jetstream";
 import { OperationFunction, retry } from "../../../../utils/retry/index";
 
 const PARCEL_EVENT_CHUNK_SIZE = 1000;

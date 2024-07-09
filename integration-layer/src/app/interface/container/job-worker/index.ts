@@ -1,6 +1,4 @@
-import { NatsService } from "../../../infrastructure/nats/index";
 import { IWorker } from "../../job-workers/interface";
-import { ParcelEventWorker } from "../../job-workers/interval/parcel-event";
 import { registerWorkers } from "./register";
 
 interface IRegisteredWorker {
@@ -14,9 +12,7 @@ export interface IJobWorkerContainer {
 
 export const createJobWorkerContainer =
   async (): Promise<IJobWorkerContainer> => {
-    const nats = new NatsService();
-
-    const workers = await registerWorkers(nats);
+    const workers = await registerWorkers();
     return {
       workers: workers,
     };

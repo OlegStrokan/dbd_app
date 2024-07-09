@@ -1,7 +1,6 @@
 import { ParcelEventWorker } from "../../job-workers/interval/parcel-event";
 
-export const registerWorkers = async (nats) => {
-  const parcelEventWorker = new ParcelEventWorker();
+export const registerWorkers = async () => {
   return [
     {
       name: "parcel-event-worker",
