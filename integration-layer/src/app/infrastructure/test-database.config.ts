@@ -8,6 +8,6 @@ export const ILDataTestSource = new DataSource({
   username: "stroka01",
   password: "test",
   database: "il_db_test",
-  migrations: ["src/app/infrastructure/migrations/*.ts"],
+  // migrations: ["src/app/infrastructure/migrations/*.ts"],
   entities: [Log],
 });

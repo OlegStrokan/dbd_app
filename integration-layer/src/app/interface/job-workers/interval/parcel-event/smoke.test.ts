@@ -19,7 +19,6 @@ describe("ParcelEventWorker", () => {
         await createTestAppContainer();
       worker = parcelEventWorker;
       container = apiContainer;
-      console.log("Setup completed");
     } catch (error) {
       console.error("Error in beforeAll:", error);
     }
@@ -27,27 +26,28 @@ describe("ParcelEventWorker", () => {
 
   afterAll(async () => {
     try {
-      await container.exchangeDataSource.destroy(),
-        await container.iLDataSource.destroy();
-      console.log("Cleanup completed");
+      await container.exchangeDataSource.destroy();
+      await container.iLDataSource.destroy();
     } catch (error) {
       console.error("Error in afterAll:", error);
     }
   });
 
-  it("should load last sent at log from log", async () => {
+  it("should save last sent at log from log", async () => {
     try {
       const log = new Log();
       log.lastConsumedAt = new Date(Date.now()).toISOString();
       await container.iLDataSource.manager.save(log);
+
       const lastLog = await container.iLDataSource.manager.find(Log, {
         order: {
           id: "DESC",
         },
         take: 1,
       });
+      await worker.saveLastSentAt(worker.getLastSentAt);
+
       await worker.loadLastSentAt();
-      console.log("Worker loaded last sent at");
 
       expect(worker.getLastSentAt.toISOString()).toEqual(
         lastLog[0].lastConsumedAt

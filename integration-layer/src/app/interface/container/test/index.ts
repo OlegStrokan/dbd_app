@@ -14,21 +14,33 @@ export interface IAppContainer {
 }
 
 export const createTestApiContainer = async (): Promise<IApiContainer> => {
-  const exchangeDataSource = await ExchangeDataSource.initialize();
-  const iLDataSource = await ILDataTestSource.initialize();
+  try {
+    const exchangeDataSource = await ExchangeDataSource.initialize();
 
-  return {
-    exchangeDataSource,
-    iLDataSource,
-  };
+    const iLDataSource = await ILDataTestSource.initialize();
+
+    return {
+      exchangeDataSource,
+      iLDataSource,
+    };
+  } catch (error) {
+    console.error("Error during createTestApiContainer:", error);
+    throw error;
+  }
 };
 
 export const createTestAppContainer = async (): Promise<IAppContainer> => {
-  const apiContainer = await createTestApiContainer();
-  const parcelEventWorker = new ParcelEventWorker(
-    apiContainer.iLDataSource,
-    apiContainer.exchangeDataSource
-  );
+  try {
+    const apiContainer = await createTestApiContainer();
 
-  return { apiContainer, parcelEventWorker };
+    const parcelEventWorker = new ParcelEventWorker(
+      apiContainer.iLDataSource,
+      apiContainer.exchangeDataSource
+    );
+
+    return { apiContainer, parcelEventWorker };
+  } catch (error) {
+    console.error("Error during createTestAppContainer:", error);
+    throw error;
+  }
 };
