@@ -14,6 +14,7 @@ import {
   createJobWorkerContainer,
 } from "./interface/container/job-worker";
 import { logger } from "./core/services/logger";
+import { IApiContainer, IAppContainer } from "./interface/container/test";
 
 export class IntegrationLayerApp {
   private server: FastifyInstance<
@@ -31,7 +32,12 @@ export class IntegrationLayerApp {
     try {
       this.container = await createApiContainer();
       this.server = Fastify(this.container);
-      this.jobWorkerContainer = await createJobWorkerContainer();
+      const { exchangeDataSource, iLDataSource } = this
+        .container as IApiContainer;
+      this.jobWorkerContainer = await createJobWorkerContainer(
+        iLDataSource,
+        exchangeDataSource
+      );
       this.jobWorkerContainer.workers.forEach(({ worker, name }) => {
         worker.startCronJob().catch((error) => {
           logger.error({ error }, "Error starting cron job:");
