@@ -1,11 +1,9 @@
-import { AppDataSource } from "../../../../infrastructure/exchange-database.config";
-import { ILDataSource } from "../../../../infrastructure/database.config";
 import { ParcelEvent } from "../../../../infrastructure/entity/parcel-event/index";
 import * as cron from "node-cron";
 import { schemaResolvers } from "../../../resolvers/parcel-event";
 import { IWorker } from "../../interface";
 import { logger } from "../../../../core/services/logger/index";
-import { MoreThan } from "typeorm";
+import { DataSource, MoreThan } from "typeorm";
 import { Log } from "../../../../infrastructure/entity/log/index";
 import { getJetStreamConnection } from "../../../../infrastructure/jetstream/jetstream";
 import { OperationFunction, retry } from "../../../../utils/retry/index";
@@ -16,20 +14,24 @@ export class ParcelEventWorker implements IWorker {
   private subjectName: string = "parcel-event";
   private schemaVersion: string = "v1";
 
-  constructor() {}
+  constructor(
+    private readonly ilRepository: DataSource,
+    private readonly exchangeRepository: DataSource
+  ) {}
 
-  static async create() {
-    const worker = new ParcelEventWorker();
-    await worker.init();
+  static async create(ilDB: DataSource, exchangeDB: DataSource) {
+    const worker = new ParcelEventWorker(ilDB, exchangeDB);
     await worker.loadLastSentAt();
     return worker;
   }
 
-  async init() {}
+  get getLastSentAt() {
+    return this.lastSentAt;
+  }
 
   async loadLastSentAt() {
     try {
-      const log = await ILDataSource.manager.findOne(Log, {
+      const log = await this.ilRepository.manager.findOne(Log, {
         where: {},
       });
       if (log) {
@@ -42,18 +44,18 @@ export class ParcelEventWorker implements IWorker {
 
   async saveLastSentAt(lastSentAt: Date) {
     try {
-      const log = await ILDataSource.manager.findOne(Log, {
+      const log = await this.ilRepository.manager.findOne(Log, {
         where: {},
       });
 
       if (log) {
         log.lastConsumedAt = lastSentAt.toISOString();
-        await ILDataSource.manager.update(Log, log.id, log);
+        await this.ilRepository.manager.update(Log, log.id, log);
       } else {
         const newLog = new Log({
           lastConsumedAt: lastSentAt.toISOString(),
         });
-        await ILDataSource.manager.save(newLog);
+        await this.ilRepository.manager.save(newLog);
       }
 
       if (lastSentAt > this.lastSentAt) {
@@ -136,7 +138,7 @@ export class ParcelEventWorker implements IWorker {
 
   private async *getDataAfter(after: string) {
     while (true) {
-      const result = await AppDataSource.manager.find(ParcelEvent, {
+      const result = await this.exchangeRepository.manager.find(ParcelEvent, {
         where: {
           updatedAt: MoreThan(after),
         },

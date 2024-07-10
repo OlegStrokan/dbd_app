@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using NATS.Client;
 using NATS.Client.JetStream;
 using System.Text;
@@ -14,7 +15,7 @@ namespace report_worker
         private readonly string _reportRequestSubject = "report.requests";
         private readonly string _reportResponseSubject = "report.responses";
         private readonly string _stream = "reports";
-
+        
         public ReportWorker(ILogger<ReportWorker> logger, IConnection natsConnection, ParcelDeliveryRepository parcelDeliveryRepository)
         {
             _logger = logger;
@@ -72,7 +73,7 @@ namespace report_worker
                 var report = GenerateReport();
 
                 await _jetStream.PublishAsync(_reportResponseSubject, report);
-
+                
             }, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
             await Task.Delay(Timeout.Infinite, stoppingToken);

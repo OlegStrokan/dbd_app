@@ -29,7 +29,7 @@ namespace ReportWorkerApp
         private static IConnection NATSConnection()
         {
             Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = "nats://localhost:4222";
+            opts.Url = "nats://10.32.0.18:4222";
 
             IConnection connection = new ConnectionFactory().CreateConnection(opts);
             return connection;
@@ -37,7 +37,7 @@ namespace ReportWorkerApp
 
         private static string GetConnectionString()
         {
-            return "Server=localhost;Port=5433;Database=dev_db;User Id=stroka01;Password=user;";
+            return "Server=10.32.0.18;Port=5433;Database=dev_db;User Id=stroka01;Password=user;";
 
         }
     }

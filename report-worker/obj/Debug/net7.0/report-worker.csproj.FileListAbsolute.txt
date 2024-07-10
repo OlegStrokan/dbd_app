@@ -34,7 +34,6 @@
 /Users/stroka01/Development/apollo-microservices/report-worker/bin/Debug/net7.0/NATS.Client.dll
 /Users/stroka01/Development/apollo-microservices/report-worker/bin/Debug/net7.0/NATS.Client.Core.dll
 /Users/stroka01/Development/apollo-microservices/report-worker/bin/Debug/net7.0/NATS.Client.JetStream.dll
-/Users/stroka01/Development/apollo-microservices/report-worker/bin/Debug/net7.0/NCrontab.Signed.dll
 /Users/stroka01/Development/apollo-microservices/report-worker/bin/Debug/net7.0/Npgsql.dll
 /Users/stroka01/Development/apollo-microservices/report-worker/bin/Debug/net7.0/System.Diagnostics.EventLog.dll
 /Users/stroka01/Development/apollo-microservices/report-worker/bin/Debug/net7.0/System.IO.Pipelines.dll

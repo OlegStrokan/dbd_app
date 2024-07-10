@@ -12,7 +12,6 @@
           "Microsoft.Extensions.Hosting": "7.0.1",
           "NATS.Client": "1.1.5",
           "NATS.Client.JetStream": "2.3.0-preview.1",
-          "NCrontab.Signed": "3.3.3",
           "Npgsql": "8.0.3"
         },
         "runtime": {
@@ -395,14 +394,6 @@
           }
         }
       },
-      "NCrontab.Signed/3.3.3": {
-        "runtime": {
-          "lib/netstandard2.0/NCrontab.Signed.dll": {
-            "assemblyVersion": "3.3.3.0",
-            "fileVersion": "3.3.3.0"
-          }
-        }
-      },
       "Npgsql/8.0.3": {
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0"
@@ -661,13 +652,6 @@
       "sha512": "sha512-k9r66axn/2JhIXSSqu4A7dag5ZGqIScdANkVSSufR1cmuJ67J7dvlJSsrAw24FFZ4xywVFd5tZDt/8NG2ykPhQ==",
       "path": "nats.client.jetstream/2.3.0-preview.1",
       "hashPath": "nats.client.jetstream.2.3.0-preview.1.nupkg.sha512"
-    },
-    "NCrontab.Signed/3.3.3": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-YzLZyFiovVnAvvsTDnQygC82KhQyJIMsBspTYvHaK4Fp73UgUCni05mIQgOMZIZDlnO8Mg9fcNi5fpDArgQO4A==",
-      "path": "ncrontab.signed/3.3.3",
-      "hashPath": "ncrontab.signed.3.3.3.nupkg.sha512"
     },
     "Npgsql/8.0.3": {
       "type": "package",

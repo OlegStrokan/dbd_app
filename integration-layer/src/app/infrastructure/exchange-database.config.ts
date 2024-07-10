@@ -1,10 +1,9 @@
 import { DataSource } from "typeorm";
 import { ParcelEvent } from "./entity/parcel-event";
 
-export const AppDataSource = new DataSource({
-  name: "default",
+export const ExchangeDataSource = new DataSource({
   type: "postgres",
-  host: "localhost",
+  host: "10.32.0.18",
   port: 8434,
   username: "stroka01",
   password: "user",

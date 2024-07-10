@@ -19,7 +19,7 @@ import { IJetStreamService } from "./jet-stream.interface";
     {
       provide: "NATS_CONNECTION",
       useFactory: async (): Promise<NatsConnection> => {
-        const connection = await connect({ servers: "nats://localhost:4222" });
+        const connection = await connect({ servers: "nats://10.32.0.18:4222" });
         return connection;
       },
     },
