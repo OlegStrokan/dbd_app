@@ -1,12 +1,13 @@
-import { AppDataSource } from "../../../infrastructure/exchange-database.config";
+import { ExchangeDataSource } from "../../../infrastructure/exchange-database.config";
 import { ILDataSource } from "../../../infrastructure/database.config";
+import { IApiContainer } from "../test";
 
-export const createApiContainer = async () => {
-  const dataSource = await AppDataSource.initialize();
+export const createApiContainer = async (): Promise<IApiContainer> => {
+  const exchangeDataSource = await ExchangeDataSource.initialize();
   const iLDataSource = await ILDataSource.initialize();
 
   return {
-    dataSource,
+    exchangeDataSource,
     iLDataSource,
   };
 };
