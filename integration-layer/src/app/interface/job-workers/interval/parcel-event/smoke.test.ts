@@ -5,10 +5,9 @@ import {
   createTestAppContainer,
 } from "../../../container/test";
 import { describe, beforeAll, afterAll, it, expect } from "vitest";
-import { IJobWorkerContainer } from "../../../container/job-worker";
-import { WORKER } from "../../../container/job-worker/register";
 import { Log } from "../../../../infrastructure/entity/log";
 
+// TODO update log[0] shitcode
 describe("ParcelEventWorker", () => {
   let container: IApiContainer;
   let worker: ParcelEventWorker;
@@ -27,6 +26,9 @@ describe("ParcelEventWorker", () => {
   afterAll(async () => {
     try {
       await container.exchangeDataSource.destroy();
+      await container.iLDataSource.query(
+        "TRUNCATE TABLE log RESTART IDENTITY CASCADE"
+      );
       await container.iLDataSource.destroy();
     } catch (error) {
       console.error("Error in afterAll:", error);
@@ -35,25 +37,33 @@ describe("ParcelEventWorker", () => {
 
   it("should save last sent at log from log", async () => {
     try {
-      const log = new Log();
-      log.lastConsumedAt = new Date(Date.now()).toISOString();
-      await container.iLDataSource.manager.save(log);
+      const testDate = new Date(Date.now()).toISOString();
+      // await container.iLDataSource.manager.save(log);
 
-      const lastLog = await container.iLDataSource.manager.find(Log, {
-        order: {
-          id: "DESC",
-        },
-        take: 1,
-      });
-      await worker.saveLastSentAt(worker.getLastSentAt);
+      await worker.saveLastSentAt(new Date(testDate));
 
       await worker.loadLastSentAt();
 
-      expect(worker.getLastSentAt.toISOString()).toEqual(
-        lastLog[0].lastConsumedAt
-      );
+      expect(worker.getLastSentAt.toISOString()).toEqual(testDate);
     } catch (error) {
       console.error("Error in test case:", error);
     }
   });
+
+  it(
+    "should update last log if log already exist",
+    async () => {
+      {
+        const log = new Log();
+        log.lastConsumedAt = new Date(Date.now()).toISOString();
+
+        await container.iLDataSource.manager.save(log);
+
+        await worker.loadLastSentAt();
+
+        expect(worker.getLastSentAt.toISOString()).toEqual(log.lastConsumedAt);
+      }
+    },
+    { timeout: 40000000 }
+  );
 });
