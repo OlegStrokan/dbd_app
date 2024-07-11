@@ -31,11 +31,14 @@ export class ParcelEventWorker implements IWorker {
 
   async loadLastSentAt() {
     try {
-      const log = await this.ilRepository.manager.findOne(Log, {
-        where: {},
+      const log = await this.ilRepository.manager.find(Log, {
+        order: {
+          lastConsumedAt: "DESC",
+        },
+        take: 1,
       });
       if (log) {
-        this.lastSentAt = new Date(log.lastConsumedAt);
+        this.lastSentAt = new Date(log[0]?.lastConsumedAt);
       }
     } catch (error) {
       logger.error({ message: error.message }, "Error loading last sent at");
@@ -44,13 +47,17 @@ export class ParcelEventWorker implements IWorker {
 
   async saveLastSentAt(lastSentAt: Date) {
     try {
-      const log = await this.ilRepository.manager.findOne(Log, {
-        where: {},
+      const log = await this.ilRepository.manager.find(Log, {
+        order: {
+          lastConsumedAt: "DESC",
+        },
+        take: 1,
       });
+      console.log(log);
 
-      if (log) {
-        log.lastConsumedAt = lastSentAt.toISOString();
-        await this.ilRepository.manager.update(Log, log.id, log);
+      if (log.length > 0) {
+        log[0].lastConsumedAt = lastSentAt.toISOString();
+        await this.ilRepository.manager.update(Log, log[0]?.id, log[0]);
       } else {
         const newLog = new Log({
           lastConsumedAt: lastSentAt.toISOString(),
