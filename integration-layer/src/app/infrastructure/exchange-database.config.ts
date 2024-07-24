@@ -3,7 +3,7 @@ import { ParcelEvent } from "./entity/parcel-event";
 
 export const ExchangeDataSource = new DataSource({
   type: "postgres",
-  host: "10.32.0.18",
+  host: "locahost",
   port: 8434,
   username: "stroka01",
   password: "user",

@@ -14,7 +14,7 @@ func SaveDataToDatabase() *gorm.DB {
 	log.Printf("Starting Parcel Event Worker\n")
 
 	testDbConfig := db.DbConfig{
-		Host:     "10.32.0.18",
+		Host:     "localhost",
 		Port:     8434,
 		User:     "stroka01",
 		Password: "user",

@@ -1,6 +1,6 @@
 import { connect, JetStreamManager, NatsConnection } from "nats";
 
-const server = "nats://10.32.0.18:4222";
+const server = "nats://locahost:4222";
 
 export const getJetStreamConnection = async (
   subject: string
