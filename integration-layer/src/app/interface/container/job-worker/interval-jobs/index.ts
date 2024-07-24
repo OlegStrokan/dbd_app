@@ -4,7 +4,7 @@ import { IInvervalJob, IJobScheduler } from "./types";
 
 interface IJobState {
   jobPromise: Promise<void> | null;
-  intervalHandle: NodeJS.Timer;
+  intervalHandle: NodeJS.Timeout;
 }
 export class InvervalJobScheduler implements IJobScheduler {
   private jobStates: IJobState[] = [];
@@ -14,7 +14,7 @@ export class InvervalJobScheduler implements IJobScheduler {
     private readonly jobs: IInvervalJob[]
   ) {}
 
-  start = async () => {
+  start = async (): Promise<void> => {
     if (this.jobStates.length > 0) return;
 
     this.jobStates = await Promise.all(
@@ -22,10 +22,16 @@ export class InvervalJobScheduler implements IJobScheduler {
     );
   };
 
-  stop = async () => {
+  stop = async (): Promise<void> => {
     this.jobStates.forEach(({ intervalHandle }) =>
       clearInterval(intervalHandle)
     );
+
+    await Promise.allSettled(
+      this.jobStates.map(({ jobPromise }) => jobPromise ?? Promise.resolve())
+    );
+
+    this.jobStates = [];
   };
 
   private scheduleInterfaceJob = async ({
@@ -35,8 +41,17 @@ export class InvervalJobScheduler implements IJobScheduler {
     job,
   }: IInvervalJob): Promise<IJobState> => {
     const run = async () => {
+      if (jobState.jobPromise) {
+        logger.warn(
+          `Cannot invoke interval job '${name}' because it's already running`
+        );
+      }
+
+      logger.info(`Invoking interval job '${name}'.`);
+
       const jobPromise = Promise.resolve(job(this.parentContainer));
 
+      jobState.jobPromise = jobPromise;
       try {
         await jobPromise;
         logger.info(`Interval job ${name} finished`);
