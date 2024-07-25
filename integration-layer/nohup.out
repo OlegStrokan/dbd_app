@@ -1,0 +1,75 @@
+yarn run v1.22.22
+$ tsnd --respawn --transpile-only --exit-child src/index.ts
+[INFO] 18:49:15 ts-node-dev ver. 1.1.8 (using ts-node ver. 9.1.1, typescript ver. 4.9.5)
+[18:49:16.288] [32mINFO[39m (48781): [36mstart app[39m
+yarn run v1.22.22
+$ tsnd --respawn --transpile-only --exit-child src/index.ts
+[INFO] 19:02:25 ts-node-dev ver. 1.1.8 (using ts-node ver. 9.1.1, typescript ver. 4.9.5)
+[19:02:26.095] [32mINFO[39m (50684): [36mstart app[39m
+[INFO] 19:06:31 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/infrastructure/jetstream/jetstream.ts has been modified
+[INFO] 19:06:31 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/infrastructure/jetstream/jetstream.ts has been modified
+Child got SIGTERM, exiting.
+Child got SIGTERM, exiting.
+[19:06:32.312] [32mINFO[39m (51046): [36mstart app[39m
+[19:06:32.765] [32mINFO[39m (51050): [36mstart app[39m
+[INFO] 19:07:43 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/interface/job-workers/interval/parcel-event/index.ts has been modified
+[INFO] 19:07:43 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/interface/job-workers/interval/parcel-event/index.ts has been modified
+Child got SIGTERM, exiting.
+Child got SIGTERM, exiting.
+[19:07:44.958] [32mINFO[39m (51146): [36mstart app[39m
+[19:07:45.301] [32mINFO[39m (51150): [36mstart app[39m
+[19:07:45.960] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:46.302] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:46.961] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:47.304] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:47.962] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:48.305] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:48.963] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:49.306] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:49.965] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:50.307] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:50.965] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:51.309] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:51.967] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:52.310] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:52.968] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:53.312] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:53.968] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:54.312] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:54.970] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:55.314] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:55.971] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:56.315] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:56.972] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:57.317] [32mINFO[39m (51150): [36mStart cron job[39m
+[INFO] 19:07:58 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/interface/job-workers/interval/parcel-event/index.ts has been modified
+[INFO] 19:07:58 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/interface/job-workers/interval/parcel-event/index.ts has been modified
+Child got SIGTERM, exiting.
+Child got SIGTERM, exiting.
+[19:07:57.973] [32mINFO[39m (51146): [36mStart cron job[39m
+[19:07:58.318] [32mINFO[39m (51150): [36mStart cron job[39m
+[19:07:58.736] [32mINFO[39m (51171): [36mstart app[39m
+[19:07:59.061] [32mINFO[39m (51173): [36mstart app[39m
+[INFO] 19:08:17 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/interface/job-workers/interval/parcel-event/index.ts has been modified
+[INFO] 19:08:17 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/interface/job-workers/interval/parcel-event/index.ts has been modified
+Child got SIGTERM, exiting.
+Child got SIGTERM, exiting.
+[19:08:18.281] [32mINFO[39m (51196): [36mstart app[39m
+[INFO] 19:08:18 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/interface/job-workers/interval/parcel-event/index.ts has been modified
+[INFO] 19:08:18 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/interface/job-workers/interval/parcel-event/index.ts has been modified
+Child got SIGTERM, exiting.
+Child got SIGTERM, exiting.
+[19:08:18.933] [32mINFO[39m (51201): [36mstart app[39m
+[19:08:18.989] [32mINFO[39m (51202): [36mstart app[39m
+[INFO] 19:08:29 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/infrastructure/jetstream/jetstream.ts has been modified
+[INFO] 19:08:29 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/infrastructure/jetstream/jetstream.ts has been modified
+Child got SIGTERM, exiting.
+Child got SIGTERM, exiting.
+[19:08:30.538] [32mINFO[39m (51221): [36mstart app[39m
+[19:08:30.539] [32mINFO[39m (51223): [36mstart app[39m
+[INFO] 19:08:43 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/infrastructure/jetstream/jetstream.ts has been modified
+[INFO] 19:08:43 Restarting: /Users/stroka01/Development/apollo-microservices/integration-layer/src/app/infrastructure/jetstream/jetstream.ts has been modified
+Child got SIGTERM, exiting.
+Child got SIGTERM, exiting.
+[19:08:43.972] [32mINFO[39m (51255): [36mstart app[39m
+[19:08:43.972] [32mINFO[39m (51254): [36mstart app[39m

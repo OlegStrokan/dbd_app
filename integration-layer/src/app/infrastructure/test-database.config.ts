@@ -3,7 +3,7 @@ import { Log } from "./entity/log";
 
 export const ILDataTestSource = new DataSource({
   type: "postgres",
-  host: "locahost",
+  host: "localhost",
   port: 8437,
   username: "stroka01",
   password: "test",

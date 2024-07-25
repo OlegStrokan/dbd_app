@@ -29,7 +29,7 @@ namespace ReportWorkerApp
         private static IConnection NATSConnection()
         {
             Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = "nats://locahost:4222";
+            opts.Url = "nats://localhost:4222";
 
             IConnection connection = new ConnectionFactory().CreateConnection(opts);
             return connection;

@@ -22,7 +22,7 @@ var createParcelEvent = func(db *gorm.DB) {
 func ParcelEventWorker() *gorm.DB {
 	log.Printf("Starting Parcel Event Worker\n")
 	testDbConfig := db.DbConfig{
-		Host:     "locahost",
+		Host:     "localhost",
 		Port:     8434,
 		User:     "stroka01",
 		Password: "user",
