@@ -1,7 +1,7 @@
 import { ParcelEvent } from "../../../../infrastructure/entity/parcel-event/index";
 import * as cron from "node-cron";
 import { schemaResolvers } from "../../../resolvers/parcel-event";
-import { IWorker } from "../../interface";
+import { IScheduleJob } from "../../interface";
 import { logger } from "../../../../core/services/logger/index";
 import { DataSource, MoreThan } from "typeorm";
 import { Log } from "../../../../infrastructure/entity/log/index";
@@ -9,7 +9,7 @@ import { getJetStreamConnection } from "../../../../infrastructure/jetstream/jet
 import { OperationFunction, retry } from "../../../../utils/retry/index";
 
 const PARCEL_EVENT_CHUNK_SIZE = 1000;
-export class ParcelEventWorker implements IWorker {
+export class ParcelEventScheduleJob implements IScheduleJob {
   private lastSentAt: Date = new Date(0);
   private subjectName: string = "parcel-event";
   private schemaVersion: string = "v1";
@@ -20,7 +20,7 @@ export class ParcelEventWorker implements IWorker {
   ) {}
 
   static async create(ilDB: DataSource, exchangeDB: DataSource) {
-    const worker = new ParcelEventWorker(ilDB, exchangeDB);
+    const worker = new ParcelEventScheduleJob(ilDB, exchangeDB);
     await worker.loadLastSentAt();
     return worker;
   }

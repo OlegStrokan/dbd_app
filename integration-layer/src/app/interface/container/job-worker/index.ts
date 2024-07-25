@@ -1,9 +1,9 @@
 import { DataSource } from "typeorm";
-import { IWorker } from "../../job-workers/interface";
+import { IScheduleJob } from "../../job-workers/interface";
 import { registerWorkers } from "./register";
 
 interface IRegisteredWorker {
-  worker: IWorker;
+  worker: IScheduleJob;
   name: string;
 }
 

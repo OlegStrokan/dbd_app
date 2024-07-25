@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { ParcelEventWorker } from "../../job-workers/interval/parcel-event";
+import { ParcelEventScheduleJob } from "../../job-workers/interval/parcel-event";
 
 export enum WORKER {
   PARCEL_EVENT = "parcel-event-worker",
@@ -11,7 +11,7 @@ export const registerWorkers = async (
   return [
     {
       name: WORKER.PARCEL_EVENT,
-      worker: await ParcelEventWorker.create(ilDb, exchangeDb),
+      worker: await ParcelEventScheduleJob.create(ilDb, exchangeDb),
     },
   ];
 };

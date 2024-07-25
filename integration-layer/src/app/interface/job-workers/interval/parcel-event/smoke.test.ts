@@ -1,4 +1,4 @@
-import { ParcelEventWorker } from ".";
+import { ParcelEventScheduleJob } from ".";
 import {
   IAppContainer,
   IApiContainer,
@@ -10,7 +10,7 @@ import { Log } from "../../../../infrastructure/entity/log";
 // TODO update log[0] shitcode
 describe("ParcelEventWorker", () => {
   let container: IApiContainer;
-  let worker: ParcelEventWorker;
+  let worker: ParcelEventScheduleJob;
 
   beforeAll(async () => {
     try {
@@ -50,20 +50,16 @@ describe("ParcelEventWorker", () => {
     }
   });
 
-  it(
-    "should update last log if log already exist",
-    async () => {
-      {
-        const log = new Log();
-        log.lastConsumedAt = new Date(Date.now()).toISOString();
+  it("should update last log if log already exist", async () => {
+    {
+      const log = new Log();
+      log.lastConsumedAt = new Date(Date.now()).toISOString();
 
-        await container.iLDataSource.manager.save(log);
+      await container.iLDataSource.manager.save(log);
 
-        await worker.loadLastSentAt();
+      await worker.loadLastSentAt();
 
-        expect(worker.getLastSentAt.toISOString()).toEqual(log.lastConsumedAt);
-      }
-    },
-    { timeout: 40000000 }
-  );
+      expect(worker.getLastSentAt.toISOString()).toEqual(log.lastConsumedAt);
+    }
+  });
 });

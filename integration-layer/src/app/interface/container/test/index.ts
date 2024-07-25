@@ -1,7 +1,7 @@
 import { ILDataTestSource } from "../../../infrastructure/test-database.config";
 import { ExchangeDataSource } from "../../../infrastructure/exchange-database.config";
 import { DataSource } from "typeorm";
-import { ParcelEventWorker } from "../../job-workers/interval/parcel-event";
+import { ParcelEventScheduleJob } from "../../job-workers/interval/parcel-event";
 
 export interface IApiContainer {
   exchangeDataSource: DataSource;
@@ -10,7 +10,7 @@ export interface IApiContainer {
 
 export interface IAppContainer {
   apiContainer: IApiContainer;
-  parcelEventWorker: ParcelEventWorker;
+  parcelEventWorker: ParcelEventScheduleJob;
 }
 
 export const createTestApiContainer = async (): Promise<IApiContainer> => {
@@ -33,7 +33,7 @@ export const createTestAppContainer = async (): Promise<IAppContainer> => {
   try {
     const apiContainer = await createTestApiContainer();
 
-    const parcelEventWorker = new ParcelEventWorker(
+    const parcelEventWorker = new ParcelEventScheduleJob(
       apiContainer.iLDataSource,
       apiContainer.exchangeDataSource
     );

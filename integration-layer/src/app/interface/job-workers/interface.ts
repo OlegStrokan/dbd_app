@@ -1,3 +1,3 @@
-export interface IWorker {
+export interface IScheduleJob {
   startCronJob(): Promise<void>;
 }
