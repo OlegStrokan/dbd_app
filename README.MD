@@ -17,8 +17,8 @@
 
 ### Architecture:
 
-- `exchange` - service for client data (randomly generated data)
-- `new-exchange` - same shit, just written in golang
+- `exchange` -
+- `new-exchange` - service for client data (randomly generated data)
 - `integration-layer` - service for reading exchange db, validate and send to microservices
 - `new-fido` - delivery service (fintech part)
 - `report-worker` - background worker to creating report everyday (also support creation on-demand)
