@@ -111,6 +111,7 @@ export class ParcelEventScheduleJob implements IScheduleJob {
     parcelEventId: string
   ) {
     const operation: OperationFunction<void> = async () => {
+      logger.info("Start publishing");
       const nats = await getJetStreamConnection(this.subjectName);
       await nats.publish(this.subjectName, encodedParcel);
       logger.info(
