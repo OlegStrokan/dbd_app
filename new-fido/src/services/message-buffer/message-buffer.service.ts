@@ -4,10 +4,10 @@ import { JsMsg } from "nats";
 
 @Injectable()
 export class MessageBufferService implements IMessageBufferService {
-  private messageBuffers: Map<string, JsMsg[]> = new Map();
+  private messageBuffers: Map<string, Uint8Array[]> = new Map();
   private bufferLocks: Map<string, boolean> = new Map();
 
-  async addMessage(subjectName: string, msg: JsMsg): Promise<void> {
+  async addMessage(subjectName: string, msg: Uint8Array): Promise<void> {
     await this.acquireBufferLock(subjectName);
     if (!this.messageBuffers.has(subjectName)) {
       this.messageBuffers.set(subjectName, []);
@@ -15,9 +15,9 @@ export class MessageBufferService implements IMessageBufferService {
     this.messageBuffers.get(subjectName)?.push(msg);
     this.releaseBufferLock(subjectName);
   }
-  async getMessageBuffer(subjectName: string): Promise<JsMsg[]> {
+  async getMessageBuffer(subjectName: string): Promise<Uint8Array[]> {
     await this.acquireBufferLock(subjectName);
-    const buffer: JsMsg[] = this.messageBuffers.get(subjectName);
+    const buffer: Uint8Array[] = this.messageBuffers.get(subjectName);
     this.releaseBufferLock(subjectName);
     return buffer;
   }
