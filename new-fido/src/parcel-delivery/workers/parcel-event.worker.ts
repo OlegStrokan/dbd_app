@@ -17,7 +17,9 @@ export class ParcelEventWorker implements OnModuleDestroy, IWorker {
     private readonly messageBufferService: MessageBufferService,
     private readonly parcelRepository: ParcelDeliveryRepository,
     private readonly decodeService: DecodingDataService
-  ) {}
+  ) {
+    console.log("init parcel worker");
+  }
 
   @Cron(CronExpression.EVERY_SECOND)
   async consumeNatsMessages(): Promise<void> {
@@ -26,9 +28,10 @@ export class ParcelEventWorker implements OnModuleDestroy, IWorker {
       const messages = await this.messageBufferService.getMessageBuffer(
         this.subjectName
       );
+      console.log(messages.length);
       if (messages.length > 0) {
         const processedMessage = messages.map((msg) =>
-          this.decodeService.decodeEvent(msg.data)
+          this.decodeService.decodeEvent(msg)
         );
 
         // TODO delete type assertion
