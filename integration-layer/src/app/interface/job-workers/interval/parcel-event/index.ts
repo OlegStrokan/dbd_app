@@ -37,7 +37,7 @@ export class ParcelEventScheduleJob implements IScheduleJob {
         },
         take: 1,
       });
-      if (log) {
+      if (log.length > 0) {
         this.lastSentAt = new Date(log[0]?.lastConsumedAt);
       }
     } catch (error) {
@@ -53,7 +53,6 @@ export class ParcelEventScheduleJob implements IScheduleJob {
         },
         take: 1,
       });
-      console.log(log);
 
       if (log.length > 0) {
         log[0].lastConsumedAt = lastSentAt.toISOString();
@@ -111,7 +110,6 @@ export class ParcelEventScheduleJob implements IScheduleJob {
     parcelEventId: string
   ) {
     const operation: OperationFunction<void> = async () => {
-      logger.info("Start publishing");
       const nats = await getJetStreamConnection(this.subjectName);
       await nats.publish(this.subjectName, encodedParcel);
       logger.info(
@@ -140,6 +138,7 @@ export class ParcelEventScheduleJob implements IScheduleJob {
       const { schema } = schemaResolver;
       return schema.toBuffer(parcelEvent);
     } catch (error) {
+      logger.error({ error }, "Error encoding parcel event");
       return null;
     }
   };
