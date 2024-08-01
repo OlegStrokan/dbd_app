@@ -6,4 +6,4 @@ type ParcelEventVersions = keyof AvailableSchemas["parcelEvent"];
 export const parcelEventResolver = createResolver<
   "parcelEvent",
   ParcelEventVersions[]
->("parcelEvent", ["v1", "v2"]);
+>("parcelEvent", ["v2", "v3"]);
