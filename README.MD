@@ -1,4 +1,8 @@
-# Delivery application
+# Logistic solution application
+
+New version will be done soon. At that moment you can check code in `old-project` folder
+
+--------------------------------------DEPRECATED--------------------------------------
 
 ### Tech stack:
 
@@ -17,7 +21,7 @@
 
 ### Architecture:
 
-- `exchange` -
+- `exchange` - service for client data (deprecated)
 - `new-exchange` - service for client data (randomly generated data)
 - `integration-layer` - service for reading exchange db, validate and send to microservices
 - `new-fido` - delivery service (fintech part)
