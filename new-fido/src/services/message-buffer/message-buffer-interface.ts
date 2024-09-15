@@ -1,7 +1,5 @@
-import { JsMsg } from "nats";
-
 export interface IMessageBufferService {
-  addMessage(subjectName: string, msg: JsMsg): Promise<void>;
-  getMessageBuffer(subjectName: string): Promise<JsMsg[]>;
+  addMessage(subjectName: string, msg: Uint8Array): Promise<void>;
+  getMessageBuffer(subjectName: string): Promise<Uint8Array[]>;
   clearMessageBuffer(subjectName: string): void;
 }

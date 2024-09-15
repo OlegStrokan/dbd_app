@@ -59,7 +59,7 @@ export class JetStreamService implements IJetStreamService {
 
   async processMessage(subjectName: string, msg: JsMsg) {
     try {
-      await this.messageBufferService.addMessage(subjectName, msg);
+      await this.messageBufferService.addMessage(subjectName, msg.data);
 
       console.log(
         `Processing message for ${subjectName}: ${msg.subject} ${msg.seq}`

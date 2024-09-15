@@ -16,6 +16,7 @@ import { NatsJetStreamModule } from "@app/services/jet-stream/jet-stream.module"
 import { MessageBufferModule } from "@app/services/message-buffer/message-buffer.module";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ParcelEventWorker } from "./workers/parcel-event.worker";
+import { ParcelEventMocksService } from "./workers/mocks/parcel-event.mocks";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ParcelEventWorker } from "./workers/parcel-event.worker";
     MessageBufferModule,
   ],
   providers: [
+    ParcelEventMocksService,
     ParcelDeliveryRepository,
     CreateParcelDeliveryUseCase,
     GetParcelDeliveryUseCase,
@@ -38,10 +40,12 @@ import { ParcelEventWorker } from "./workers/parcel-event.worker";
     ParcelEventWorker,
   ],
   exports: [
+    ParcelEventMocksService,
     ParcelDeliveryRepository,
     CreateParcelDeliveryUseCase,
     GetParcelDeliveryUseCase,
     ParcelDeliveryMapper,
+    ParcelEventWorker,
   ],
 })
 export class ParcelDeliveryModule {}
