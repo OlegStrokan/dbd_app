@@ -2,6 +2,11 @@
 
 New version will be done soon. At that moment you can check code in `old-project` folder
 
+Plan:
+
+- order application for ordering (starting point)
+- fido applicaion for finance control
+
 --------------------------------------DEPRECATED--------------------------------------
 
 ### Tech stack:
