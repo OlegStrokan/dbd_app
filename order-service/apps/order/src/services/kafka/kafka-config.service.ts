@@ -1,34 +1,37 @@
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { KafkaOptions, Transport } from '@nestjs/microservices';
 
+@Injectable()
 export class KafkaConfigService {
   constructor(private readonly configService: ConfigService) {}
 
-  public getKafkaOptions(): KafkaOptions {
+  getKafkaOptions(): KafkaOptions {
     return {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: [process.env.KAFKA_BROKER],
-          clientId: process.env.KAFKA_CLIENT_ID,
+          brokers: [this.configService.get('KAFKA_BROKER')],
+          clientId: this.configService.get('KAFKA_CLIENT_ID'),
           sasl:
-            process.env.KAFKA_USERNAME && process.env.KAFKA_PASSWORD
+            this.configService.get('KAFKA_USERNAME') &&
+            this.configService.get('KAFKA_PASSWORD')
               ? {
                   mechanism: 'plain',
-                  username: process.env.KAFKA_USERNAME,
-                  password: process.env.KAFKA_PASSWORD,
+                  username: this.configService.get('KAFKA_USERNAME'),
+                  password: this.configService.get('KAFKA_PASSWORD'),
                 }
               : undefined,
-          ssl: Boolean(process.env.KAFKA_SSL) === true,
+          ssl: Boolean(this.configService.get('KAFKA_SSL')),
         },
         consumer: {
-          groupId: process.env.KAFKA_GROUP_ID,
+          groupId: this.configService.get('KAFKA_GROUP_ID'),
           allowAutoTopicCreation: true,
         },
         producer: {
           allowAutoTopicCreation: true,
           idempotent: true,
-          transactionalId: process.env.KAFKA_TRANSACTIONAL_ID,
+          transactionalId: this.configService.get('KAFKA_TRANSACTIONAL_ID'),
           transactionTimeout: 30000,
           retry: {
             retries: 5,
