@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { Kafka, Producer, Message } from 'kafkajs';
 import { KafkaConfigService } from './kafka-config.service';
-import { IProducer } from '../producer.service.interface';
+import { IProducer } from './producer.service.interface';
 @Injectable()
 export class ProducerService implements IProducer, OnApplicationShutdown {
   private readonly producers = new Map<string, Producer>();
