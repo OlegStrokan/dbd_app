@@ -1,8 +1,9 @@
 import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { Kafka, Producer, Message } from 'kafkajs';
 import { KafkaConfigService } from './kafka-config.service';
+import { IProducer } from '../producer.service.interface';
 @Injectable()
-export class ProducerService implements OnApplicationShutdown {
+export class ProducerService implements IProducer, OnApplicationShutdown {
   private readonly producers = new Map<string, Producer>();
 
   constructor(
@@ -42,7 +43,7 @@ export class ProducerService implements OnApplicationShutdown {
     return producer;
   }
 
-  async onApplicationShutdown(): Promise<void> {
+  public async onApplicationShutdown(): Promise<void> {
     for (const producer of this.producers.values()) {
       await producer.disconnect();
     }
