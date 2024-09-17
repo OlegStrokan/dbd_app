@@ -8,6 +8,7 @@ import {
 } from 'kafkajs';
 import { IConsumer } from './consumer.service.interface';
 import { KafkaConfigService } from './kafka-config.service';
+import { IProducer } from './producer.service.interface';
 
 @Injectable()
 export class ConsumerService implements IConsumer, OnApplicationShutdown {
@@ -16,8 +17,7 @@ export class ConsumerService implements IConsumer, OnApplicationShutdown {
   constructor(
     @Inject('KAFKA_SERVICE') private readonly kafka: Kafka,
     private readonly kafkaConfigService: KafkaConfigService,
-    // TODO - update database service type
-    private readonly databaseService: any
+    private readonly producerService: IProducer
   ) {}
 
   public async consume(
@@ -62,17 +62,17 @@ export class ConsumerService implements IConsumer, OnApplicationShutdown {
     });
   }
 
-  // TODO update with real db service
   private async addMessageToDlq(
     message: KafkaMessage,
     topic: string
   ): Promise<void> {
-    await this.databaseService
-      .getDbHandle()
-      .collection('dlq')
-      .insertOne({ value: message.value, topic });
+    const deadLetterTopic = `${topic}-dlq`;
+    const producer = await this.producerService.createProducer();
+    await producer.send({
+      topic: deadLetterTopic,
+      messages: [{ value: message.value }],
+    });
   }
-
   public async onApplicationShutdown(): Promise<void> {
     for (const consumer of this.consumers.values()) {
       await consumer.disconnect;
