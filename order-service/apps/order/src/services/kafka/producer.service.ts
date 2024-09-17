@@ -26,7 +26,7 @@ export class ProducerService implements IProducer, OnApplicationShutdown {
     }
   }
 
-  private async createProducer() {
+  public async createProducer() {
     const config = this.kafkaConfigService.getKafkaOptions().options.producer;
     return this.kafka.producer({
       ...config,
