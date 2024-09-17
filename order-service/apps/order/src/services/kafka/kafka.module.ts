@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { KafkaConfigService } from './kafka-config.service';
 import { Kafka } from 'kafkajs';
-import { ProducerService } from './producer.service';
-import { ConsumerService } from './consumer.service';
+import { ProducerService } from './producer/producer.service';
+import { ConsumerService } from './consumer/consumer.service';
 
 @Module({
   imports: [ConfigModule.forRoot()],

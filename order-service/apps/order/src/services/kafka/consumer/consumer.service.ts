@@ -7,8 +7,8 @@ import {
   ConsumerSubscribeTopics,
 } from 'kafkajs';
 import { IConsumer } from './consumer.service.interface';
-import { KafkaConfigService } from './kafka-config.service';
-import { IProducer } from './producer.service.interface';
+import { KafkaConfigService } from '../kafka-config.service';
+import { IProducer } from '../producer/producer.service.interface';
 
 @Injectable()
 export class ConsumerService implements IConsumer, OnApplicationShutdown {
