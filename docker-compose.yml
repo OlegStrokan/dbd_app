@@ -5,6 +5,7 @@ services:
     image: confluentinc/cp-zookeeper:7.3.2
     hostname: zoo1
     container_name: zoo1
+    platform: linux/amd64
     ports:
       - "2181:2181"
     environment:
@@ -16,6 +17,7 @@ services:
     image: confluentinc/cp-kafka:7.3.2
     hostname: kafka1
     container_name: kafka1
+    platform: linux/amd64
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -43,6 +45,7 @@ services:
     image: confluentinc/cp-schema-registry:7.3.2
     hostname: kafka-schema-registry
     container_name: kafka-schema-registry
+    platform: linux/amd64
     ports:
       - "8081:8081"
     environment:
@@ -57,6 +60,7 @@ services:
     image: confluentinc/cp-kafka-rest:7.3.2
     hostname: kafka-rest-proxy
     container_name: kafka-rest-proxy
+    platform: linux/amd64
     ports:
       - "8082:8082"
     environment:
@@ -74,6 +78,7 @@ services:
     image: confluentinc/cp-kafka-connect:7.3.2
     hostname: kafka-connect
     container_name: kafka-connect
+    platform: linux/amd64
     ports:
       - "8083:8083"
     environment:
@@ -115,6 +120,7 @@ services:
     image: confluentinc/cp-ksqldb-server:7.3.2
     hostname: ksqldb-server
     container_name: ksqldb-server
+    platform: linux/amd64
     ports:
       - "8088:8088"
     environment:
@@ -131,6 +137,7 @@ services:
     extends:
       service: postgresql
       file: conduktor.yml
+    platform: linux/amd64
 
   conduktor-console:
     hostname: conduktor-console
@@ -138,6 +145,7 @@ services:
     extends:
       service: conduktor-console
       file: conduktor.yml
+    platform: linux/amd64
 
 volumes:
   pg_data: {}
