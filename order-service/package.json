@@ -2,7 +2,6 @@
   "name": "@order-service/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
   "private": true,
   "dependencies": {
     "@nestjs/common": "^10.0.2",
@@ -19,6 +18,8 @@
     "@opentelemetry/sdk-trace-base": "^1.25.1",
     "@opentelemetry/semantic-conventions": "^1.25.1",
     "axios": "^1.6.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
@@ -59,5 +60,6 @@
     "typeorm": "^0.3.20",
     "typescript": "~5.5.2",
     "webpack-cli": "^5.1.4"
-  }
+  },
+  "packageManager": "yarn@4.5.0"
 }
