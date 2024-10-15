@@ -6,15 +6,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrderQuery } from './query/order-query.entity';
-import { OrderCommand } from './command/order-command.service';
+import { OrderCommand } from './command/order-command.entity';
 
 @Entity('order_items')
 export class OrderItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column()
-  orderId: string;
 
   @Column()
   productId: string;
