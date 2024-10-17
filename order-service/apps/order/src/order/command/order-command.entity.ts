@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { OrderItem } from '../order-item.entity';
+import { OrderItemCommand } from './order-item-command.entity';
 
 @Entity('order-command')
 export class OrderCommand {
@@ -27,6 +27,8 @@ export class OrderCommand {
   @Column({ nullable: true })
   specialInstructions: string;
 
-  @OneToMany(() => OrderItem, (item) => item.orderCommand, { cascade: true })
-  items: OrderItem[];
+  @OneToMany(() => OrderItemCommand, (item) => item.orderCommand, {
+    cascade: true,
+  })
+  items: OrderItemCommand[];
 }
