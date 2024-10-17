@@ -1,4 +1,6 @@
 import { IsDecimal, IsNotEmpty, IsString } from 'class-validator';
+import { ManyToOne } from 'typeorm';
+import { OrderCommand } from '../order-command.entity';
 
 export class OrderItemDto {
   @IsNotEmpty()
@@ -11,4 +13,7 @@ export class OrderItemDto {
 
   @IsNotEmpty()
   quantity: number;
+
+  @ManyToOne(() => OrderCommand, (orderCommand) => orderCommand.items)
+  orderCommand: OrderCommand;
 }
