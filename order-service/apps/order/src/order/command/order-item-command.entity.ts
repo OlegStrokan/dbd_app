@@ -5,11 +5,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { OrderQuery } from './query/order-query.entity';
-import { OrderCommand } from './command/order-command.entity';
+import { OrderCommand } from './order-command.entity';
 
-@Entity('order_items')
-export class OrderItem {
+@Entity('order_item_command')
+export class OrderItemCommand {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -25,8 +24,4 @@ export class OrderItem {
   @ManyToOne(() => OrderCommand, (order) => order.items)
   @JoinColumn({ name: 'orderCommandId' })
   orderCommand: OrderCommand;
-
-  @ManyToOne(() => OrderQuery, (order) => order.items)
-  @JoinColumn({ name: 'orderQueryId' })
-  orderQuery: OrderQuery;
 }
