@@ -1,6 +1,29 @@
-version: "2.1"
-
 services:
+  order_command_db:
+    container_name: order_command_db
+    image: postgres:13
+    environment:
+      POSTGRES_USER: stroka01
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: order_command_db
+    ports:
+      - "6433:5432"
+    volumes:
+      - pgdata_order_command_db:/var/lib/postgresql/data
+    restart: always
+
+  order_query_db:
+    container_name: order_query_db
+    image: postgres:13
+    environment:
+      POSTGRES_USER: stroka01
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: order_query_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_order_query_db:/var/lib/postgresql/data
+    restart: always
   zoo1:
     image: confluentinc/cp-zookeeper:7.3.2
     hostname: zoo1
@@ -150,3 +173,5 @@ services:
 volumes:
   pg_data: {}
   conduktor_data: {}
+  pgdata_order_command_db: {}
+  pgdata_order_query_db: {}
