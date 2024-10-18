@@ -6,18 +6,17 @@ import {
   KafkaMessage,
   ConsumerSubscribeTopics,
 } from 'kafkajs';
-import { IConsumer } from './consumer.service.interface';
 import { KafkaConfigService } from '../kafka-config.service';
-import { IProducer } from '../producer/producer.service.interface';
+import { ProducerService } from '../producer/producer.service';
 
 @Injectable()
-export class ConsumerService implements IConsumer, OnApplicationShutdown {
+export class ConsumerService implements OnApplicationShutdown {
   private readonly consumers = new Map<string, Consumer>();
 
   constructor(
     @Inject('KAFKA_SERVICE') private readonly kafka: Kafka,
     private readonly kafkaConfigService: KafkaConfigService,
-    private readonly producerService: IProducer
+    private readonly producerService: ProducerService
   ) {}
 
   public async consume(
