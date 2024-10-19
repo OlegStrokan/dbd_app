@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { OrderCommand } from '../../order/command/order-command.entity';
 import { OrderItemCommand } from '../../order/command/order-item-command.entity';
 
-export const DbCommandConfig = registerAs('command_db', () => ({
+export const DbCommandConfig = registerAs('commandConnection', () => ({
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT, 10) || 6433,

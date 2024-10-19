@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { OrderQuery } from '../../order/query/order-query.entity';
 import { OrderItemQuery } from '../../order/query/order-item-query.entity';
 
-export const DbQueryConfig = registerAs('query_db', () => ({
+export const DbQueryConfig = registerAs('queryConnection', () => ({
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT, 10) || 5433,
