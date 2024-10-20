@@ -14,7 +14,6 @@ export type OrderEssentialProperties = Required<{
     id: string;
     customerId: string;
     totalAmount: number;
-    createdAt: Date;
 }>;
 
 export type OrderOptionalProperties = Partial<{
