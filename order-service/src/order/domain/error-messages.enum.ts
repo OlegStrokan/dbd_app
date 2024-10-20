@@ -5,6 +5,7 @@ export enum ErrorMessages {
     // order
     ORDER_ALREADY_CREATED = '',
     ORDER_NOT_IN_CREATED_STATE = '',
+    ORDER_NOT_CANCELABLE = '',
     ORDER_ALREADY_COMPLETED = '',
     ORDER_NOT_COMPLETED = '',
     INVALID_ORDER_ITEM = '',
