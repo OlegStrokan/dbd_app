@@ -6,17 +6,22 @@ import { OrderItemAddedEvent } from '../event/order-item-added.event';
 import { OrderItemUpdatedEvent } from '../event/order-item-updated.event';
 
 export class OrderItem extends AggregateRoot implements IOrderItem {
-    private orderItemData: OrderItemProperties;
-
-    constructor(properties: OrderItemProperties) {
+    constructor(private orderItemData: OrderItemProperties) {
         super();
-        this.orderItemData = {
-            id: properties.id,
-            productId: properties.productId,
-            quantity: properties.quantity || 0,
-            price: properties.price || 0,
-            createdAt: properties.createdAt || new Date(),
-            updatedAt: properties.updatedAt || new Date(),
+    }
+
+    static create(properties: OrderItemProperties): OrderItem {
+        const orderItem = new OrderItem(properties);
+        orderItem.apply(
+            new OrderItemAddedEvent(properties.id, properties.productId, properties.quantity, properties.price)
+        );
+        return orderItem;
+    }
+
+    private clone(): OrderItemProperties {
+        return {
+            ...this.orderItemData,
+            updatedAt: new Date(),
         };
     }
 
@@ -52,8 +57,12 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
         if (quantity <= 0) {
             throw new InternalServerErrorException(ErrorMessages.INVALID_ORDER_ITEM_QUANTITY);
         }
-        this.orderItemData.quantity = quantity;
-        this.orderItemData.updatedAt = new Date();
+
+        // Clone the current state before update
+        const clonedData = this.clone();
+        clonedData.quantity = quantity;
+
+        this.orderItemData = clonedData;
         this.apply(new OrderItemUpdatedEvent(this.id, this.productId, this.quantity, this.price));
     }
 
@@ -61,8 +70,12 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
         if (price < 0) {
             throw new InternalServerErrorException(ErrorMessages.INVALID_ORDER_ITEM_PRICE);
         }
-        this.orderItemData.price = price;
-        this.orderItemData.updatedAt = new Date();
+
+        // Clone the current state before update
+        const clonedData = this.clone();
+        clonedData.price = price;
+
+        this.orderItemData = clonedData;
         this.apply(new OrderItemUpdatedEvent(this.id, this.productId, this.quantity, this.price));
     }
 
