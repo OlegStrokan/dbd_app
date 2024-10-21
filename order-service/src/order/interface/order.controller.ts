@@ -13,7 +13,7 @@ import { FindOrderByIdResponseDto } from './response-dto/find-order-response.dto
 import { FindOrderByIdQuery } from '../application/query/find-order-by-id.query';
 
 @Controller('orders')
-export class AccountsContoller {
+export class OrderContoller {
     constructor(private readonly commandBus: CommandBus, private readonly queryBus: QueryBus) {}
 
     @Post()
