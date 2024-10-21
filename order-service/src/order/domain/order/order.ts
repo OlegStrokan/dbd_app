@@ -8,7 +8,6 @@ import { OrderCancelledEvent } from '../event/order-canceled.event';
 import { OrderShippedEvent } from '../event/order-shipped.event';
 import { OrderItemAddedEvent } from '../event/order-item-added.event';
 import { generateUlid } from 'src/order/libs/domain/generate-ulid';
-import { Optional } from 'src/order/libs/domain/types';
 
 export type OrderEssentialProperties = Required<{
     id: string;
