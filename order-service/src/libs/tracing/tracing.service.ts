@@ -29,6 +29,7 @@ export class OpenTelemetryModule implements OnModuleInit, OnModuleDestroy {
             resource: new Resource({
                 [SemanticResourceAttributes.SERVICE_NAME]: 'nestjs-otel',
             }),
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
             spanProcessor: spanProcessor,
             instrumentations: [new HttpInstrumentation(), new ExpressInstrumentation(), new NestInstrumentation()],
