@@ -1,6 +1,7 @@
 import { registerAs } from '@nestjs/config';
-import { OrderItemQuery } from 'src/order/infrastructure/entity/query/order-item-query.entity';
-import { OrderQuery } from 'src/order/infrastructure/entity/query/order-query.entity';
+import { OrderItemQuery } from 'src/order/infrastructure/entity/order-item/query/order-item-query.entity';
+import { OrderQuery } from 'src/order/infrastructure/entity/order/query/order-query.entity';
+import { ParcelQuery } from 'src/order/infrastructure/entity/parcel/query/parcel-query.entity';
 
 export const DbQueryConfig = registerAs('queryConnection', () => ({
     type: 'postgres',
@@ -9,7 +10,7 @@ export const DbQueryConfig = registerAs('queryConnection', () => ({
     username: process.env.DB_USER || 'stroka01',
     password: process.env.DB_PASSWORD || 'admin',
     database: process.env.DB_NAME || 'order_query_db',
-    entities: [OrderQuery, OrderItemQuery],
+    entities: [OrderQuery, OrderItemQuery, ParcelQuery],
     logging: process.env.NODE_ENV === 'development',
     migrations: [`${__dirname}/../../migrations/query/*{.ts,.js}`],
     migrationsTableName: 'migrations',
