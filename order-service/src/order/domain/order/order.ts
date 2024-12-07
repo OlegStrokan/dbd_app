@@ -2,23 +2,20 @@ import { AggregateRoot } from '@nestjs/cqrs';
 import { InternalServerErrorException, UnprocessableEntityException } from '@nestjs/common';
 import { ErrorMessages } from '../error-messages.enum';
 import { OrderItem } from '../order-item/order-item';
-import { OrderCreatedEvent } from '../event/order-created.event';
-import { OrderCompletedEvent } from '../event/order-completed.event';
-import { OrderCancelledEvent } from '../event/order-canceled.event';
-import { OrderShippedEvent } from '../event/order-shipped.event';
-import { OrderItemAddedEvent } from '../event/order-item-added.event';
-import { generateUlid } from 'src/order/libs/domain/generate-ulid';
+import { generateUlid } from 'src/libs/generate-ulid';
 
 export type OrderEssentialProperties = Required<{
     id: string;
     customerId: string;
     totalAmount: number;
+    deliveryAddress?: string;
+    paymentMethod?: string;
+    specialInstructions?: string;
+    items?: OrderItem[];
 }>;
 
 export type OrderOptionalProperties = Partial<{
     orderDate?: Date;
-    deliveryAddress?: string;
-    paymentMethod?: string;
     items?: OrderItem[];
     createdAt?: Date;
     status: OrderStatus;
@@ -33,7 +30,6 @@ export type OrderData = OrderEssentialProperties & OrderOptionalProperties;
 
 export interface IOrder {
     compareId: (id: string) => boolean;
-    create: (order: OrderEssentialProperties) => void;
     complete: () => void;
     cancel: () => void;
     ship: (trackingNumber: string, deliveryDate: Date) => void;
@@ -48,14 +44,25 @@ export class Order extends AggregateRoot implements IOrder {
 
     static generateOrderId = () => generateUlid();
 
-    create(orderData: Omit<OrderEssentialProperties, 'id'>): void {
+    static create(orderData: Omit<OrderEssentialProperties, 'id'>): Order {
         const order = new Order({
             ...orderData,
             status: OrderStatus.Created,
             createdAt: new Date(),
             id: generateUlid(),
         });
-        order.apply(new OrderCreatedEvent(order.id, order.customerId, order.totalAmount));
+
+        return order;
+    }
+
+    static createWithId(orderData: OrderEssentialProperties): Order {
+        const order = new Order({
+            ...orderData,
+            status: OrderStatus.Created,
+            createdAt: new Date(),
+        });
+
+        return order;
     }
 
     compareId(id: string): boolean {
@@ -69,7 +76,6 @@ export class Order extends AggregateRoot implements IOrder {
         }
         clonedOrder.orderData.status = OrderStatus.Completed;
         clonedOrder.orderData.updatedAt = new Date();
-        clonedOrder.apply(new OrderCompletedEvent(clonedOrder.id, clonedOrder.customerId));
     }
 
     cancel(): void {
@@ -80,7 +86,6 @@ export class Order extends AggregateRoot implements IOrder {
 
         clonedOrder.orderData.status = OrderStatus.Canceled;
         clonedOrder.orderData.updatedAt = new Date();
-        clonedOrder.apply(new OrderCancelledEvent(clonedOrder.id, clonedOrder.customerId));
     }
 
     ship(trackingNumber: string, deliveryDate: Date): void {
@@ -92,13 +97,6 @@ export class Order extends AggregateRoot implements IOrder {
         clonedOrder.orderData.trackingNumber = trackingNumber;
         clonedOrder.orderData.deliveryDate = deliveryDate;
         clonedOrder.orderData.updatedAt = new Date();
-        clonedOrder.apply(
-            new OrderShippedEvent(
-                clonedOrder.id,
-                clonedOrder.orderData.trackingNumber,
-                clonedOrder.orderData.deliveryDate
-            )
-        );
     }
 
     addItem(item: OrderItem): void {
@@ -109,7 +107,11 @@ export class Order extends AggregateRoot implements IOrder {
         clonedOrder.orderData.items.push(item);
         clonedOrder.orderData.totalAmount += item.price * item.quantity;
         clonedOrder.orderData.updatedAt = new Date();
-        clonedOrder.apply(new OrderItemAddedEvent(clonedOrder.id, item.productId, item.quantity, item.price));
+    }
+
+    setDeliveryAddress(address: string): void {
+        const clonedOrder = this.clone();
+        clonedOrder.orderData.deliveryAddress = address;
     }
 
     get id(): string {
@@ -148,6 +150,17 @@ export class Order extends AggregateRoot implements IOrder {
         return this.orderData.feedback;
     }
 
+    get specialInstruction(): string | undefined {
+        return this.orderData.specialInstructions;
+    }
+
+    get paymentMethod(): string | undefined {
+        return this.orderData.paymentMethod;
+    }
+
+    get deliveryAddress(): string | undefined {
+        return this.orderData.deliveryAddress;
+    }
     private clone(): Order {
         return new Order({ ...this.orderData });
     }
