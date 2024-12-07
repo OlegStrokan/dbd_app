@@ -2,19 +2,22 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { IOrderItem, OrderItemProperties } from './order-item.interface';
 import { AggregateRoot } from '@nestjs/cqrs';
 import { ErrorMessages } from '../error-messages.enum';
-import { OrderItemAddedEvent } from '../event/order-item-added.event';
-import { OrderItemUpdatedEvent } from '../event/order-item-updated.event';
+import { OrderItemAddedEvent } from '../event/order-item/order-item-added.event';
+import { OrderItemUpdatedEvent } from '../event/order-item/order-item-updated.event';
+import { generateUlid } from 'src/libs/generate-ulid';
 
 export class OrderItem extends AggregateRoot implements IOrderItem {
     constructor(private orderItemData: OrderItemProperties) {
         super();
     }
 
-    static create(properties: OrderItemProperties): OrderItem {
-        const orderItem = new OrderItem(properties);
-        orderItem.apply(
-            new OrderItemAddedEvent(properties.id, properties.productId, properties.quantity, properties.price)
-        );
+    static generateOrderItemId = () => generateUlid();
+
+    static create(properties: Omit<OrderItemProperties, 'id'>): OrderItem {
+        const orderItem = new OrderItem({
+            id: generateUlid(),
+            ...properties,
+        });
         return orderItem;
     }
 
@@ -41,6 +44,10 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
         return this.orderItemData.price;
     }
 
+    get weight(): number {
+        return this.orderItemData.weight;
+    }
+
     get createdAt(): Date {
         return this.orderItemData.createdAt;
     }
@@ -58,12 +65,11 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
             throw new InternalServerErrorException(ErrorMessages.INVALID_ORDER_ITEM_QUANTITY);
         }
 
-        // Clone the current state before update
         const clonedData = this.clone();
         clonedData.quantity = quantity;
 
         this.orderItemData = clonedData;
-        this.apply(new OrderItemUpdatedEvent(this.id, this.productId, this.quantity, this.price));
+        this.apply(new OrderItemUpdatedEvent(this.id, this.productId, this.quantity, this.price, this.weight));
     }
 
     updatePrice(price: number): void {
@@ -71,15 +77,14 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
             throw new InternalServerErrorException(ErrorMessages.INVALID_ORDER_ITEM_PRICE);
         }
 
-        // Clone the current state before update
         const clonedData = this.clone();
         clonedData.price = price;
 
         this.orderItemData = clonedData;
-        this.apply(new OrderItemUpdatedEvent(this.id, this.productId, this.quantity, this.price));
+        this.apply(new OrderItemUpdatedEvent(this.id, this.productId, this.quantity, this.price, this.weight));
     }
 
     commit(): void {
-        this.apply(new OrderItemAddedEvent(this.id, this.productId, this.quantity, this.price));
+        this.apply(new OrderItemAddedEvent(this.id, this.productId, this.quantity, this.price, this.weight));
     }
 }
