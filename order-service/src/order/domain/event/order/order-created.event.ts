@@ -9,6 +9,7 @@ export class OrderCreatedEvent implements IEvent {
         public readonly specialInstructions: string,
         public readonly paymentMethod: string,
         public readonly deliveryAddress: string,
-        public readonly orderItems: OrderItemAddedEvent[]
+        public readonly createdAt: Date,
+        public readonly items: OrderItemAddedEvent[]
     ) {}
 }
