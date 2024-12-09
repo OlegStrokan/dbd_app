@@ -4,11 +4,11 @@ export type OrderItemEssentialProperties = Required<{
     quantity: number;
     price: number;
     weight: number;
+    createdAt: Date;
+    updatedAt?: Date;
 }>;
 
-export type OrderItemOptionalProperties = Partial<{ createdAt: Date; updatedAt: Date }>;
-
-export type OrderItemProperties = OrderItemEssentialProperties & OrderItemOptionalProperties;
+export type OrderItemProperties = OrderItemEssentialProperties;
 
 export interface IOrderItem {
     compareId: (id: string) => boolean;

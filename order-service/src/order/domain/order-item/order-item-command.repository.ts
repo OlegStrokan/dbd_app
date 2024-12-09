@@ -1,8 +1,8 @@
-import { OrderItem } from './order-item';
+import { OrderItemEssentialProperties } from './order-item.interface';
 
 export interface IOrderItemCommandRepository {
-    insertOne(order: OrderItem): Promise<void>;
-    insertMany(order: OrderItem[]): Promise<void>;
-    updateOne(order: OrderItem): Promise<void>;
+    insertOne(order: OrderItemEssentialProperties): Promise<void>;
+    insertMany(order: OrderItemEssentialProperties[]): Promise<void>;
+    updateOne(order: OrderItemEssentialProperties): Promise<void>;
     deleteOne(order: string): Promise<void>;
 }

@@ -3,7 +3,6 @@ import { IOrderItem, OrderItemProperties } from './order-item.interface';
 import { AggregateRoot } from '@nestjs/cqrs';
 import { ErrorMessages } from '../error-messages.enum';
 import { OrderItemAddedEvent } from '../event/order-item/order-item-added.event';
-import { OrderItemUpdatedEvent } from '../event/order-item/order-item-updated.event';
 import { generateUlid } from 'src/libs/generate-ulid';
 
 export class OrderItem extends AggregateRoot implements IOrderItem {
@@ -13,11 +12,22 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
 
     static generateOrderItemId = () => generateUlid();
 
-    static create(properties: Omit<OrderItemProperties, 'id'>): OrderItem {
+    static create(properties: Omit<OrderItemProperties, 'id' | 'createdAt' | 'updatedAt'>): OrderItem {
         const orderItem = new OrderItem({
             id: generateUlid(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
             ...properties,
         });
+
+        return orderItem;
+    }
+
+    static createWithIdAndDate(properties: OrderItemProperties): OrderItem {
+        const orderItem = new OrderItem({
+            ...properties,
+        });
+
         return orderItem;
     }
 
@@ -48,12 +58,10 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
         return this.orderItemData.weight;
     }
 
-    get createdAt(): Date {
-        return this.orderItemData.createdAt;
-    }
-
-    get updatedAt(): Date {
-        return this.orderItemData.updatedAt;
+    get data(): OrderItemProperties {
+        return {
+            ...this.orderItemData,
+        };
     }
 
     compareId(id: string): boolean {
@@ -69,7 +77,6 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
         clonedData.quantity = quantity;
 
         this.orderItemData = clonedData;
-        this.apply(new OrderItemUpdatedEvent(this.id, this.productId, this.quantity, this.price, this.weight));
     }
 
     updatePrice(price: number): void {
@@ -81,10 +88,19 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
         clonedData.price = price;
 
         this.orderItemData = clonedData;
-        this.apply(new OrderItemUpdatedEvent(this.id, this.productId, this.quantity, this.price, this.weight));
     }
 
     commit(): void {
-        this.apply(new OrderItemAddedEvent(this.id, this.productId, this.quantity, this.price, this.weight));
+        this.apply(
+            new OrderItemAddedEvent(
+                this.id,
+                this.productId,
+                this.quantity,
+                this.price,
+                this.weight,
+                this.data.createdAt,
+                this.data.updatedAt
+            )
+        );
     }
 }
