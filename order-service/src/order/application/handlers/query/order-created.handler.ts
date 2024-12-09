@@ -1,19 +1,35 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { OrderCreatedEvent } from 'src/order/domain/event/order/order-created.event';
 import { OrderQueryRepository } from 'src/order/infrastructure/repository/order/order-query.repository';
 import { Order } from 'src/order/domain/order/order';
 import { OrderItem } from 'src/order/domain/order-item/order-item';
+import { ParcelQueryRepository } from 'src/order/infrastructure/repository/parcel/parcel-query.repository';
 
 @EventsHandler(OrderCreatedEvent)
 export class OrderCreatedHandler implements IEventHandler<OrderCreatedEvent> {
-    constructor(@Inject(OrderQueryRepository) private orderQueryRepository: OrderQueryRepository) {}
+    constructor(
+        @Inject(OrderQueryRepository) private orderQueryRepository: OrderQueryRepository,
+        @Inject(ParcelQueryRepository) private parcelQueryRepository: ParcelQueryRepository,
+        private readonly logger: Logger
+    ) {}
 
     async handle(event: OrderCreatedEvent): Promise<void> {
-        const items = event.orderItems?.map((item) => OrderItem.create(item));
+        try {
+            let orderItems: OrderItem[] = [];
+            if (event.items) {
+                orderItems = event.items?.map((item) => {
+                    return OrderItem.createWithIdAndDate({ ...item });
+                });
+            }
 
-        const order = Order.createWithId({ ...event, items });
+            const order = Order.createWithId({ ...event, items: orderItems });
+            await this.orderQueryRepository.insertOne(order);
+            await this.parcelQueryRepository.insertMany(order);
 
-        await this.orderQueryRepository.insertOne(order);
+            this.logger.log(`Order table synchronized`);
+        } catch (e) {
+            console.warn(e.message);
+        }
     }
 }

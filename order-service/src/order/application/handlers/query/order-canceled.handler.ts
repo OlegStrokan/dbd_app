@@ -13,6 +13,6 @@ export class OrderCancelledHandler implements IEventHandler<OrderCancelledEvent>
             throw new NotFoundException('Order not found');
         }
         order.cancel();
-        await this.orderQueryRepository.updateOne(order.id, order);
+        await this.orderQueryRepository.updateOne(order.id, order.data);
     }
 }
