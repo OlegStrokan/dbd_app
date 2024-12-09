@@ -3,27 +3,27 @@ import { InternalServerErrorException, UnprocessableEntityException } from '@nes
 import { ErrorMessages } from '../error-messages.enum';
 import { OrderItem } from '../order-item/order-item';
 import { generateUlid } from 'src/libs/generate-ulid';
+import { Parcel } from '../parcel/parcel';
 
 export type OrderEssentialProperties = Required<{
     id: string;
     customerId: string;
     totalAmount: number;
-    deliveryAddress?: string;
-    paymentMethod?: string;
-    specialInstructions?: string;
-    items?: OrderItem[];
+    createdAt: Date;
+    items: OrderItem[];
 }>;
 
 export type OrderOptionalProperties = Partial<{
-    orderDate?: Date;
-    items?: OrderItem[];
-    createdAt?: Date;
     status: OrderStatus;
+    parcels: Parcel[];
     updatedAt?: Date;
     version?: number;
     trackingNumber?: string;
     deliveryDate?: Date;
     feedback?: string;
+    deliveryAddress?: string;
+    paymentMethod?: string;
+    specialInstructions?: string;
 }>;
 
 export type OrderData = OrderEssentialProperties & OrderOptionalProperties;
@@ -78,14 +78,22 @@ export class Order extends AggregateRoot implements IOrder {
         clonedOrder.orderData.updatedAt = new Date();
     }
 
-    cancel(): void {
+    deliver(): void {
         const clonedOrder = this.clone();
-        if (!clonedOrder.isValidStatusChange(clonedOrder.status, OrderStatus.Canceled)) {
+        if (!clonedOrder.isValidStatusChange(OrderStatus.Shipped, OrderStatus.Delivered)) {
+            throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_IN_CREATED_STATE);
+        }
+        clonedOrder.orderData.status = OrderStatus.Delivered;
+        clonedOrder.orderData.updatedAt = new Date();
+    }
+
+    cancel(): void {
+        if (!this.isValidStatusChange(this.status, OrderStatus.Canceled)) {
             throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_CANCELABLE);
         }
 
-        clonedOrder.orderData.status = OrderStatus.Canceled;
-        clonedOrder.orderData.updatedAt = new Date();
+        this.orderData.status = OrderStatus.Canceled;
+        this.orderData.updatedAt = new Date();
     }
 
     ship(trackingNumber: string, deliveryDate: Date): void {
@@ -114,6 +122,10 @@ export class Order extends AggregateRoot implements IOrder {
         clonedOrder.orderData.deliveryAddress = address;
     }
 
+    get data(): OrderData {
+        return { ...this.orderData };
+    }
+
     get id(): string {
         return this.orderData.id;
     }
@@ -130,8 +142,12 @@ export class Order extends AggregateRoot implements IOrder {
         return this.orderData.status || OrderStatus.Pending;
     }
 
-    get orderDate(): Date {
-        return this.orderData.orderDate || new Date();
+    get createdAt(): Date {
+        return this.orderData.createdAt || new Date();
+    }
+
+    get updatedAt(): Date {
+        return this.orderData.createdAt || new Date();
     }
 
     get items(): OrderItem[] {
@@ -172,6 +188,7 @@ export class Order extends AggregateRoot implements IOrder {
 
 export enum OrderStatus {
     Created = 'Created',
+    Delivered = 'Delivered',
     Completed = 'Completed',
     Canceled = 'Canceled',
     Shipped = 'Shipped',
@@ -183,8 +200,9 @@ type NextStatus = OrderStatus;
 
 const VALID_STATUS_CHANGES: Record<CurrentStatus, NextStatus[]> = {
     [OrderStatus.Created]: [OrderStatus.Completed, OrderStatus.Canceled, OrderStatus.Shipped],
-    [OrderStatus.Completed]: [OrderStatus.Canceled, OrderStatus.Shipped],
+    [OrderStatus.Completed]: [],
+    [OrderStatus.Delivered]: [OrderStatus.Completed, OrderStatus.Shipped],
     [OrderStatus.Canceled]: [],
-    [OrderStatus.Shipped]: [],
+    [OrderStatus.Shipped]: [OrderStatus.Delivered],
     [OrderStatus.Pending]: [],
 };

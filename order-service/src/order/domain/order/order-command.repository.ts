@@ -1,7 +1,7 @@
-import { Order } from './order';
+import { OrderData } from './order';
 
 export interface IOrderCommandRepository {
-    insertOne(order: Order): Promise<void>;
-    updateOne(order: Order): Promise<void>;
-    deleteOne(order: Order): Promise<void>;
+    insertOne(order: OrderData): Promise<void>;
+    updateOne(order: OrderData): Promise<void>;
+    deleteOne(orderId: string): Promise<void>;
 }
