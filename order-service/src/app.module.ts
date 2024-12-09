@@ -5,12 +5,13 @@ import { DbCommandConfig } from './libs/database/command/database-command.config
 import { DbQueryConfig } from './libs/database/query/database-query.config';
 import { KafkaModule } from './libs/kafka/kafka.module';
 import { OrderModule } from './order/order.module';
-import { OrderCommand } from './order/infrastructure/entity/order/command/order-command.entity';
 import { OrderItemCommand } from './order/infrastructure/entity/order-item/command/order-item-command.entity';
-import { OrderQuery } from './order/infrastructure/entity/order/query/order-query.entity';
+import { OrderQuery } from './order/infrastructure/entity/order/order-query.entity';
 import { OrderItemQuery } from './order/infrastructure/entity/order-item/query/order-item-query.entity';
 import { ParcelQuery } from './order/infrastructure/entity/parcel/query/parcel-query.entity';
 import { ParcelCommand } from './order/infrastructure/entity/parcel/command/parcel-command.entity';
+import { OrderCommand } from './order/infrastructure/entity/order/order-command.entity';
+import { OrderProjection } from './order/infrastructure/entity/order/order-projection.entity';
 
 @Module({
     imports: [
@@ -37,7 +38,7 @@ import { ParcelCommand } from './order/infrastructure/entity/parcel/command/parc
             inject: [ConfigService],
         }),
         TypeOrmModule.forFeature([OrderCommand, OrderItemCommand, ParcelCommand], 'commandConnection'),
-        TypeOrmModule.forFeature([OrderQuery, OrderItemQuery, ParcelQuery], 'queryConnection'),
+        TypeOrmModule.forFeature([OrderQuery, OrderItemQuery, ParcelQuery, OrderProjection], 'queryConnection'),
         KafkaModule,
         OrderModule,
     ],

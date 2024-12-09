@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { OrderItemCommand } from 'src/order/infrastructure/entity/order-item/command/order-item-command.entity';
-import { OrderCommand } from 'src/order/infrastructure/entity/order/command/order-command.entity';
+import { OrderCommand } from 'src/order/infrastructure/entity/order/order-command.entity';
 import { ParcelCommand } from 'src/order/infrastructure/entity/parcel/command/parcel-command.entity';
 
 export const DbCommandConfig = registerAs('commandConnection', () => ({
