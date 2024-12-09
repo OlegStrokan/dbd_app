@@ -15,13 +15,14 @@ export class CancelOrderHandler implements ICommandHandler<CancelOrderCommand, v
     ) {}
 
     async execute(command: CancelOrderCommand): Promise<void> {
+        console.log(command);
         const order = await this.orderQueryRepository.findById(command.id);
         if (!order) {
             throw new NotFoundException('Order not found');
         }
         order.cancel();
-        await this.orderCommandRepository.updateOne(order);
+        await this.orderCommandRepository.updateOne(order.data);
 
-        this.eventBus.publish(new OrderCancelledEvent(order.id, order.customerId));
+        this.eventBus.publish(new OrderCancelledEvent(order.id, new Date()));
     }
 }

@@ -4,8 +4,8 @@ import { Inject, NotFoundException } from '@nestjs/common';
 import { IOrderCommandRepository } from 'src/order/domain/order/order-command.repository';
 import { EventBus } from '@nestjs/cqrs';
 import { OrderQueryRepository } from 'src/order/infrastructure/repository/order/order-query.repository';
-import { OrderShippedEvent } from 'src/order/domain/event/order-item/order-shipped.event';
 import { OrderCommandRepository } from 'src/order/infrastructure/repository/order/order-command.repository';
+import { OrderShippedEvent } from 'src/order/domain/event/order/order-shipped.event';
 
 @CommandHandler(ShipOrderCommand)
 export class ShipOrderHandler implements ICommandHandler<ShipOrderCommand, void> {
@@ -21,8 +21,10 @@ export class ShipOrderHandler implements ICommandHandler<ShipOrderCommand, void>
             throw new NotFoundException('Order not found');
         }
         order.ship(command.trackingNumber, command.deliveryDate);
-        await this.orderRepository.updateOne(order);
+        await this.orderRepository.updateOne(order.data);
 
-        this.eventBus.publish(new OrderShippedEvent(order.id, command.trackingNumber, command.deliveryDate));
+        this.eventBus.publish(
+            new OrderShippedEvent(order.id, command.trackingNumber, command.deliveryDate, command.deliveryDate)
+        );
     }
 }

@@ -22,8 +22,8 @@ export class CreateOrderHandler implements ICommandHandler<CompleteOrderCommand,
         }
 
         order.complete();
-        await this.orderCommandRepository.updateOne(order);
+        await this.orderCommandRepository.updateOne(order.data);
 
-        this.eventBus.publish(new OrderCompletedEvent(order.id, order.customerId));
+        this.eventBus.publish(new OrderCompletedEvent(order.id, new Date()));
     }
 }
