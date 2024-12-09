@@ -24,7 +24,12 @@
         "migration:generate:command": "yarn typeorm -- -d ./src/libs/database/command/database-command.datasource.ts migration:generate ./src/libs/database/command/migrations/$npm_config_name",
         "migration:create:command": "yarn typeorm -- migration:create ./src/libs/database/command/migrations/$npm_config_name",
         "migration:revert:command": "yarn typeorm -- -d ./src/libs/database/command/database-command.datasource.ts migration:revert",
-        "migration:show:command": "yarn typeorm migration:show -- -d ./src/libs/database/command/database-command.datasource.ts"
+        "migration:show:command": "yarn typeorm migration:show -- -d ./src/libs/database/command/database-command.datasource.ts",
+        "migration:run:query": "yarn typeorm migration:run -- -d ./src/libs/database/query/database-query.datasource.ts",
+        "migration:generate:query": "yarn typeorm -- -d ./src/libs/database/query/database-query.datasource.ts migration:generate ./src/libs/database/query/migrations/$npm_config_name",
+        "migration:create:query": "yarn typeorm -- migration:create ./src/libs/database/query/migrations/$npm_config_name",
+        "migration:revert:query": "yarn typeorm -- -d ./src/libs/database/query/database-query.datasource.ts migration:revert",
+        "migration:show:query": "yarn typeorm migration:show -- -d ./src/libs/database/query/database-query.datasource.ts"
     },
     "dependencies": {
         "@nestjs/common": "^9.0.0",
