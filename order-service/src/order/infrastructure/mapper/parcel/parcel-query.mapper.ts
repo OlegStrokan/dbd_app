@@ -2,10 +2,17 @@
 import { Parcel } from 'src/order/domain/parcel/parcel';
 import { ParcelQuery } from '../../entity/parcel/query/parcel-query.entity';
 import { OrderItemQueryMapper } from '../order-item/order-item-query.mapper';
+import { HasMany } from 'src/libs/helpers/db-relationship.interface';
 
 export class ParcelQueryMapper {
     static toDomain(parcelQuery: ParcelQuery): Parcel {
-        const items = parcelQuery.items?.map((item) => OrderItemQueryMapper.toDomain(item));
+        const items = parcelQuery.items
+            ? HasMany.loaded(
+                  parcelQuery.items.map((item) => OrderItemQueryMapper.toDomain(item)),
+                  'parcel.items'
+              )
+            : HasMany.unloaded('parcel.items');
+
         return new Parcel({
             ...parcelQuery,
             items,
@@ -19,6 +26,11 @@ export class ParcelQueryMapper {
         parcelQuery.weight = parcel.weight;
         parcelQuery.dimensions = parcel.dimensions;
         parcelQuery.orderId = parcel.orderId;
+
+        if (parcel.parcel.items.isLoaded()) {
+            parcelQuery.items = parcel.parcel.items.get().map((item) => OrderItemQueryMapper.toEntity(item));
+        }
+
         return parcelQuery;
     }
 }

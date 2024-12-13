@@ -29,7 +29,7 @@ export class ParcelQueryRepository implements IParcelQueryRepository {
         await this.parcelQueryRepository.save(newParcel);
     }
 
-    public async updateOne(orderId: string, updateData: Partial<Order>): Promise<void> {
+    public async updateOne(orderId: string, updateData: Partial<Parcel>): Promise<void> {
         await this.parcelQueryRepository.update(orderId, updateData);
     }
 
