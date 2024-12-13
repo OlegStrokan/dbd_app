@@ -20,8 +20,8 @@ export class ShipOrderHandler implements ICommandHandler<ShipOrderCommand, void>
         if (!order) {
             throw new NotFoundException('Order not found');
         }
-        order.ship(command.trackingNumber, command.deliveryDate);
-        await this.orderRepository.updateOne(order.data);
+        const shippedOrder = order.ship(command.trackingNumber, command.deliveryDate);
+        await this.orderRepository.updateOne(shippedOrder.data);
 
         this.eventBus.publish(
             new OrderShippedEvent(order.id, command.trackingNumber, command.deliveryDate, command.deliveryDate)

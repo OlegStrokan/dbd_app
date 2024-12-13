@@ -5,6 +5,7 @@ import { OrderQuery } from '../../entity/order/order-query.entity';
 import { OrderStatusMapper } from '../order-status.mapper';
 import { ParcelQuery } from '../../entity/parcel/query/parcel-query.entity';
 import { Parcel } from 'src/order/domain/parcel/parcel';
+import { HasMany } from 'src/libs/helpers/db-relationship.interface';
 
 export class OrderQueryMapper {
     static toDomain(orderQuery: OrderQuery): Order {
@@ -40,8 +41,15 @@ export class OrderQueryMapper {
     }
 
     static toDomainParcel(parcel: ParcelQuery): Parcel {
-        const domainItems = parcel.items?.map((item) => OrderQueryMapper.toDomainItem(item));
-        return Parcel.createWithIdAndDate({ ...parcel, items: domainItems });
+        const domainItems = HasMany.loaded(
+            parcel.items?.map((item) => OrderQueryMapper.toDomainItem(item)) || [],
+            'parcel.items'
+        );
+
+        return Parcel.createWithIdAndDate({
+            ...parcel,
+            items: domainItems,
+        });
     }
 
     static toEntity(order: Order): OrderQuery {
@@ -73,7 +81,9 @@ export class OrderQueryMapper {
         const dbParcel = new ParcelQuery();
         dbParcel.dimensions = parcel.dimensions;
         dbParcel.id = parcel.id;
-        dbParcel.items = parcel.items?.map((item) => OrderQueryMapper.toEntityItem(item));
+        dbParcel.items = parcel.parcel.items.isLoaded()
+            ? parcel.parcel.items.get().map((item) => OrderQueryMapper.toEntityItem(item))
+            : [];
         dbParcel.orderId = parcel.orderId;
         dbParcel.trackingNumber = parcel.trackingNumber;
         dbParcel.weight = parcel.weight;

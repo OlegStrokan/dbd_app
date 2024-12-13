@@ -20,8 +20,8 @@ export class CancelOrderHandler implements ICommandHandler<CancelOrderCommand, v
         if (!order) {
             throw new NotFoundException('Order not found');
         }
-        order.cancel();
-        await this.orderCommandRepository.updateOne(order.data);
+        const canceledOrder = order.cancel();
+        await this.orderCommandRepository.updateOne(canceledOrder.data);
 
         this.eventBus.publish(new OrderCancelledEvent(order.id, new Date()));
     }

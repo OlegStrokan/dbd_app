@@ -21,8 +21,8 @@ export class CreateOrderHandler implements ICommandHandler<CompleteOrderCommand,
             throw new NotFoundException('Order not found');
         }
 
-        order.complete();
-        await this.orderCommandRepository.updateOne(order.data);
+        const completedOrder = order.complete();
+        await this.orderCommandRepository.updateOne(completedOrder.data);
 
         this.eventBus.publish(new OrderCompletedEvent(order.id, new Date()));
     }
