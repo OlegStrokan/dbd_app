@@ -2,6 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { OrderItemCommand } from 'src/order/infrastructure/entity/order-item/command/order-item-command.entity';
 import { OrderCommand } from 'src/order/infrastructure/entity/order/order-command.entity';
 import { ParcelCommand } from 'src/order/infrastructure/entity/parcel/command/parcel-command.entity';
+import { RepaymentPreferencesCommand } from 'src/order/infrastructure/entity/repayment-preferences/repayment-preferences-command.entity';
 
 export const DbCommandConfig = registerAs('commandConnection', () => ({
     type: 'postgres',
@@ -10,7 +11,7 @@ export const DbCommandConfig = registerAs('commandConnection', () => ({
     username: process.env.DB_USER || 'stroka01',
     password: process.env.DB_PASSWORD || 'admin',
     database: process.env.DB_NAME || 'order_command_db',
-    entities: [OrderCommand, OrderItemCommand, ParcelCommand],
+    entities: [OrderCommand, OrderItemCommand, ParcelCommand, RepaymentPreferencesCommand],
     logging: process.env.NODE_ENV === 'development',
     migrations: [`${__dirname}/migrations/*{.ts,.js}`],
     migrationsTableName: 'migrations',
