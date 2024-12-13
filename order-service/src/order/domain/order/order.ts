@@ -4,6 +4,7 @@ import { ErrorMessages } from '../error-messages.enum';
 import { OrderItem } from '../order-item/order-item';
 import { generateUlid } from 'src/libs/generate-ulid';
 import { Parcel } from '../parcel/parcel';
+import { IClone } from 'src/libs/helpers/clone.interface';
 
 export type OrderEssentialProperties = Required<{
     id: string;
@@ -34,92 +35,11 @@ export interface IOrder {
     cancel: () => void;
     ship: (trackingNumber: string, deliveryDate: Date) => void;
     addItem: (item: OrderItem) => void;
-    commit: () => void;
 }
 
-export class Order extends AggregateRoot implements IOrder {
+export class Order extends AggregateRoot implements IOrder, IClone<Order> {
     constructor(private orderData: OrderData) {
         super();
-    }
-
-    static generateOrderId = () => generateUlid();
-
-    static create(orderData: Omit<OrderEssentialProperties, 'id'>): Order {
-        const order = new Order({
-            ...orderData,
-            status: OrderStatus.Created,
-            createdAt: new Date(),
-            id: generateUlid(),
-        });
-
-        return order;
-    }
-
-    static createWithId(orderData: OrderEssentialProperties): Order {
-        const order = new Order({
-            ...orderData,
-            status: OrderStatus.Created,
-            createdAt: new Date(),
-        });
-
-        return order;
-    }
-
-    compareId(id: string): boolean {
-        return id === this.id;
-    }
-
-    complete(): void {
-        const clonedOrder = this.clone();
-        if (!clonedOrder.isValidStatusChange(OrderStatus.Created, OrderStatus.Completed)) {
-            throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_IN_CREATED_STATE);
-        }
-        clonedOrder.orderData.status = OrderStatus.Completed;
-        clonedOrder.orderData.updatedAt = new Date();
-    }
-
-    deliver(): void {
-        const clonedOrder = this.clone();
-        if (!clonedOrder.isValidStatusChange(OrderStatus.Shipped, OrderStatus.Delivered)) {
-            throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_IN_CREATED_STATE);
-        }
-        clonedOrder.orderData.status = OrderStatus.Delivered;
-        clonedOrder.orderData.updatedAt = new Date();
-    }
-
-    cancel(): void {
-        if (!this.isValidStatusChange(this.status, OrderStatus.Canceled)) {
-            throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_CANCELABLE);
-        }
-
-        this.orderData.status = OrderStatus.Canceled;
-        this.orderData.updatedAt = new Date();
-    }
-
-    ship(trackingNumber: string, deliveryDate: Date): void {
-        const clonedOrder = this.clone();
-        if (!clonedOrder.isValidStatusChange(clonedOrder.status, OrderStatus.Shipped)) {
-            throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_COMPLETED);
-        }
-
-        clonedOrder.orderData.trackingNumber = trackingNumber;
-        clonedOrder.orderData.deliveryDate = deliveryDate;
-        clonedOrder.orderData.updatedAt = new Date();
-    }
-
-    addItem(item: OrderItem): void {
-        const clonedOrder = this.clone();
-        if (!item) {
-            throw new InternalServerErrorException(ErrorMessages.INVALID_ORDER_ITEM);
-        }
-        clonedOrder.orderData.items.push(item);
-        clonedOrder.orderData.totalAmount += item.price * item.quantity;
-        clonedOrder.orderData.updatedAt = new Date();
-    }
-
-    setDeliveryAddress(address: string): void {
-        const clonedOrder = this.clone();
-        clonedOrder.orderData.deliveryAddress = address;
     }
 
     get data(): OrderData {
@@ -177,7 +97,95 @@ export class Order extends AggregateRoot implements IOrder {
     get deliveryAddress(): string | undefined {
         return this.orderData.deliveryAddress;
     }
-    private clone(): Order {
+
+    static generateOrderId = () => generateUlid();
+
+    static create(orderData: Omit<OrderEssentialProperties, 'id'>): Order {
+        const order = new Order({
+            ...orderData,
+            status: OrderStatus.Created,
+            createdAt: new Date(),
+            id: generateUlid(),
+        });
+
+        return order;
+    }
+
+    static createWithId(orderData: OrderEssentialProperties): Order {
+        const order = new Order({
+            ...orderData,
+            status: OrderStatus.Created,
+            createdAt: new Date(),
+        });
+
+        return order;
+    }
+
+    compareId(id: string): boolean {
+        return id === this.id;
+    }
+
+    complete(): Order {
+        const clonedOrder = this.clone();
+        if (!clonedOrder.isValidStatusChange(OrderStatus.Created, OrderStatus.Completed)) {
+            throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_IN_CREATED_STATE);
+        }
+        clonedOrder.orderData.status = OrderStatus.Completed;
+        clonedOrder.orderData.updatedAt = new Date();
+        return clonedOrder;
+    }
+
+    deliver(): Order {
+        const clonedOrder = this.clone();
+        if (!clonedOrder.isValidStatusChange(OrderStatus.Shipped, OrderStatus.Delivered)) {
+            throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_IN_CREATED_STATE);
+        }
+        clonedOrder.orderData.status = OrderStatus.Delivered;
+        clonedOrder.orderData.updatedAt = new Date();
+        return clonedOrder;
+    }
+
+    cancel(): Order {
+        const clonedOrder = this.clone();
+        if (!this.isValidStatusChange(clonedOrder.status, OrderStatus.Canceled)) {
+            throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_CANCELABLE);
+        }
+
+        clonedOrder.orderData.status = OrderStatus.Canceled;
+        clonedOrder.orderData.updatedAt = new Date();
+        return clonedOrder;
+    }
+
+    ship(trackingNumber: string, deliveryDate: Date): Order {
+        const clonedOrder = this.clone();
+        if (!clonedOrder.isValidStatusChange(clonedOrder.status, OrderStatus.Shipped)) {
+            throw new UnprocessableEntityException(ErrorMessages.ORDER_NOT_COMPLETED);
+        }
+
+        clonedOrder.orderData.trackingNumber = trackingNumber;
+        clonedOrder.orderData.deliveryDate = deliveryDate;
+        clonedOrder.orderData.updatedAt = new Date();
+        return clonedOrder;
+    }
+
+    addItem(item: OrderItem): Order {
+        const clonedOrder = this.clone();
+        if (!item) {
+            throw new InternalServerErrorException(ErrorMessages.INVALID_ORDER_ITEM);
+        }
+        clonedOrder.orderData.items.push(item);
+        clonedOrder.orderData.totalAmount += item.price * item.quantity;
+        clonedOrder.orderData.updatedAt = new Date();
+        return clonedOrder;
+    }
+
+    setDeliveryAddress(address: string): Order {
+        const clonedOrder = this.clone();
+        clonedOrder.orderData.deliveryAddress = address;
+        return clonedOrder;
+    }
+
+    clone(): Order {
         return new Order({ ...this.orderData });
     }
 

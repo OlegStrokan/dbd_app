@@ -2,10 +2,10 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { IOrderItem, OrderItemProperties } from './order-item.interface';
 import { AggregateRoot } from '@nestjs/cqrs';
 import { ErrorMessages } from '../error-messages.enum';
-import { OrderItemAddedEvent } from '../event/order-item/order-item-added.event';
 import { generateUlid } from 'src/libs/generate-ulid';
+import { IClone } from 'src/libs/helpers/clone.interface';
 
-export class OrderItem extends AggregateRoot implements IOrderItem {
+export class OrderItem extends AggregateRoot implements IOrderItem, IClone<OrderItem> {
     constructor(private orderItemData: OrderItemProperties) {
         super();
     }
@@ -31,11 +31,10 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
         return orderItem;
     }
 
-    private clone(): OrderItemProperties {
-        return {
+    clone(): OrderItem {
+        return new OrderItem({
             ...this.orderItemData,
-            updatedAt: new Date(),
-        };
+        });
     }
 
     get id(): string {
@@ -68,39 +67,25 @@ export class OrderItem extends AggregateRoot implements IOrderItem {
         return id === this.id;
     }
 
-    updateQuantity(quantity: number): void {
+    updateQuantity(quantity: number): OrderItem {
         if (quantity <= 0) {
             throw new InternalServerErrorException(ErrorMessages.INVALID_ORDER_ITEM_QUANTITY);
         }
 
         const clonedData = this.clone();
-        clonedData.quantity = quantity;
+        clonedData.orderItemData.quantity = quantity;
 
-        this.orderItemData = clonedData;
+        return clonedData;
     }
 
-    updatePrice(price: number): void {
+    updatePrice(price: number): OrderItem {
         if (price < 0) {
             throw new InternalServerErrorException(ErrorMessages.INVALID_ORDER_ITEM_PRICE);
         }
 
         const clonedData = this.clone();
-        clonedData.price = price;
+        clonedData.orderItemData.price = price;
 
-        this.orderItemData = clonedData;
-    }
-
-    commit(): void {
-        this.apply(
-            new OrderItemAddedEvent(
-                this.id,
-                this.productId,
-                this.quantity,
-                this.price,
-                this.weight,
-                this.data.createdAt,
-                this.data.updatedAt
-            )
-        );
+        return clonedData;
     }
 }
