@@ -63,4 +63,9 @@ export class OrderController {
         const query = new FindOrderByIdQuery(param);
         return this.queryBus.execute(query);
     }
+
+    // TODO create new controller for customer
+    @Post(':orderId/shipping-cost'): Promise<> {
+        
+    }
 }

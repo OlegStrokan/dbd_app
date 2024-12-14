@@ -1,7 +1,7 @@
 // parcel-command.repository.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ParcelCommand } from '../../entity/parcel/command/parcel-command.entity';
+import { ParcelCommand } from '../../entity/parcel/parcel-command.entity';
 import { Repository } from 'typeorm';
 import { IParcelCommandRepository } from 'src/order/domain/parcel/parcel-command.repository';
 import { Parcel } from 'src/order/domain/parcel/parcel';

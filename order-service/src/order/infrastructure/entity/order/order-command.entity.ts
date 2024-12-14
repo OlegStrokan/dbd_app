@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { BaseEntity } from 'src/libs/database/base.entity';
 import { OrderItemCommand } from '../order-item/command/order-item-command.entity';
-import { ParcelCommand } from '../parcel/command/parcel-command.entity';
+import { ParcelCommand } from '../parcel/parcel-command.entity';
 import { RepaymentPreferencesCommand } from '../repayment-preferences/repayment-preferences-command.entity';
 
 @Entity('order_command')

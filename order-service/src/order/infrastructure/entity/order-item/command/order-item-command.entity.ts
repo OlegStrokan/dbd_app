@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { BaseEntity } from 'src/libs/database/base.entity';
-import { ParcelCommand } from '../../parcel/command/parcel-command.entity';
+import { ParcelCommand } from '../../parcel/parcel-command.entity';
 import { OrderCommand } from '../../order/order-command.entity';
 
 @Entity('order_item_command')

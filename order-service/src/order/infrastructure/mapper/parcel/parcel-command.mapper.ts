@@ -1,5 +1,5 @@
 import { Parcel } from 'src/order/domain/parcel/parcel';
-import { ParcelCommand } from '../../entity/parcel/command/parcel-command.entity';
+import { ParcelCommand } from '../../entity/parcel/parcel-command.entity';
 import { OrderItemCommandMapper } from '../order-item/order-item-command.mapper';
 import { HasMany } from 'src/libs/helpers/db-relationship.interface';
 
