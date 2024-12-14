@@ -9,10 +9,9 @@ import { OrderQuery } from './infrastructure/entity/order/order-query.entity';
 import { OrderItemQuery } from './infrastructure/entity/order-item/query/order-item-query.entity';
 import { OrderItemCommandRepository } from './infrastructure/repository/order-item/order-item-command.repository';
 import { ParcelCommandRepository } from './infrastructure/repository/parcel/parcel-command.repository';
-import { ParcelQuery } from './infrastructure/entity/parcel/query/parcel-query.entity';
 import { ParcelQueryRepository } from './infrastructure/repository/parcel/parcel-query.repository';
 import { OrderItemQueryRepository } from './infrastructure/repository/order-item/order-query.repository';
-import { ParcelCommand } from './infrastructure/entity/parcel/command/parcel-command.entity';
+import { ParcelCommand } from './infrastructure/entity/parcel/parcel-command.entity';
 import { OrderQueryRepository } from './infrastructure/repository/order/order-query.repository';
 import { OrderCreatedHandler } from './application/handlers/query/order-created.handler';
 import { FindAllOrdersHandler } from './application/handlers/query/find-all-orders.handler';
@@ -26,11 +25,20 @@ import { OrderCompletedHandler } from './application/handlers/query/order-comple
 import { OrderCancelledHandler } from './application/handlers/query/order-canceled.handler';
 import { CancelOrderHandler } from './application/handlers/command/cancel-order.handler';
 import { ShipOrderHandler } from './application/handlers/command/ship-order.handler';
+import { ShippingCostCommand } from './infrastructure/entity/shipping-cost/shipping-cost-command.entity';
+import { ShippingCostQuery } from './infrastructure/entity/shipping-cost/shipping-cost-query.entity';
+import { ParcelQuery } from './infrastructure/entity/parcel/parcel-query.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([OrderCommand, OrderItemCommand, ParcelCommand], 'commandConnection'),
-        TypeOrmModule.forFeature([OrderQuery, OrderItemQuery, ParcelQuery, OrderProjection], 'queryConnection'),
+        TypeOrmModule.forFeature(
+            [OrderCommand, OrderItemCommand, ParcelCommand, ShippingCostCommand],
+            'commandConnection'
+        ),
+        TypeOrmModule.forFeature(
+            [OrderQuery, OrderItemQuery, ParcelQuery, OrderProjection, ShippingCostQuery],
+            'queryConnection'
+        ),
         CqrsModule,
     ],
     controllers: [OrderController],
