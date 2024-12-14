@@ -1,9 +1,10 @@
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import { OrderItemCommand } from 'src/order/infrastructure/entity/order-item/command/order-item-command.entity';
-import { ParcelCommand } from 'src/order/infrastructure/entity/parcel/command/parcel-command.entity';
 import { OrderCommand } from 'src/order/infrastructure/entity/order/order-command.entity';
 import { RepaymentPreferencesCommand } from 'src/order/infrastructure/entity/repayment-preferences/repayment-preferences-command.entity';
+import { ParcelCommand } from 'src/order/infrastructure/entity/parcel/parcel-command.entity';
+import { ShippingCost } from 'src/order/domain/shipping-cost/shipping-cost';
 
 config();
 
@@ -14,7 +15,7 @@ export default new DataSource({
     username: process.env.DB_USER || 'stroka01',
     password: process.env.DB_PASSWORD || 'admin',
     database: process.env.DB_NAME || 'order_command_db',
-    entities: [OrderCommand, OrderItemCommand, ParcelCommand, RepaymentPreferencesCommand],
+    entities: [OrderCommand, OrderItemCommand, ParcelCommand, RepaymentPreferencesCommand, ShippingCost],
     logging: process.env.NODE_ENV === 'development',
     migrations: [`${__dirname}/migrations/*{.ts,.js}`],
     migrationsTableName: 'migrations',
