@@ -1,8 +1,8 @@
 // parcel-query.mapper.ts
 import { Parcel } from 'src/order/domain/parcel/parcel';
-import { ParcelQuery } from '../../entity/parcel/query/parcel-query.entity';
 import { OrderItemQueryMapper } from '../order-item/order-item-query.mapper';
 import { HasMany } from 'src/libs/helpers/db-relationship.interface';
+import { ParcelQuery } from '../../entity/parcel/parcel-query.entity';
 
 export class ParcelQueryMapper {
     static toDomain(parcelQuery: ParcelQuery): Parcel {
