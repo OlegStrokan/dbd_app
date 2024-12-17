@@ -1,4 +1,6 @@
 import { IClone } from 'src/libs/helpers/clone.interface';
+import { Parcel } from '../parcel/parcel';
+import { HasMany } from 'src/libs/helpers/db-relationship.interface';
 
 export type ShippingDimentions = {
     length: number;
@@ -18,6 +20,7 @@ export type ShippingCostData = {
     dimensions: ShippingDimentions;
     shippingOptions: ShippingOptions;
     calculatedCost: number;
+    parcels: HasMany<Parcel>;
 };
 
 export class ShippingCost implements IClone<ShippingCost> {
@@ -60,6 +63,12 @@ export class ShippingCost implements IClone<ShippingCost> {
 
     get data(): ShippingCostData {
         return this.shippingCostData;
+    }
+
+    loadOrderItems(orderItems: Parcel[]): ShippingCost {
+        const clone = this.clone();
+        clone.shippingCostData.parcels = HasMany.loaded(orderItems, 'shippingConst.parcels');
+        return clone;
     }
 
     clone(): ShippingCost {
