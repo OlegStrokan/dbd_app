@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/order/domain/order/order';
 import { OrderQuery } from '../../entity/order/order-query.entity';
 import { OrderQueryMapper } from '../../mapper/order/order-query.mapper';
-import { ParcelQuery } from '../../entity/parcel/query/parcel-query.entity';
+import { ParcelQuery } from '../../entity/parcel/parcel-query.entity';
 
 @Injectable()
 export class OrderQueryRepository {

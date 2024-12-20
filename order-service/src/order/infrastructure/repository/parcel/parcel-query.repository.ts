@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/order/domain/order/order';
-import { ParcelQuery } from '../../entity/parcel/query/parcel-query.entity';
 import { Parcel } from 'src/order/domain/parcel/parcel';
 import { ParcelQueryMapper } from '../../mapper/parcel/parcel-query.mapper';
 import { OrderItem } from 'src/order/domain/order-item/order-item';
 import { IParcelQueryRepository } from 'src/order/domain/parcel/parcel-query.repository';
+import { ParcelQuery } from '../../entity/parcel/parcel-query.entity';
 
 @Injectable()
 export class ParcelQueryRepository implements IParcelQueryRepository {
