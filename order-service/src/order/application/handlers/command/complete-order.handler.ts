@@ -5,7 +5,7 @@ import { IOrderCommandRepository } from 'src/order/domain/order/order-command.re
 import { Inject, NotFoundException } from '@nestjs/common';
 import { OrderQueryRepository } from 'src/order/infrastructure/repository/order/order-query.repository';
 import { IOrderQueryRepository } from 'src/order/domain/order/order-query.repository';
-import { OrderCompletedEvent } from 'src/order/domain/event/order/order-completed.event';
+import { OrderCompletedEvent } from 'src/order/domain/order/event/order-completed.event';
 
 @CommandHandler(CompleteOrderCommand)
 export class CreateOrderHandler implements ICommandHandler<CompleteOrderCommand, void> {

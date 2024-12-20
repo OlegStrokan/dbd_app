@@ -3,11 +3,11 @@ import { CreateOrderCommand } from '../../command/order/create-order.command';
 import { Inject, Logger } from '@nestjs/common';
 import { IOrderCommandRepository } from 'src/order/domain/order/order-command.repository';
 import { OrderCommandRepository } from 'src/order/infrastructure/repository/order/order-command.repository';
-import { OrderCreatedEvent } from 'src/order/domain/event/order/order-created.event';
 import { OrderItem } from 'src/order/domain/order-item/order-item';
 import { IParcelCommandRepository } from 'src/order/domain/parcel/parcel-command.repository';
 import { ParcelCommandRepository } from 'src/order/infrastructure/repository/parcel/parcel-command.repository';
 import { Order } from 'src/order/domain/order/order';
+import { OrderCreatedEvent } from 'src/order/domain/order/event/order-created.event';
 
 @CommandHandler(CreateOrderCommand)
 export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand, void> {
