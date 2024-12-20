@@ -1,4 +1,3 @@
-// src/order/application/command/shipping-cost/calculate-shipping-cost.command.ts
 export class CalculateShippingCostCommand {
     constructor(
         public readonly orderId: string,
