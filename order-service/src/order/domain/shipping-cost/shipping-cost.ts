@@ -2,7 +2,7 @@ import { IClone } from 'src/libs/helpers/clone.interface';
 import { Parcel } from '../parcel/parcel';
 import { HasMany } from 'src/libs/helpers/db-relationship.interface';
 
-export type ShippingDimentions = {
+export type Dimension = {
     length: number;
     width: number;
     height: number;
@@ -17,22 +17,64 @@ export type ShippingOptions = {
 export type ShippingCostData = {
     orderId: string;
     weight: number;
-    dimensions: ShippingDimentions;
+    dimensions: Dimension;
     shippingOptions: ShippingOptions;
     calculatedCost: number;
-    parcels: HasMany<Parcel>;
+    parcels?: HasMany<Parcel>;
 };
 
 export class ShippingCost implements IClone<ShippingCost> {
     constructor(public readonly shippingCostData: ShippingCostData) {}
 
+    get data(): ShippingCostData {
+        return this.shippingCostData;
+    }
+
     static create(shippingCostData: Omit<ShippingCostData, 'calculatedCost'>) {
-        const { orderId } = shippingCostData;
         const calculatedCost = this.calculateShippingCost({ ...shippingCostData });
         return new ShippingCost({
             ...shippingCostData,
             calculatedCost,
         });
+    }
+
+    addParcel(parcel: Parcel): ShippingCost {
+        if (!parcel) {
+            throw new Error('Invalid Parcel');
+        }
+        return this.addParcels([parcel]);
+    }
+
+    addParcels(parcels: Parcel[]): ShippingCost {
+        if (!parcels || parcels.length === 0) {
+            throw new Error('No parcels to add');
+        }
+
+        const existingParcels = this.shippingCostData.parcels.isLoaded() ? this.shippingCostData.parcels.get() : [];
+        const totalWeight = parcels.reduce((acc, parcel) => acc + parcel.weight, 0);
+
+        const updatedParcels = [...existingParcels, ...parcels];
+        const updatedWeight = this.shippingCostData.weight + totalWeight;
+
+        return new ShippingCost({
+            ...this.shippingCostData,
+            weight: updatedWeight,
+            parcels: HasMany.loaded(updatedParcels, 'shippingCost.parcels'),
+            calculatedCost: ShippingCost.calculateShippingCost({
+                ...this.shippingCostData,
+                weight: updatedWeight,
+            }),
+        });
+    }
+
+    loadOrderItems(orderItems: Parcel[]): ShippingCost {
+        const clone = this.clone();
+        clone.shippingCostData.parcels = HasMany.loaded(orderItems, 'shippingConst.parcels');
+        return clone;
+    }
+
+    clone(): ShippingCost {
+        return new ShippingCost({ ...this.shippingCostData });
     }
 
     private static calculateShippingCost(
@@ -59,19 +101,5 @@ export class ShippingCost implements IClone<ShippingCost> {
         }
 
         return baseCost;
-    }
-
-    get data(): ShippingCostData {
-        return this.shippingCostData;
-    }
-
-    loadOrderItems(orderItems: Parcel[]): ShippingCost {
-        const clone = this.clone();
-        clone.shippingCostData.parcels = HasMany.loaded(orderItems, 'shippingConst.parcels');
-        return clone;
-    }
-
-    clone(): ShippingCost {
-        return new ShippingCost({ ...this.shippingCostData });
     }
 }
