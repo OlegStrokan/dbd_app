@@ -2,6 +2,7 @@ import { generateUlid } from 'src/libs/generate-ulid';
 import { OrderItem } from '../order-item/order-item';
 import { HasMany } from 'src/libs/helpers/db-relationship.interface';
 import { IClone } from 'src/libs/helpers/clone.interface';
+import { AggregateRoot } from '@nestjs/cqrs';
 
 export type ParcelData = {
     id: string;
@@ -14,8 +15,10 @@ export type ParcelData = {
     updatedAt: Date;
 };
 
-export class Parcel implements IClone<Parcel> {
-    constructor(public readonly parcel: ParcelData) {}
+export class Parcel extends AggregateRoot implements IClone<Parcel> {
+    constructor(public readonly parcel: ParcelData) {
+        super();
+    }
 
     get id(): string {
         return this.parcel.id;
