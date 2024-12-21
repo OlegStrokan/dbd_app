@@ -1,6 +1,7 @@
 // order-item-command.mapper.ts
 import { OrderItem } from 'src/order/domain/order-item/order-item';
 import { OrderItemCommand } from '../../entity/order-item/command/order-item-command.entity';
+import { OrderItemDto } from 'src/order/interface/dto/order-item.dto';
 
 export class OrderItemCommandMapper {
     static toDomain(itemCommand: OrderItemCommand): OrderItem {
@@ -15,6 +16,12 @@ export class OrderItemCommandMapper {
         });
     }
 
+    static toClient(item: OrderItem): OrderItemDto {
+        return {
+            ...item.data,
+        };
+    }
+
     static toEntity(item: OrderItem): OrderItemCommand {
         const itemCommand = new OrderItemCommand();
         itemCommand.id = item.id;
@@ -24,4 +31,6 @@ export class OrderItemCommandMapper {
         itemCommand.weight = item.weight;
         return itemCommand;
     }
+
+    static;
 }

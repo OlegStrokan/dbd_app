@@ -1,4 +1,4 @@
-import { ShippingCost } from 'src/order/domain/shipping-cost/shipping-cost';
+import { ShippingCost, ShippingCostCreateDate } from 'src/order/domain/shipping-cost/shipping-cost';
 import { ShippingCostCommand } from '../../entity/shipping-cost/shipping-cost-command.entity';
 import { HasMany } from 'src/libs/helpers/db-relationship.interface';
 import { ParcelCommandMapper } from '../parcel/parcel-command.mapper';
@@ -22,14 +22,12 @@ export class ShippingCostCommandMapper {
         });
     }
 
-    static toEntity(shippingCost: ShippingCost): ShippingCostCommand {
+    static toEntity(shippingCost: ShippingCostCreateDate): ShippingCostCommand {
         const command = new ShippingCostCommand();
-        command.id = shippingCost.data.orderId;
-        command.orderId = shippingCost.data.orderId;
-        command.weight = shippingCost.data.weight;
-        command.dimensions = shippingCost.data.dimensions;
-        command.shippingOptions = shippingCost.data.shippingOptions;
-        command.calculatedCost = shippingCost.data.calculatedCost;
+        command.id = shippingCost.orderId;
+        command.orderId = shippingCost.orderId;
+        command.weight = shippingCost.weight;
+        command.dimensions = shippingCost.dimensions;
 
         return command;
     }

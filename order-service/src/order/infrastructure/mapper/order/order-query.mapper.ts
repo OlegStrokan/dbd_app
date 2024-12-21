@@ -3,9 +3,9 @@ import { Order, OrderData } from 'src/order/domain/order/order';
 import { OrderItemQuery } from '../../entity/order-item/query/order-item-query.entity';
 import { OrderQuery } from '../../entity/order/order-query.entity';
 import { OrderStatusMapper } from '../order-status.mapper';
-import { ParcelQuery } from '../../entity/parcel/query/parcel-query.entity';
 import { Parcel } from 'src/order/domain/parcel/parcel';
 import { HasMany } from 'src/libs/helpers/db-relationship.interface';
+import { ParcelQuery } from '../../entity/parcel/parcel-query.entity';
 
 export class OrderQueryMapper {
     static toDomain(orderQuery: OrderQuery): Order {
@@ -26,6 +26,23 @@ export class OrderQueryMapper {
             parcels: orderQuery.parcels?.map((parcel) => OrderQueryMapper.toDomainParcel(parcel)),
         };
         return Order.createWithId(orderData);
+    }
+
+    static toClient(orderQuery: OrderQuery): any {
+        return {
+            id: orderQuery.id,
+            customerId: orderQuery.customerId,
+            totalAmount: orderQuery.totalAmount,
+            createdAt: orderQuery.createdAt,
+            updatedAt: orderQuery.updatedAt,
+            status: OrderStatusMapper.fromDatabase(orderQuery.status),
+            deliveryAddress: orderQuery.deliveryAddress,
+            paymentMethod: orderQuery.paymentMethod,
+            deliveryDate: orderQuery.deliveryDate,
+            trackingNumber: orderQuery.trackingNumber,
+            specialInstructions: orderQuery.specialInstructions,
+            feedback: orderQuery.feedback,
+        };
     }
 
     static toDomainItem(itemQuery: OrderItemQuery): OrderItem {
@@ -81,14 +98,14 @@ export class OrderQueryMapper {
         const dbParcel = new ParcelQuery();
         dbParcel.dimensions = parcel.dimensions;
         dbParcel.id = parcel.id;
-        dbParcel.items = parcel.parcel.items.isLoaded()
-            ? parcel.parcel.items.get().map((item) => OrderQueryMapper.toEntityItem(item))
+        dbParcel.items = parcel.parcelData.items.isLoaded()
+            ? parcel.parcelData.items.get().map((item) => OrderQueryMapper.toEntityItem(item))
             : [];
         dbParcel.orderId = parcel.orderId;
         dbParcel.trackingNumber = parcel.trackingNumber;
         dbParcel.weight = parcel.weight;
-        dbParcel.createdAt = parcel.parcel.createdAt;
-        dbParcel.updatedAt = parcel.parcel.updatedAt;
+        dbParcel.createdAt = parcel.parcelData.createdAt;
+        dbParcel.updatedAt = parcel.parcelData.updatedAt;
 
         return dbParcel;
     }

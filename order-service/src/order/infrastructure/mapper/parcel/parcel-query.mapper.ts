@@ -27,8 +27,8 @@ export class ParcelQueryMapper {
         parcelQuery.dimensions = parcel.dimensions;
         parcelQuery.orderId = parcel.orderId;
 
-        if (parcel.parcel.items.isLoaded()) {
-            parcelQuery.items = parcel.parcel.items.get().map((item) => OrderItemQueryMapper.toEntity(item));
+        if (parcel.parcelData.items.isLoaded()) {
+            parcelQuery.items = parcel.parcelData.items.get().map((item) => OrderItemQueryMapper.toEntity(item));
         }
 
         return parcelQuery;

@@ -1,8 +1,9 @@
-import { OrderItem } from 'src/order/domain/order-item/order-item';
 import { OrderStatusMapper } from '../order-status.mapper';
-import { OrderItemCommand } from '../../entity/order-item/command/order-item-command.entity';
 import { Order } from 'src/order/domain/order/order';
 import { OrderCommand } from '../../entity/order/order-command.entity';
+import { OrderItemCommandMapper } from '../order-item/order-item-command.mapper';
+import { OrderDto } from 'src/order/interface/dto/order.dto';
+import { ParcelCommandMapper } from '../parcel/parcel-command.mapper';
 
 export class OrderCommandMapper {
     static toDomain(orderCommand: OrderCommand): Order {
@@ -16,21 +17,23 @@ export class OrderCommandMapper {
             deliveryAddress: orderCommand.deliveryAddress,
             paymentMethod: orderCommand.paymentMethod,
             specialInstructions: orderCommand.specialInstructions,
-            items: orderCommand.items.map((item) => OrderCommandMapper.toDomainItem(item)),
+            items: orderCommand.items.map((item) => OrderItemCommandMapper.toDomain(item)),
         };
         return Order.createWithId(orderData);
     }
 
-    static toDomainItem(itemCommand: OrderItemCommand): OrderItem {
-        return new OrderItem({
-            id: itemCommand.id,
-            productId: itemCommand.productId,
-            quantity: itemCommand.quantity,
-            price: itemCommand.price,
-            weight: itemCommand.weight,
-            createdAt: itemCommand.createdAt,
-            updatedAt: itemCommand.updatedAt,
-        });
+    static toClient(order: Order): OrderDto {
+        const items = order.items.map((item) => OrderItemCommandMapper.toClient(item));
+        const parcels = order.parcels.map((parcel) => ParcelCommandMapper.toClient(parcel));
+        return {
+            id: order.id,
+            customerId: order.customerId,
+            items,
+            status: OrderStatusMapper.fromDatabase(order.status),
+            totalAmount: order.totalAmount,
+            deliveryAddress: order.deliveryAddress,
+            parcels,
+        };
     }
 
     static toEntity(order: Order): OrderCommand {
@@ -45,15 +48,7 @@ export class OrderCommandMapper {
         orderCommand.paymentMethod = order.paymentMethod;
         orderCommand.specialInstructions = order.specialInstruction;
         // TODO add order.feedback
-        orderCommand.items = order.items.map((item) => OrderCommandMapper.toEntityItem(item));
+        orderCommand.items = order.items.map((item) => OrderItemCommandMapper.toEntity(item));
         return orderCommand;
-    }
-
-    static toEntityItem(item: OrderItem): OrderItemCommand {
-        const itemCommand = new OrderItemCommand();
-        itemCommand.productId = item.productId;
-        itemCommand.quantity = item.quantity;
-        itemCommand.price = item.price;
-        return itemCommand;
     }
 }
