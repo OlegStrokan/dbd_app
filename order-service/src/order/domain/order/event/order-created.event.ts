@@ -1,5 +1,5 @@
 import { IEvent } from '@nestjs/cqrs';
-import { OrderItemAddedEvent } from '../order-item/order-item-added.event';
+import { OrderItemAddedEvent } from '../../order-item/event/order-item-added.event';
 
 export class OrderCreatedEvent implements IEvent {
     constructor(

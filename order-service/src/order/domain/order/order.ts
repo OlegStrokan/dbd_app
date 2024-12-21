@@ -16,7 +16,7 @@ export type OrderEssentialProperties = Required<{
 
 export type OrderOptionalProperties = Partial<{
     status: OrderStatus;
-    parcels: Parcel[];
+    parcels?: Parcel[];
     updatedAt?: Date;
     version?: number;
     trackingNumber?: string;
@@ -70,6 +70,10 @@ export class Order extends AggregateRoot implements IOrder, IClone<Order> {
         return this.orderData.createdAt || new Date();
     }
 
+    get parcels(): Parcel[] | undefined {
+        return this.orderData.parcels;
+    }
+
     get items(): OrderItem[] {
         return this.orderData.items || [];
     }
@@ -100,7 +104,7 @@ export class Order extends AggregateRoot implements IOrder, IClone<Order> {
 
     static generateOrderId = () => generateUlid();
 
-    static create(orderData: Omit<OrderEssentialProperties, 'id'>): Order {
+    static create(orderData: Omit<OrderEssentialProperties, 'id' | 'createdAt'>): Order {
         const order = new Order({
             ...orderData,
             status: OrderStatus.Created,

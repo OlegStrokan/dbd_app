@@ -1,138 +1,110 @@
-import { generateUlid } from 'src/libs/generate-ulid';
-import { OrderItem } from '../order-item/order-item';
-import { HasMany } from 'src/libs/helpers/db-relationship.interface';
-import { IClone } from 'src/libs/helpers/clone.interface';
+import { InternalServerErrorException } from '@nestjs/common';
 import { AggregateRoot } from '@nestjs/cqrs';
+import { generateUlid } from 'src/libs/generate-ulid';
+import { IClone } from 'src/libs/helpers/clone.interface';
+import { HasMany } from 'src/libs/helpers/db-relationship.interface';
+import { OrderItem } from '../order-item/order-item';
+import { Dimension } from '../shipping-cost/shipping-cost';
 
 export type ParcelData = {
     id: string;
     trackingNumber: string;
     weight: number;
-    dimensions: string;
+    dimensions: Dimension;
     orderId: string;
     items: HasMany<OrderItem>;
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt?: Date;
 };
-
 export class Parcel extends AggregateRoot implements IClone<Parcel> {
-    constructor(public readonly parcel: ParcelData) {
+    constructor(private parcelData: ParcelData) {
         super();
     }
 
     get id(): string {
-        return this.parcel.id;
+        return this.parcelData.id;
     }
 
     get trackingNumber(): string {
-        return this.parcel.trackingNumber;
+        return this.parcelData.trackingNumber;
+    }
+
+    get data(): ParcelData {
+        return this.parcelData;
     }
 
     get weight(): number {
-        return this.parcel.weight;
+        return this.parcelData.weight;
     }
 
-    get dimensions(): string {
-        return this.parcel.dimensions;
+    get dimensions(): Dimension {
+        return this.parcelData.dimensions;
     }
 
     get orderId(): string {
-        return this.parcel.orderId;
+        return this.parcelData.orderId;
     }
 
-    static createWithIdAndDate(parcelData: Omit<ParcelData, 'id' | 'createdAt' | 'updatedAt'>): Parcel {
-        return new Parcel({
+    get createdAt(): Date {
+        return this.parcelData.createdAt;
+    }
+
+    get updatedAt(): Date {
+        return this.parcelData.updatedAt || this.parcelData.createdAt;
+    }
+
+    static create(parcelData: Omit<ParcelData, 'id' | 'createdAt' | 'trackingNumber'>): Parcel {
+        const parcel = new Parcel({
             ...parcelData,
             id: generateUlid(),
             createdAt: new Date(),
             updatedAt: new Date(),
+            trackingNumber: this.generateTrackingNumber(),
         });
-    }
-
-    static addItem(parcel: Parcel, item: OrderItem): Parcel {
-        if (!item) {
-            throw new Error('Invalid Order Item');
-        }
-
-        const loadedItems = parcel.parcel.items.isLoaded() ? parcel.parcel.items.get() : [];
-
-        return new Parcel({
-            ...parcel.parcel,
-            weight: parcel.parcel.weight + item.weight,
-            items: HasMany.loaded([...loadedItems, item], 'parcel.items'),
-            updatedAt: new Date(),
-        });
-    }
-
-    static createParcels(orderId: string, items: OrderItem[]): Parcel[] {
-        const parcels: Parcel[] = [];
-        let currentParcel: Parcel | null = null;
-
-        for (const item of items) {
-            const isLargeItem = item.weight > MAX_SINGLE_ITEM_WEIGHT;
-
-            if (isLargeItem) {
-                if (currentParcel) {
-                    parcels.push(currentParcel);
-                }
-
-                currentParcel = new Parcel({
-                    id: generateUlid(),
-                    trackingNumber: Parcel.generateTrackingNumber(),
-                    weight: item.weight,
-                    dimensions: LARGE_ITEM_DIMENSIONS,
-                    orderId,
-                    items: HasMany.loaded([item], 'parcel.items'),
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                });
-
-                parcels.push(currentParcel);
-                currentParcel = null;
-            } else {
-                if (!currentParcel || currentParcel.parcel.weight + item.weight > MAX_PARCEL_WEIGHT) {
-                    if (currentParcel) {
-                        parcels.push(currentParcel);
-                    }
-
-                    currentParcel = new Parcel({
-                        id: generateUlid(),
-                        trackingNumber: Parcel.generateTrackingNumber(),
-                        dimensions: SMALL_ITEM_DIMENSIONS,
-                        orderId,
-                        items: HasMany.loaded([item], 'parcel.items'),
-                        createdAt: new Date(),
-                        updatedAt: new Date(),
-                        weight: 0,
-                    });
-                }
-                currentParcel = Parcel.addItem(currentParcel, item);
-            }
-        }
-
-        if (currentParcel) {
-            parcels.push(currentParcel);
-        }
-
-        return parcels;
+        return parcel;
     }
 
     static generateTrackingNumber(): string {
         return 'TRACK-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     }
 
+    addItem(item: OrderItem): Parcel {
+        if (!item) {
+            throw new InternalServerErrorException('Invalid Order Item');
+        }
+
+        const clonedParcel = this.clone();
+        const loadedItems = clonedParcel.parcelData.items.isLoaded() ? clonedParcel.parcelData.items.get() : [];
+
+        clonedParcel.parcelData.items = HasMany.loaded([...loadedItems, item], 'parcel.items');
+        clonedParcel.parcelData.weight += item.weight;
+        clonedParcel.parcelData.updatedAt = new Date();
+
+        return clonedParcel;
+    }
+
+    updateTrackingInfo(trackingNumber: string): Parcel {
+        const clonedParcel = this.clone();
+        clonedParcel.parcelData.trackingNumber = trackingNumber;
+        clonedParcel.parcelData.updatedAt = new Date();
+        return clonedParcel;
+    }
+
+    setDimensions(dimensions: Dimension): Parcel {
+        const clonedParcel = this.clone();
+        clonedParcel.parcelData.dimensions = dimensions;
+        clonedParcel.parcelData.updatedAt = new Date();
+        return clonedParcel;
+    }
+
     loadOrderItems(orderItems: OrderItem[]): Parcel {
-        const clone = this.clone();
-        clone.parcel.items = HasMany.loaded(orderItems, 'parcel.orderItems');
-        return clone;
+        const clonedParcel = this.clone();
+        clonedParcel.parcelData.items = HasMany.loaded(orderItems, 'parcel.items');
+        clonedParcel.parcelData.updatedAt = new Date();
+        return clonedParcel;
     }
 
     clone(): Parcel {
-        return new Parcel({ ...this.parcel });
+        return new Parcel({ ...this.parcelData });
     }
 }
-
-const MAX_PARCEL_WEIGHT = 10;
-const MAX_SINGLE_ITEM_WEIGHT = 5;
-const SMALL_ITEM_DIMENSIONS = '10x10x10';
-const LARGE_ITEM_DIMENSIONS = '50x50x50';
