@@ -8,11 +8,13 @@ import { CancelOrderCommand } from '../application/command/order/cancel-order.co
 import { ShipOrderDto } from './dto/ship-order.dto';
 import { ShipOrderCommand } from '../application/command/order/ship-order.command';
 import { FindOrdersQuery } from '../application/query/find-orders.query';
-import { FindOrdersResponseDto } from './response-dto/find-orders-response.dto';
 import { FindOrderByIdResponseDto } from './response-dto/find-order-response.dto';
 import { FindOrderByIdQuery } from '../application/query/find-order-by-id.query';
 import { GetOrderAnalyticsResponseDto } from './response-dto/get-order-analytics-response.dto';
 import { GetOrderAnalyticsQuery } from '../application/query/get-order-analytics.query';
+import { Order } from '../domain/order/order';
+import { OrderCommandMapper } from '../infrastructure/mapper/order/order-command.mapper';
+import { OrderDto } from './dto/order.dto';
 
 @Controller('orders')
 export class OrderController {
@@ -47,9 +49,10 @@ export class OrderController {
     }
 
     @Get()
-    public async findOrders(@Query() query: { customerId?: string }): Promise<FindOrdersResponseDto> {
+    public async findOrders(@Query() query: { customerId?: string }): Promise<OrderDto[]> {
         const queryInstanse = new FindOrdersQuery(query);
-        return await this.queryBus.execute(queryInstanse);
+        const orders = await this.queryBus.execute<FindOrdersQuery, Order[]>(queryInstanse);
+        return orders.map((order) => OrderCommandMapper.toClient(order));
     }
 
     @Get('/analytics')
@@ -62,10 +65,5 @@ export class OrderController {
     public async findOrderById(@Param() param: string): Promise<FindOrderByIdResponseDto> {
         const query = new FindOrderByIdQuery(param);
         return this.queryBus.execute(query);
-    }
-
-    // TODO create new controller for customer
-    @Post(':orderId/shipping-cost'): Promise<> {
-        
     }
 }
