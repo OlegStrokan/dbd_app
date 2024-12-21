@@ -2,20 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ShippingCostCommand } from '../../entity/shipping-cost/shipping-cost-command.entity';
-import { ShippingCostData } from 'src/order/domain/shipping-cost/shipping-cost';
+import { ShippingCost, ShippingCostCreateDate } from 'src/order/domain/shipping-cost/shipping-cost';
+import { ShippingCostCommandMapper } from '../../mapper/shipping-cost/shipping-cost-command.mapper';
+import { IShippingCostCommandRepository } from 'src/order/domain/shipping-cost/shipping-cost-command.repository';
 
 @Injectable()
-export class ShippingCostCommandRepository {
+export class ShippingCostCommandRepository implements IShippingCostCommandRepository {
     constructor(
         @InjectRepository(ShippingCostCommand)
         private readonly shippingCostCommandRepository: Repository<ShippingCostCommand>
     ) {}
 
-    async createShippingCost(data: ShippingCostData): Promise<ShippingCostCommand> {
-        return this.shippingCostCommandRepository.save(data);
+    async create(data: ShippingCostCreateDate): Promise<void> {
+        const shippingCostEntity = ShippingCostCommandMapper.toEntity(data);
+        await this.shippingCostCommandRepository.save(shippingCostEntity);
     }
 
-    async findByOrderId(orderId: string): Promise<ShippingCostCommand | undefined> {
-        return this.shippingCostCommandRepository.findOne({ where: { orderId } });
+    async findByOrderId(orderId: string): Promise<ShippingCost | undefined> {
+        const shippingCost = await this.shippingCostCommandRepository.findOne({ where: { orderId } });
+        return ShippingCostCommandMapper.toDomain(shippingCost);
     }
 }

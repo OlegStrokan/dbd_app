@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Order } from 'src/order/domain/order/order';
 import { Parcel } from 'src/order/domain/parcel/parcel';
 import { ParcelQueryMapper } from '../../mapper/parcel/parcel-query.mapper';
-import { OrderItem } from 'src/order/domain/order-item/order-item';
 import { IParcelQueryRepository } from 'src/order/domain/parcel/parcel-query.repository';
 import { ParcelQuery } from '../../entity/parcel/parcel-query.entity';
+import { ParcelCreateCommand } from 'src/order/application/command/parcel/parcel-create.command';
 
 @Injectable()
 export class ParcelQueryRepository implements IParcelQueryRepository {
@@ -20,12 +19,12 @@ export class ParcelQueryRepository implements IParcelQueryRepository {
         return ParcelQueryMapper.toDomain(parcelEntity);
     }
 
-    public async insertMany(order: Order): Promise<void> {
-        const parcels = Parcel.createParcels(order.id, order.items);
-        await this.parcelQueryRepository.save(parcels);
+    public async insertMany(parcels: ParcelCreateCommand[]): Promise<void> {
+        const createdParcels = parcels.map((parcel) => Parcel.create(parcel).data);
+        await this.parcelQueryRepository.save(createdParcels);
     }
-    public async insertOne(parcel: Parcel, item: OrderItem): Promise<void> {
-        const newParcel = Parcel.addItem(parcel, item);
+    public async insertOne(parcel: ParcelCreateCommand): Promise<void> {
+        const newParcel = Parcel.create(parcel);
         await this.parcelQueryRepository.save(newParcel);
     }
 

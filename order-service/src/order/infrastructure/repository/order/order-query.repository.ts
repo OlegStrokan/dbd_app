@@ -25,7 +25,6 @@ export class OrderQueryRepository {
     }
 
     public async updateOne(orderId: string, updateData: Partial<Order>): Promise<void> {
-        console.log(orderId, updateData);
         await this.orderQueryRepository.update(orderId, updateData);
     }
 
