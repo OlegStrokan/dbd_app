@@ -3,7 +3,7 @@ import { CreateOrderItemCommand } from '../order-item/create-order-item.command'
 
 export class ParcelCreateCommand {
     constructor(
-        public readonly weight: string,
+        public readonly weight: number,
         public readonly dimensions: Dimension,
         public readonly orderId: string,
         public readonly items?: CreateOrderItemCommand[]

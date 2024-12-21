@@ -10,9 +10,9 @@ export class CreateShippingCostHandler implements ICommandHandler<CreateShipping
         private readonly eventBus: EventBus
     ) {}
 
-    async execute(command: CreateShippingCostCommand): Promise<ShippingCost> {
+    async execute(command: CreateShippingCostCommand): Promise<void> {
         const { parcels, ...commandWithouParcels } = command;
-        const shippingCost = ShippingCost.create({ ...commandWithouParcels });
+        const shippingCost = ShippingCost.create({ ...commandWithouParcels, parcels: null });
         return await this.shippingCostCommandRepository.create(shippingCost.data);
 
         // this.eventBus.publish(new ShippingCostCreatedEvent(command.orderId, shippingCostDomain.getCalculatedCost()));
