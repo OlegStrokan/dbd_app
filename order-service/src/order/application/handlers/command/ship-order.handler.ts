@@ -5,7 +5,7 @@ import { IOrderCommandRepository } from 'src/order/domain/order/order-command.re
 import { EventBus } from '@nestjs/cqrs';
 import { OrderQueryRepository } from 'src/order/infrastructure/repository/order/order-query.repository';
 import { OrderCommandRepository } from 'src/order/infrastructure/repository/order/order-command.repository';
-import { OrderShippedEvent } from 'src/order/domain/event/order/order-shipped.event';
+import { OrderShippedEvent } from 'src/order/domain/order/event/order-shipped.event';
 
 @CommandHandler(ShipOrderCommand)
 export class ShipOrderHandler implements ICommandHandler<ShipOrderCommand, void> {

@@ -1,7 +1,7 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Inject, Logger } from '@nestjs/common';
 import { OrderProjectionRepository } from 'src/order/infrastructure/repository/order/order-projection.repository';
-import { OrderUpdatedEvent } from 'src/order/domain/event/order/order-updated.event';
+import { OrderUpdatedEvent } from 'src/order/domain/order/event/order-updated.event';
 
 @EventsHandler(OrderUpdatedEvent)
 export class OrderDeliveredHandler implements IEventHandler<OrderUpdatedEvent> {

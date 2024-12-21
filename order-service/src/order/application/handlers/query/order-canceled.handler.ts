@@ -1,6 +1,6 @@
 import { Inject, NotFoundException } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { OrderCancelledEvent } from 'src/order/domain/event/order/order-canceled.event';
+import { OrderCancelledEvent } from 'src/order/domain/order/event/order-canceled.event';
 import { OrderQueryRepository } from 'src/order/infrastructure/repository/order/order-query.repository';
 
 @EventsHandler(OrderCancelledEvent)

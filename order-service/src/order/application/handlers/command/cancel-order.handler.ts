@@ -2,9 +2,9 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { CancelOrderCommand } from '../../command/order/cancel-order.command';
 import { Inject, NotFoundException } from '@nestjs/common';
 import { IOrderCommandRepository } from 'src/order/domain/order/order-command.repository';
-import { OrderCancelledEvent } from 'src/order/domain/event/order/order-canceled.event';
 import { OrderCommandRepository } from 'src/order/infrastructure/repository/order/order-command.repository';
 import { OrderQueryRepository } from 'src/order/infrastructure/repository/order/order-query.repository';
+import { OrderCancelledEvent } from 'src/order/domain/order/event/order-canceled.event';
 
 @CommandHandler(CancelOrderCommand)
 export class CancelOrderHandler implements ICommandHandler<CancelOrderCommand, void> {

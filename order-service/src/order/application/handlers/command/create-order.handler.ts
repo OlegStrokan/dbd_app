@@ -29,8 +29,7 @@ export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand, v
         const order = Order.create({
             customerId: command.customerId,
             totalAmount: command.totalAmount,
-            createdAt: new Date(),
-            items: orderItems ?? [],
+            items: orderItems,
         });
 
         await this.orderRepository.insertOne(order.data);
