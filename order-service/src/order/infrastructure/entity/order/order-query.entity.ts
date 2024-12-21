@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { OrderItemQuery } from '../order-item/query/order-item-query.entity';
-import { ParcelQuery } from '../parcel/query/parcel-query.entity';
 import { BaseEntity } from 'src/libs/database/base.entity';
 import { RepaymentPreferencesQuery } from '../repayment-preferences/repayment-preferences-query.entity';
+import { ParcelQuery } from '../parcel/parcel-query.entity';
 
 @Entity('order_query')
 export class OrderQuery extends BaseEntity {

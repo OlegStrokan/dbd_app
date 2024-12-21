@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany, ManyToOne } from 'typeorm';
 import { BaseEntity } from 'src/libs/database/base.entity';
 import { OrderItemQuery } from '../order-item/query/order-item-query.entity';
 import { ShippingCostQuery } from '../shipping-cost/shipping-cost-query.entity';
+import { Dimension } from 'src/order/domain/shipping-cost/shipping-cost';
 
 @Entity('parcel_query')
 export class ParcelQuery extends BaseEntity {
@@ -15,7 +16,7 @@ export class ParcelQuery extends BaseEntity {
     weight: number;
 
     @Column()
-    dimensions: string;
+    dimensions: Dimension;
 
     @Column()
     orderId: string;
@@ -23,7 +24,6 @@ export class ParcelQuery extends BaseEntity {
     @OneToMany(() => OrderItemQuery, (item) => item.parcel)
     items: OrderItemQuery[];
 
-    @ManyToOne(() => ShippingCostQuery, (shippingCost) => shippingCost.parcels, { nullable: false })
-    @JoinColumn({ name: 'shipping_cost_id' })
+    @ManyToOne(() => ShippingCostQuery, (shippingCost) => shippingCost.parcels, { nullable: true })
     shippingCost: ShippingCostQuery;
 }

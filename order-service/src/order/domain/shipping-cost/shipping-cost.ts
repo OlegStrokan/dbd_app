@@ -20,9 +20,10 @@ export type ShippingCostData = {
     dimensions: Dimension;
     shippingOptions: ShippingOptions;
     calculatedCost: number;
-    parcels?: HasMany<Parcel>;
+    parcels: HasMany<Parcel> | null;
 };
 
+export type ShippingCostCreateDate = Omit<ShippingCostData, 'calculatedCost'>;
 export class ShippingCost implements IClone<ShippingCost> {
     constructor(public readonly shippingCostData: ShippingCostData) {}
 
@@ -30,7 +31,7 @@ export class ShippingCost implements IClone<ShippingCost> {
         return this.shippingCostData;
     }
 
-    static create(shippingCostData: Omit<ShippingCostData, 'calculatedCost'>) {
+    static create(shippingCostData: ShippingCostCreateDate) {
         const calculatedCost = this.calculateShippingCost({ ...shippingCostData });
         return new ShippingCost({
             ...shippingCostData,

@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { OrderQuery } from '../../order/order-query.entity';
 import { BaseEntity } from 'src/libs/database/base.entity';
-import { ParcelQuery } from '../../parcel/query/parcel-query.entity';
+import { ParcelQuery } from '../../parcel/parcel-query.entity';
 
 @Entity('order_item_query')
 export class OrderItemQuery extends BaseEntity {

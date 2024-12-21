@@ -21,7 +21,7 @@ export class ShippingCostCommand {
     @Column('float')
     calculatedCost: number;
 
-    @OneToMany(() => ParcelCommand, (parcel) => parcel.shippingCost)
+    @OneToMany(() => ParcelCommand, (parcel) => parcel.shippingCost, { nullable: true })
     parcels: ParcelCommand[];
 
     @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
